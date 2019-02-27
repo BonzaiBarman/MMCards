@@ -65,7 +65,7 @@ public class GameControl : MonoBehaviour
 		{
 			string dataJson = File.ReadAllText(filePath);
 			movieTitles = JsonUtility.FromJson<MovieTitles>(dataJson);
-			Debug.Log(movieTitles.comedy[4]);
+			Debug.Log(movieTitles.western[10]);
 		}
 	}
 

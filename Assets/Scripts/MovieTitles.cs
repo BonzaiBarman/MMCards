@@ -7,5 +7,8 @@ public class MovieTitles
 {
 	public string[] comedy;
 	public string[] drama;
+	public string[] horror;
+	public string[] musical;
+	public string[] western;
 	public string[] action;
 }
