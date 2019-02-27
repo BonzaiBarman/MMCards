@@ -56,13 +56,13 @@ public class Card : MonoBehaviour
         //}
 	}
 
-	void OnMouseUp()
+	void OnMouseDown()
     {
 
-	    Debug.Log(cardData.status);
+
 	    if (cardData.status == CardData.Status.Deck)
 	    {
-		    //Debug.Log(cardData.cardName);
+		    Debug.Log(cardData.cardName + ", " + cardData.deckIdx);
 		    gControl.CardDraw(this);
 		    if (cardData.type == CardData.CardType.Action)
 		    {

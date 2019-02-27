@@ -46,7 +46,19 @@ public class GameControl : MonoBehaviour
 	    foreach (Card item in daCards)
 	    {
 			item.GetComponent<Rigidbody>().isKinematic = true;
-		}
+	    }
+	    float nvalue = 0.02f;
+	    foreach (Card item in actionCards)
+	    {
+	    	item.transform.DOMoveY(nvalue,0);
+	    	nvalue += .005f;
+	    }
+	    nvalue = 0.02f;
+	    foreach (Card item in talentCards)
+	    {
+	    	item.transform.DOMoveY(nvalue,0);
+	    	nvalue += .005f;
+	    }
 
 
 
@@ -65,13 +77,11 @@ public class GameControl : MonoBehaviour
 		{
 			string dataJson = File.ReadAllText(filePath);
 			movieTitles = JsonUtility.FromJson<MovieTitles>(dataJson);
-			Debug.Log(movieTitles.western[10]);
 		}
 	}
 
 	void InitActionCards()
 	{
-		
 		//Get Action Cards
 		int count = 0;
 		actionCards = new Card[ActionCardCount];
@@ -93,25 +103,21 @@ public class GameControl : MonoBehaviour
 		//shuffle
 		ShuffleListCards(actionCards);
 
+		//Sort action cards by shuffle index
+		actionCards = actionCards.OrderByDescending(go => go.cardData.deckIdx).ToArray();
 		//move cards to the height to drop from
 		float loc = 2f;
 		foreach (Card item in actionCards)
 		{
-			//if (item.cardData.type == CardData.CardType.Action)
-			//{
-			loc = loc + 0.03f;
+			loc = loc + 0.1f;
 			item.transform.DOMoveY(loc,0);
-			//}
 		}
 		//turn off Kinematic to activate gravity
 		foreach (Card item in actionCards)
 		{
-			//if (item.cardData.type == CardData.CardType.Action)
-			//{
-				item.GetComponent<Rigidbody>().isKinematic = false;
-			//}
+			item.GetComponent<Rigidbody>().isKinematic = false;
 		}
-		
+
 	}
 	
 	void InitTalentCards()
@@ -137,23 +143,22 @@ public class GameControl : MonoBehaviour
 		//shuffle
 		ShuffleListCards(talentCards);
 		
+		//Sort talent cards by shuffle index
+		talentCards = talentCards.OrderByDescending(go => go.cardData.deckIdx).ToArray();
 		//move cards to the height to drop from
 		float loc = 2f;
 		foreach (Card item in talentCards)
 		{
 			//if (item.cardData.type == CardData.CardType.Action)
 			//{
-			loc = loc + 0.03f;
+			loc = loc + 0.1f;
 			item.transform.DOMoveY(loc,0);
 			//}
 		}
 		//turn off Kinematic to activate gravity
 		foreach (Card item in talentCards)
 		{
-			//if (item.cardData.type == CardData.CardType.Action)
-			//{
 			item.GetComponent<Rigidbody>().isKinematic = false;
-			//}
 		}
 		
 	}
@@ -167,7 +172,9 @@ public class GameControl : MonoBehaviour
 			var r = UnityEngine.Random.Range(i, cnt);
 			var tmp = inCards[i];
 			inCards[i] = inCards[r];
+			inCards[i].cardData.deckIdx = i;
 			inCards[r] = tmp;
+			inCards[r].cardData.deckIdx = r;
 		}
 	}
 	
@@ -182,7 +189,8 @@ public class GameControl : MonoBehaviour
 		{
 			if (player.nextHandIdx < 7)
 			{
-				Debug.Log(player.nextHandIdx);
+				//Debug.Log(inCard.cardData.deckIdx);
+				//Debug.Log(player.nextHandIdx);
 				player.hand[player.nextHandIdx] = inCard;
 				inCard.cardData.hand = 0;
 				inCard.cardData.handIdx = player.nextHandIdx;
@@ -198,6 +206,7 @@ public class GameControl : MonoBehaviour
 		}
 		else if (inCard.cardData.type == CardData.CardType.Action)
 		{
+			Debug.Log(inCard.cardData.deckIdx);
 			inCard.cardData.status = CardData.Status.Hand;
 		}
 	}
@@ -207,7 +216,7 @@ public class GameControl : MonoBehaviour
 		{
 			if (player.nextHandIdx < 7)
 			{
-				Debug.Log(player.nextHandIdx);
+				//Debug.Log(player.nextHandIdx);
 				player.hand[player.nextHandIdx] = inCard;
 				inCard.cardData.hand = -1;
 				inCard.cardData.handIdx = -1;
