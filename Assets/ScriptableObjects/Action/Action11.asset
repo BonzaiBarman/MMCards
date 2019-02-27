@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44813d08b11c9f84baf873b13588b1f2, type: 3}
+  m_Name: Action11
+  m_EditorClassIdentifier: 
+  cardID: 11
+  cardName: Raid Talent
+  type: 0
+  subType: 1
+  status: 0
+  frontSprite: {fileID: 21300000, guid: fec625a37e7c2c54f8ec295a2d733e0a, type: 3}
+  backSprite: {fileID: 21300000, guid: aa919f95d748400479f27c4a64ff2d25, type: 3}
+  value: 0000000000000000000000000000000000000000
+  hand: -1
+  handIdx: -1
+  deck: 0
+  deckIdx: 11
+  discard: 0
+  discardIdx: -1
+  movie: -1
+  movieIdx: -1
