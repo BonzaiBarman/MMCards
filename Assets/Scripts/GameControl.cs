@@ -21,10 +21,10 @@ public class GameControl : MonoBehaviour
 	
 	Name daname;
 	List<Card> daCards;
-	List<Card> actionCards;
+	List<Card> actionCards = new List<Card>();
 	int curActionCardsIdx = 0;
 	int curActionDiscardIdx = 0;
-	List <Card> talentCards;
+	List <Card> talentCards = new List<Card>();
 	int curTalenCardsIdx = 0;
 	int curTalentDiscardIdx = 0;
 	MovieTitles movieTitles;
@@ -98,18 +98,20 @@ public class GameControl : MonoBehaviour
 	{
 		//Get Action Cards
 		int count = 0;
-		actionCards = new Card[ActionCardCount].ToList();
+		//actionCards = new Card[ActionCardCount].ToList();
 		foreach (Card item in daCards)
 		{
 			if (item.cardData.type == CardData.CardType.Action)
 			{
-				actionCards[count] = item;
-				actionCards[count].cardData.status = CardData.Status.Deck;
-				actionCards[count].cardData.hand = 0;
-				actionCards[count].cardData.handIdx = -1;
-				actionCards[count].cardData.deckIdx = actionCards[count].cardData.cardID;
-				actionCards[count].cardData.movie = -1;
-				actionCards[count].cardData.movieIdx = -1;
+				Card tc = new Card();
+				tc = item;
+				tc.cardData.status = CardData.Status.Deck;
+				tc.cardData.hand = 0;
+				tc.cardData.handIdx = -1;
+				tc.cardData.movie = -1;
+				tc.cardData.movieIdx = -1;
+				actionCards.Add(tc);
+				
 				count += 1;
 			}
 		}
@@ -118,7 +120,7 @@ public class GameControl : MonoBehaviour
 		ShuffleListCards(actionCards);
 
 		//Sort action cards by shuffle index
-		actionCards = actionCards.OrderByDescending(go => go.cardData.deckIdx).ToList();
+		actionCards = actionCards.OrderByDescending(go => go.GetInstanceID()).ToList();
 		//move cards to the height to drop from
 		float loc = 2f;
 		foreach (Card item in actionCards)
@@ -138,18 +140,20 @@ public class GameControl : MonoBehaviour
 	{
 		//Get Talent Cards
 		int count = 0;
-		talentCards = new Card[TalentCardCount].ToList();
+		//talentCards = new Card[TalentCardCount].ToList();
 		foreach (Card item in daCards)
 		{
 			if (item.cardData.type == CardData.CardType.Talent)
 			{
-				talentCards[count] = item;
-				talentCards[count].cardData.status = CardData.Status.Deck;
-				talentCards[count].cardData.hand = 0;
-				talentCards[count].cardData.handIdx = -1;
-				talentCards[count].cardData.deckIdx = talentCards[count].cardData.cardID;
-				talentCards[count].cardData.movie = -1;
-				talentCards[count].cardData.movieIdx = -1;
+				Card tc = new Card();
+				tc = item;
+				tc.cardData.status = CardData.Status.Deck;
+				tc.cardData.hand = 0;
+				tc.cardData.handIdx = -1;
+				//tc.cardData.deckIdx = talentCards.Count - 1;
+				tc.cardData.movie = -1;
+				tc.cardData.movieIdx = -1;
+				talentCards.Add(tc);
 				count += 1;
 			}
 		}
@@ -158,7 +162,7 @@ public class GameControl : MonoBehaviour
 		ShuffleListCards(talentCards);
 		
 		//Sort talent cards by shuffle index
-		talentCards = talentCards.OrderByDescending(go => go.cardData.deckIdx).ToList();
+		talentCards = talentCards.OrderByDescending(go => go.GetInstanceID()).ToList();
 		//move cards to the height to drop from
 		float loc = 2f;
 		foreach (Card item in talentCards)
@@ -186,16 +190,16 @@ public class GameControl : MonoBehaviour
 			var r = UnityEngine.Random.Range(i, cnt);
 			var tmp = inCards[i];
 			inCards[i] = inCards[r];
-			inCards[i].cardData.deckIdx = i;
+			//inCards[i].cardData.deckIdx = i;
 			inCards[r] = tmp;
-			inCards[r].cardData.deckIdx = r;
+			//inCards[r].cardData.deckIdx = r;
 		}
 	}
 	
 	void InitPlayer()
 	{
 		player = FindObjectOfType<Player>();
-		player.hand = new Card[7];
+		//player.hand = new Card[7];
 		player.nextHandIdx = 0;
 	}
 	
@@ -207,14 +211,14 @@ public class GameControl : MonoBehaviour
 			{
 				//Debug.Log(inCard.cardData.deckIdx);
 				//Debug.Log(player.nextHandIdx);
-				player.hand[player.nextHandIdx] = inCard;
 				inCard.cardData.hand = 0;
-				inCard.cardData.handIdx = player.nextHandIdx;
+				inCard.cardData.handIdx = player.hand.Count;//player.nextHandIdx;
 
-				inCard.cardData.deckIdx = -1;
+				//inCard.cardData.deckIdx = -1;
 				inCard.cardData.status = CardData.Status.Hand;
 				player.nextHandIdx += 1;
 				curTalenCardsIdx += 1;
+				player.hand.Add(inCard);
 				
 			}
 			else
@@ -225,8 +229,8 @@ public class GameControl : MonoBehaviour
 		}
 		else if (inCard.cardData.type == CardData.CardType.Action)
 		{
-			Debug.Log(inCard.cardData.deckIdx);
-			inCard.cardData.deckIdx = -1;
+			//Debug.Log(inCard.cardData.deckIdx);
+			//inCard.cardData.deckIdx = -1;
 			curActionCardsIdx += 1;
 			inCard.cardData.status = CardData.Status.Hand;
 		}
@@ -238,13 +242,13 @@ public class GameControl : MonoBehaviour
 			if (player.nextHandIdx < 7)
 			{
 				//Debug.Log(player.nextHandIdx);
-				player.hand[player.nextHandIdx] = new Card();
+				player.hand.RemoveAt(player.nextHandIdx);
 				inCard.cardData.hand = -1;
-				inCard.cardData.deckIdx = -1;
+				//inCard.cardData.deckIdx = -1;
 				inCard.cardData.status = CardData.Status.Discard;
 				inCard.cardData.discardIdx = curTalentDiscardIdx;
 				curTalentDiscardIdx += 1;
-				CompactPlayerHand(inCard.cardData.handIdx);
+				//CompactPlayerHand(inCard.cardData.handIdx);
 				inCard.cardData.handIdx = -1;
 			}
 			else
@@ -261,10 +265,7 @@ public class GameControl : MonoBehaviour
 			
 		}
 	}
-	void CompactPlayerHand(int inHandIDX)
-	{
-		
-	}
+
 	
     
     
