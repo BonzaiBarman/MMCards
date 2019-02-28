@@ -159,6 +159,7 @@ public class Card : MonoBehaviour
 		transform.DORotate(new Vector3(0f, 0f, 0f), 1);
 
 		yield return new WaitForSeconds(1f);
+		int r = 3;
 		
 	}
 }
