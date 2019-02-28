@@ -66,12 +66,12 @@ public class Card : MonoBehaviour
 		    gControl.CardDraw(this);
 		    if (cardData.type == CardData.CardType.Action)
 		    {
-			    StartCoroutine("DrawActionCard");
+			    StartCoroutine("DrawActionCardAnim");
 			    GetComponent<Rigidbody>().isKinematic = true;
 		    }	    
 		    if (cardData.type == CardData.CardType.Talent)
 		    {
-			    StartCoroutine("DrawTalentCard");
+			    StartCoroutine("DrawTalentCardAnim");
 			    GetComponent<Rigidbody>().isKinematic = true;
 		    }	    	
 	    }
@@ -82,13 +82,13 @@ public class Card : MonoBehaviour
 		    if (cardData.type == CardData.CardType.Action)
 		    {
 			    GetComponent<Rigidbody>().isKinematic = false;
-			    StartCoroutine("DiscardActionCard");
+			    StartCoroutine("DiscardActionCardAnim");
 			    GetComponent<Rigidbody>().isKinematic = true;
 		    }	    
 		    if (cardData.type == CardData.CardType.Talent)
 		    {
 			    GetComponent<Rigidbody>().isKinematic = false;
-			    StartCoroutine("DiscardTalentCard");
+			    StartCoroutine("DiscardTalentCardAnim");
 			    GetComponent<Rigidbody>().isKinematic = true;
 		    }	    	
 	    }
@@ -127,7 +127,7 @@ public class Card : MonoBehaviour
         //}
     }
 	
-	IEnumerator DrawActionCard()
+	IEnumerator DrawActionCardAnim()
 	{
 		
 		transform.DOMove(new Vector3(1.8f, 3f, -1.5f), 1);
@@ -135,7 +135,7 @@ public class Card : MonoBehaviour
 		yield return new WaitForSeconds(1f);
 		
 	}
-	IEnumerator DrawTalentCard()
+	IEnumerator DrawTalentCardAnim()
 	{
 		
 		//also based on cardData.Hand (not implemented) just doing player0
@@ -146,7 +146,7 @@ public class Card : MonoBehaviour
 		yield return new WaitForSeconds(1f);
 		
 	}
-	IEnumerator DiscardActionCard()
+	IEnumerator DiscardActionCardAnim()
 	{
 		
 		transform.DOMove(new Vector3(0.8f, 0.1f, 0f), 1);
@@ -154,7 +154,7 @@ public class Card : MonoBehaviour
 		yield return new WaitForSeconds(1f);
 		
 	}
-	IEnumerator DiscardTalentCard()
+	IEnumerator DiscardTalentCardAnim()
 	{
 		
 		//also based on cardData.Hand (not implemented) just doing player0
