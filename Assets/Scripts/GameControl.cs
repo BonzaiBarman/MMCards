@@ -20,11 +20,11 @@ public class GameControl : MonoBehaviour
 	}
 	
 	Name daname;
-	Card[] daCards;
-	Card[] actionCards;
+	List<Card> daCards;
+	List<Card> actionCards;
 	int curActionCardsIdx = 0;
 	int curActionDiscardIdx = 0;
-	Card[] talentCards;
+	List <Card> talentCards;
 	int curTalenCardsIdx = 0;
 	int curTalentDiscardIdx = 0;
 	MovieTitles movieTitles;
@@ -53,7 +53,7 @@ public class GameControl : MonoBehaviour
 	IEnumerator InitGame()
 	{
 		//get all the cards
-		daCards = FindObjectsOfType<Card>();
+		daCards = FindObjectsOfType<Card>().ToList();
 		
 		InitActionCards();
 		InitTalentCards();
@@ -98,7 +98,7 @@ public class GameControl : MonoBehaviour
 	{
 		//Get Action Cards
 		int count = 0;
-		actionCards = new Card[ActionCardCount];
+		actionCards = new Card[ActionCardCount].ToList();
 		foreach (Card item in daCards)
 		{
 			if (item.cardData.type == CardData.CardType.Action)
@@ -118,7 +118,7 @@ public class GameControl : MonoBehaviour
 		ShuffleListCards(actionCards);
 
 		//Sort action cards by shuffle index
-		actionCards = actionCards.OrderByDescending(go => go.cardData.deckIdx).ToArray();
+		actionCards = actionCards.OrderByDescending(go => go.cardData.deckIdx).ToList();
 		//move cards to the height to drop from
 		float loc = 2f;
 		foreach (Card item in actionCards)
@@ -138,7 +138,7 @@ public class GameControl : MonoBehaviour
 	{
 		//Get Talent Cards
 		int count = 0;
-		talentCards = new Card[TalentCardCount];
+		talentCards = new Card[TalentCardCount].ToList();
 		foreach (Card item in daCards)
 		{
 			if (item.cardData.type == CardData.CardType.Talent)
@@ -158,7 +158,7 @@ public class GameControl : MonoBehaviour
 		ShuffleListCards(talentCards);
 		
 		//Sort talent cards by shuffle index
-		talentCards = talentCards.OrderByDescending(go => go.cardData.deckIdx).ToArray();
+		talentCards = talentCards.OrderByDescending(go => go.cardData.deckIdx).ToList();
 		//move cards to the height to drop from
 		float loc = 2f;
 		foreach (Card item in talentCards)
@@ -177,9 +177,9 @@ public class GameControl : MonoBehaviour
 		
 	}
 	
-	void ShuffleListCards(Card[] inCards)
+	void ShuffleListCards(List<Card> inCards)
 	{
-		var cnt = inCards.Length;
+		var cnt = inCards.Count;
 		var last = cnt -1;
 		for (var i = 0; i < last; i++)
 		{
