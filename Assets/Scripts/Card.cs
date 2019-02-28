@@ -13,10 +13,6 @@ public class Card : MonoBehaviour
 	
 	Vector3[] player0PosHandIdx = new [] {new Vector3(1.8f, 2f, -3.2f), new Vector3(0.5f, 2f, -3.2f), new Vector3(3.1f, 2f, -3.2f), new Vector3(-0.8f, 2f, -3.2f), new Vector3(4.4f, 2f, -3.2f), new Vector3(-2.1f, 2f, -3.2f), new Vector3(5.7f, 2f, -3.2f)};
 
-
-	//Vector3 player0RotHandIdx0 = new Vector3(1.8f, 2f, -3.2f);
-	bool runOnce = false;
-	
 	// Start is called before the first frame update
     void Start()
     {
