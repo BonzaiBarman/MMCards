@@ -11,8 +11,9 @@ public class Card : MonoBehaviour
 	public CardData cardData;
 	GameControl gControl;
 	
-	Vector3[] plyrHandIdx = new [] {new Vector3(1.8f, 2f, -3.2f), new Vector3(0.5f, 2f, -3.2f), new Vector3(3.1f, 2f, -3.2f), new Vector3(-0.8f, 2f, -3.2f), new Vector3(4.4f, 2f, -3.2f), new Vector3(-2.1f, 2f, -3.2f), new Vector3(5.7f, 2f, -3.2f)};
+	Vector3[] plyrHandIdx = new [] {new Vector3(-2.1f, 2f, -3.2f), new Vector3(-0.8f, 2f, -3.2f), new Vector3(0.5f, 2f, -3.2f), new Vector3(1.8f, 2f, -3.2f), new Vector3(3.1f, 2f, -3.2f), new Vector3(4.4f, 2f, -3.2f), new Vector3(5.7f, 2f, -3.2f)};
 
+	
 	// Start is called before the first frame update
     void Start()
     {

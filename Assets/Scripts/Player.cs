@@ -28,38 +28,21 @@ public class Player : MonoBehaviour
     
 	public void CompactHand(int inIndex)
 	{
-		switch (inIndex)
+		bool firstEmpty = false;
+		for (int i = inIndex; i < (hand.Length - 1); i++)
 		{
-		case 0:
-			hand[0] = hand[1];
-			hand[1] = hand[3];
-			hand[3] = hand[5];
-			hand[5] = -1;
-			if (hand[0] != -1)
+			hand[i] = hand[i + 1];
+			if (hand[i] == -1 && !firstEmpty)
 			{
-				gControl.GetTalentCardFromID(hand[0]).MoveCard(0);
+				nextHandIdx = i;
+				firstEmpty = true;
 			}
-			if (hand[1] != -1)
+			if (hand[i] != -1)
 			{
-				gControl.GetTalentCardFromID(hand[1]).MoveCard(1);
+				gControl.GetTalentCardFromID(hand[i]).MoveCard(i);				
 			}
-			if (hand[3] != -1)
-			{
-				gControl.GetTalentCardFromID(hand[3]).MoveCard(3);
-			}
-			break;
-		case 1:
-			break;
-		case 2:
-			break;
-		case 3:
-			break;
-		case 4:
-			break;
-		case 5:
-			break;
-		case 6:
-			break;
+
+			
 		}
 	}
 	

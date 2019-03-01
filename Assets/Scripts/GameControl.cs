@@ -192,6 +192,129 @@ public class GameControl : MonoBehaviour
 		}
 	}
 	
+	void ShuffleIDCards(int[] inCards)
+	{
+		var cnt = inCards.Length;
+		var last = cnt -1;
+		for (var i = 0; i < last; i++)
+		{
+			var r = UnityEngine.Random.Range(i, cnt);
+			var tmp = inCards[i];
+			inCards[i] = inCards[r];
+			inCards[r] = tmp;
+		}
+	}
+	
+	void ReshuffleTalentCards()
+	{
+		
+		int cnt = 0;
+		foreach(Card crd in talentCards)
+		{
+			if (crd.cardData.status	== CardData.Status.Discard)
+			{
+				crd.cardData.status = CardData.Status.Deck;
+				cnt += 1;
+			}
+		}
+		int[] newDeck = new int[cnt + 1];
+		cnt = 0;
+		foreach(Card crd in talentCards)
+		{
+			if (crd.cardData.status	== CardData.Status.Deck)
+			{
+				newDeck[cnt] = crd.cardData.cardID;
+				cnt += 1;
+			}
+		}
+		ShuffleIDCards(newDeck);
+		//Sort talent cards by shuffle index
+		//newDeck = newDeck.OrderByDescending(go => go.cardData.deckIdx).ToArray();
+		//move cards to the height to drop from
+		float loc = 2f;
+		Debug.Log(talentCards.Length);
+		foreach (Card item in talentCards)
+		{
+
+			if (item.cardData.status ==	CardData.Status.Deck)
+			{
+
+				item.GetComponent<Rigidbody>().isKinematic = true;
+				loc = loc + 0.1f;
+				item.transform.DOMove(new Vector3(3f,2f,0f), 0f);
+				item.transform.DORotate(new Vector3(180f,180f,0f), 0f);
+				item.transform.DOMoveY(loc,0);
+			}
+
+
+		}
+		//turn off Kinematic to activate gravity
+		foreach (Card item in talentCards)
+		{
+			if (item.cardData.status ==	CardData.Status.Deck)
+			{
+				item.GetComponent<Rigidbody>().isKinematic = false;
+			}
+
+		}
+		
+	}
+	
+	void ReshuffleActionCards()
+	{
+		
+		int cnt = 0;
+		foreach(Card crd in actionCards)
+		{
+			if (crd.cardData.status	== CardData.Status.Discard)
+			{
+				crd.cardData.status = CardData.Status.Deck;
+				cnt += 1;
+			}
+		}
+		int[] newDeck = new int[cnt + 1];
+		cnt = 0;
+		foreach(Card crd in actionCards)
+		{
+			if (crd.cardData.status	== CardData.Status.Deck)
+			{
+				newDeck[cnt] = crd.cardData.cardID;
+				cnt += 1;
+			}
+		}
+		ShuffleIDCards(newDeck);
+		//Sort talent cards by shuffle index
+		//newDeck = newDeck.OrderByDescending(go => go.cardData.deckIdx).ToArray();
+		//move cards to the height to drop from
+		float loc = 2f;
+		//Debug.Log(actionCards.Length);
+		foreach (Card item in actionCards)
+		{
+
+			if (item.cardData.status ==	CardData.Status.Deck)
+			{
+
+				item.GetComponent<Rigidbody>().isKinematic = true;
+				loc = loc + 0.1f;
+				item.transform.DOMove(new Vector3(-0.5f,2f,0f), 0f);
+				item.transform.DORotate(new Vector3(180f,180f,0f), 0f);
+				item.transform.DOMoveY(loc,0f);
+			}
+
+
+		}
+		//turn off Kinematic to activate gravity
+		foreach (Card item in actionCards)
+		{
+			if (item.cardData.status ==	CardData.Status.Deck)
+			{
+				item.GetComponent<Rigidbody>().isKinematic = false;
+			}
+
+		}
+		
+	}
+	
 	void InitPlayer()
 	{
 		player = FindObjectOfType<Player>();
@@ -210,7 +333,10 @@ public class GameControl : MonoBehaviour
 				player.hand[player.nextHandIdx] = inCard.cardData.cardID;
 				inCard.cardData.hand = 0;
 				inCard.cardData.handIdx = player.nextHandIdx;
-
+				if (inCard.cardData.deckIdx == 69)
+				{
+					ReshuffleTalentCards();
+				}
 				inCard.cardData.deckIdx = -1;
 				inCard.cardData.status = CardData.Status.Hand;
 				player.nextHandIdx += 1;
@@ -222,10 +348,16 @@ public class GameControl : MonoBehaviour
 				Debug.Log("Hand Full");
 			}
 			
+			
+			
 		}
 		else if (inCard.cardData.type == CardData.CardType.Action)
 		{
 			Debug.Log(inCard.cardData.deckIdx);
+			if (inCard.cardData.deckIdx == 49)
+			{
+				ReshuffleActionCards();
+			}
 			inCard.cardData.deckIdx = -1;
 			curActionCardsIdx += 1;
 			inCard.cardData.status = CardData.Status.Hand;
