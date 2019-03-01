@@ -12,19 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44813d08b11c9f84baf873b13588b1f2, type: 3}
   m_Name: Talent69
   m_EditorClassIdentifier: 
-  cardID: 69
-  cardName: Action
+  cardID: -1
+  cardName: Sabotage Protection
   type: 1
   subType: 12
   status: 0
   frontSprite: {fileID: 21300000, guid: a9274a79a21fd6c4ca8e74d615e24718, type: 3}
   backSprite: {fileID: 21300000, guid: c271539c358a113499b45605b31c72c5, type: 3}
   value: 000000000000000000000000000000000000000000000000
-  hand: -1
+  hand: 0
   handIdx: -1
   deck: 1
-  deckIdx: 69
+  deckIdx: 67
   discard: 1
-  discardIdx: -1
+  discardIdx: 2
   movie: -1
   movieIdx: -1

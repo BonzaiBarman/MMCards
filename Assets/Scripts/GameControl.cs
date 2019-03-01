@@ -195,7 +195,7 @@ public class GameControl : MonoBehaviour
 	void InitPlayer()
 	{
 		player = FindObjectOfType<Player>();
-		player.hand = new Card[7];
+		player.hand = new int[7];
 		player.nextHandIdx = 0;
 	}
 	
@@ -207,7 +207,7 @@ public class GameControl : MonoBehaviour
 			{
 				//Debug.Log(inCard.cardData.deckIdx);
 				//Debug.Log(player.nextHandIdx);
-				player.hand[player.nextHandIdx] = inCard;
+				player.hand[player.nextHandIdx] = inCard.cardData.cardID;
 				inCard.cardData.hand = 0;
 				inCard.cardData.handIdx = player.nextHandIdx;
 
@@ -233,17 +233,18 @@ public class GameControl : MonoBehaviour
 	}
 	public void CardDiscard(Card inCard)
 	{
+		int playerHandIdx = player.GetHandIndexFromcardID(inCard.cardData.cardID);
 		if (inCard.cardData.type == CardData.CardType.Talent)
 		{
 
-			//Debug.Log(player.nextHandIdx);
-			player.hand[player.nextHandIdx].cardData.cardID = -1;
+			Debug.Log(playerHandIdx);
+			player.hand[playerHandIdx] = -1;
 			inCard.cardData.hand = -1;
 			inCard.cardData.deckIdx = -1;
 			inCard.cardData.status = CardData.Status.Discard;
 			inCard.cardData.discardIdx = curTalentDiscardIdx;
 			curTalentDiscardIdx += 1;
-			CompactPlayerHand(inCard.cardData.handIdx);
+			player.CompactHand(playerHandIdx);
 			inCard.cardData.handIdx = -1;
 
 		}
@@ -255,11 +256,20 @@ public class GameControl : MonoBehaviour
 			
 		}
 	}
-	void CompactPlayerHand(int inHandIDX)
+
+	public Card GetTalentCardFromID(int inCardID)
 	{
+		foreach (Card crd in talentCards)
+		{
+			if(crd.cardData.cardID == inCardID)
+			{
+				return crd;
+			}
+		}
+		//an error if here
+		return talentCards[0];
 		
 	}
-	
     
     
 }

@@ -20,8 +20,7 @@ public class Card : MonoBehaviour
 	    //transform.GetChild(0).GetComponent<Renderer>().material = cardData.frontMat;
 	    //transform.GetChild(0).GetComponent<Renderer>().material = Resources.Load<Material>("TalentDeck/Materials/Talent4");
 	    gControl = FindObjectOfType<GameControl>();
-
-    }
+	}
 
     // Update is called once per frame
     void Update()
@@ -55,7 +54,7 @@ public class Card : MonoBehaviour
 	void OnMouseDown()
     {
 
-
+	    Debug.Log("CardID: " + cardData.cardID);
 	    if (cardData.status == CardData.Status.Deck)
 	    {
 		    Debug.Log(cardData.cardName + ", " + cardData.deckIdx);
@@ -160,5 +159,9 @@ public class Card : MonoBehaviour
 
 		yield return new WaitForSeconds(1f);
 		
+	}
+	public void MoveCard(int inHandIdx)
+	{
+		transform.DOMove(plyrHandIdx[inHandIdx], 0.1f);
 	}
 }
