@@ -228,8 +228,14 @@ public class GameControl : MonoBehaviour
 			}
 		}
 		ShuffleIDCards(newDeck);
+		cnt =0;
+		foreach (int item in newDeck)
+		{
+			talentCards[item].cardData.deckIdx = cnt;
+			cnt += 1;
+		}
 		//Sort talent cards by shuffle index
-		//newDeck = newDeck.OrderByDescending(go => go.cardData.deckIdx).ToArray();
+		talentCards = talentCards.OrderByDescending(go => go.cardData.deckIdx).ToArray();
 		//move cards to the height to drop from
 		float loc = 2f;
 		Debug.Log(talentCards.Length);
@@ -241,9 +247,9 @@ public class GameControl : MonoBehaviour
 
 				item.GetComponent<Rigidbody>().isKinematic = true;
 				loc = loc + 0.1f;
-				item.transform.DOMove(new Vector3(3f,2f,0f), 0f);
+				item.transform.DOMove(new Vector3(3f,loc,0f), 0f);
 				item.transform.DORotate(new Vector3(180f,180f,0f), 0f);
-				item.transform.DOMoveY(loc,0);
+				//item.transform.DOMoveY(loc,0);
 			}
 
 
@@ -260,7 +266,7 @@ public class GameControl : MonoBehaviour
 		
 	}
 	
-	void ReshuffleActionCards()
+	IEnumerator ReshuffleActionCards()
 	{
 		
 		int cnt = 0;
@@ -283,8 +289,14 @@ public class GameControl : MonoBehaviour
 			}
 		}
 		ShuffleIDCards(newDeck);
+		cnt =0;
+		foreach (int item in newDeck)
+		{
+			actionCards[item].cardData.deckIdx = cnt;
+			cnt += 1;
+		}
 		//Sort talent cards by shuffle index
-		//newDeck = newDeck.OrderByDescending(go => go.cardData.deckIdx).ToArray();
+		actionCards = actionCards.OrderByDescending(go => go.cardData.deckIdx).ToArray();
 		//move cards to the height to drop from
 		float loc = 2f;
 		//Debug.Log(actionCards.Length);
@@ -296,9 +308,9 @@ public class GameControl : MonoBehaviour
 
 				item.GetComponent<Rigidbody>().isKinematic = true;
 				loc = loc + 0.1f;
-				item.transform.DOMove(new Vector3(-0.5f,2f,0f), 0f);
+				item.transform.DOMove(new Vector3(-0.5f,loc,0f), 0f);
 				item.transform.DORotate(new Vector3(180f,180f,0f), 0f);
-				item.transform.DOMoveY(loc,0f);
+				//item.transform.DOMoveY(loc,0f);
 			}
 
 
@@ -309,6 +321,25 @@ public class GameControl : MonoBehaviour
 			if (item.cardData.status ==	CardData.Status.Deck)
 			{
 				item.GetComponent<Rigidbody>().isKinematic = false;
+			}
+
+		}
+		
+		//wait for 2 seconds. cards should have fallen by then
+		yield return new WaitForSeconds(2f);
+		//stop gravity on cards
+		foreach (Card item in actionCards)
+		{
+			item.GetComponent<Rigidbody>().isKinematic = true;
+		}
+		//move cards in both decks physically to match order in deck
+		float nvalue = 0.02f;
+		foreach (Card item in actionCards)
+		{
+			if (item.cardData.status ==	CardData.Status.Deck)
+			{
+				item.transform.DOMoveY(nvalue,0);
+				nvalue += .005f;				
 			}
 
 		}
@@ -356,7 +387,7 @@ public class GameControl : MonoBehaviour
 			Debug.Log(inCard.cardData.deckIdx);
 			if (inCard.cardData.deckIdx == 49)
 			{
-				ReshuffleActionCards();
+				StartCoroutine("ReshuffleActionCards");
 			}
 			inCard.cardData.deckIdx = -1;
 			curActionCardsIdx += 1;
