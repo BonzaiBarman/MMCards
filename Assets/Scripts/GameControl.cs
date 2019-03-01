@@ -53,6 +53,7 @@ public class GameControl : MonoBehaviour
 	IEnumerator InitGame()
 	{
 		//get all the cards
+		//daCards.Clear();
 		daCards = FindObjectsOfType<Card>().ToList();
 		
 		InitActionCards();
@@ -97,27 +98,28 @@ public class GameControl : MonoBehaviour
 	void InitActionCards()
 	{
 		//Get Action Cards
+		actionCards.Clear();
 		int count = 0;
 		//actionCards = new Card[ActionCardCount].ToList();
 		foreach (Card item in daCards)
 		{
 			if (item.cardData.type == CardData.CardType.Action)
 			{
-				Card tc = new Card();
-				tc = item;
-				tc.cardData.status = CardData.Status.Deck;
-				tc.cardData.hand = 0;
-				tc.cardData.handIdx = -1;
-				tc.cardData.movie = -1;
-				tc.cardData.movieIdx = -1;
-				actionCards.Add(tc);
+
+				item.cardData.status = CardData.Status.Deck;
+				item.cardData.hand = 0;
+				item.cardData.handIdx = -1;
+				item.cardData.movie = -1;
+				item.cardData.movieIdx = -1;
+				actionCards.Add(item);
 				
 				count += 1;
 			}
 		}
 
 		//shuffle
-		ShuffleListCards(actionCards);
+		//ShuffleListCards(actionCards);
+		actionCards.Shuffle();
 
 		//Sort action cards by shuffle index
 		actionCards = actionCards.OrderByDescending(go => go.GetInstanceID()).ToList();
@@ -139,30 +141,30 @@ public class GameControl : MonoBehaviour
 	void InitTalentCards()
 	{
 		//Get Talent Cards
+		talentCards.Clear();
 		int count = 0;
 		//talentCards = new Card[TalentCardCount].ToList();
 		foreach (Card item in daCards)
 		{
 			if (item.cardData.type == CardData.CardType.Talent)
 			{
-				Card tc = new Card();
-				tc = item;
-				tc.cardData.status = CardData.Status.Deck;
-				tc.cardData.hand = 0;
-				tc.cardData.handIdx = -1;
+				item.cardData.status = CardData.Status.Deck;
+				item.cardData.hand = 0;
+				item.cardData.handIdx = -1;
 				//tc.cardData.deckIdx = talentCards.Count - 1;
-				tc.cardData.movie = -1;
-				tc.cardData.movieIdx = -1;
-				talentCards.Add(tc);
+				item.cardData.movie = -1;
+				item.cardData.movieIdx = -1;
+				talentCards.Add(item);
 				count += 1;
 			}
 		}
 		
 		//shuffle
-		ShuffleListCards(talentCards);
+		//ShuffleListCards(talentCards);
+		talentCards.Shuffle();
 		
 		//Sort talent cards by shuffle index
-		talentCards = talentCards.OrderByDescending(go => go.GetInstanceID()).ToList();
+		//talentCards = talentCards.OrderByDescending(go => go.GetInstanceID()).ToList();
 		//move cards to the height to drop from
 		float loc = 2f;
 		foreach (Card item in talentCards)
@@ -183,16 +185,17 @@ public class GameControl : MonoBehaviour
 	
 	void ShuffleListCards(List<Card> inCards)
 	{
-		var cnt = inCards.Count;
-		var last = cnt -1;
-		for (var i = 0; i < last; i++)
+
+		for (var i = 0; i < inCards.Count; i++)
 		{
-			var r = UnityEngine.Random.Range(i, cnt);
-			var tmp = inCards[i];
+			var temp = inCards[i];
+			int r = Random.Range(i, inCards.Count);
+			Debug.Log(r);
+			
+
 			inCards[i] = inCards[r];
-			//inCards[i].cardData.deckIdx = i;
-			inCards[r] = tmp;
-			//inCards[r].cardData.deckIdx = r;
+			inCards[r] = temp;
+
 		}
 	}
 	
@@ -207,6 +210,18 @@ public class GameControl : MonoBehaviour
 	{
 		if (inCard.cardData.type == CardData.CardType.Talent)
 		{
+			int cnt = 0;
+			foreach (Card cidx in talentCards)
+			{
+				if (cidx.cardData.cardName == inCard.cardData.cardName)
+				{
+					Debug.Log(cnt);
+					break;
+				}
+				cnt += 1;
+					
+			}
+			
 			if (player.nextHandIdx < 7)
 			{
 				//Debug.Log(inCard.cardData.deckIdx);
@@ -267,6 +282,22 @@ public class GameControl : MonoBehaviour
 	}
 
 	
+
     
-    
+}
+
+public static class IListExtensions
+{
+	public static void Shuffle<Card>(this IList<Card> ts)
+	{
+		var count = ts.Count;
+		var last = count - 1;
+		for (var i = 0; i < last; ++i)
+		{
+			var r = UnityEngine.Random.Range(i, count);
+			var tmp = ts[i];
+			ts[i] = ts[r];
+			ts[r] = tmp;
+		}
+	}
 }
