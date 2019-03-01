@@ -5,12 +5,12 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     
-	public List<Card> hand = new List<Card>();
+	public Card[] hand;
 	public int nextHandIdx = 0;
 	// Start is called before the first frame update
     void Start()
     {
-	    //hand = new Card[7];
+	    hand = new Card[7];
     }
 
     // Update is called once per frame

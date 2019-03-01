@@ -11,7 +11,7 @@ public class Card : MonoBehaviour
 	public CardData cardData;
 	GameControl gControl;
 	
-	//Vector3[] player0PosHandIdx = new Vector3[7]; 
+	Vector3[] plyrHandIdx = new [] {new Vector3(1.8f, 2f, -3.2f), new Vector3(0.5f, 2f, -3.2f), new Vector3(3.1f, 2f, -3.2f), new Vector3(-0.8f, 2f, -3.2f), new Vector3(4.4f, 2f, -3.2f), new Vector3(-2.1f, 2f, -3.2f), new Vector3(5.7f, 2f, -3.2f)};
 
 	// Start is called before the first frame update
     void Start()
@@ -19,15 +19,7 @@ public class Card : MonoBehaviour
 	    //cardData = Resources.Load<CardData>("CardSOs/Card1");
 	    //transform.GetChild(0).GetComponent<Renderer>().material = cardData.frontMat;
 	    //transform.GetChild(0).GetComponent<Renderer>().material = Resources.Load<Material>("TalentDeck/Materials/Talent4");
-	    
 	    gControl = FindObjectOfType<GameControl>();
-	    //player0PosHandIdx[0] = new Vector3(1.8f, 2f, -3.2f);
-	    //player0PosHandIdx[1] = new Vector3(0.5f, 2f, -3.2f);
-	    //player0PosHandIdx[2] = new Vector3(3.1f, 2f, -3.2f);
-	    //player0PosHandIdx[3] = new Vector3(-0.8f, 2f, -3.2f);
-	    //player0PosHandIdx[4] = new Vector3(4.4f, 2f, -3.2f);
-	    //player0PosHandIdx[5] = new Vector3(-2.1f, 2f, -3.2f);
-	    //player0PosHandIdx[6] = new Vector3(5.7f, 2f, -3.2f);
 
     }
 
@@ -143,8 +135,8 @@ public class Card : MonoBehaviour
 	{
 		
 		//also based on cardData.Hand (not implemented) just doing player0
-		transform.DOMove(new Vector3(1.8f, 3f, -1.5f), 1);
-		//transform.DOMove(player0PosHandIdx[cardData.handIdx], 1);
+		
+		transform.DOMove(plyrHandIdx[cardData.handIdx], 1);
 		transform.DORotate(new Vector3(350f, 0f, 0f), 1);
 
 		yield return new WaitForSeconds(1f);
@@ -167,7 +159,6 @@ public class Card : MonoBehaviour
 		transform.DORotate(new Vector3(0f, 0f, 0f), 1);
 
 		yield return new WaitForSeconds(1f);
-
 		
 	}
 }
