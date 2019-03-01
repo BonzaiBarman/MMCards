@@ -235,23 +235,17 @@ public class GameControl : MonoBehaviour
 	{
 		if (inCard.cardData.type == CardData.CardType.Talent)
 		{
-			if (player.nextHandIdx < 7)
-			{
-				//Debug.Log(player.nextHandIdx);
-				player.hand[player.nextHandIdx] = new Card();
-				inCard.cardData.hand = -1;
-				inCard.cardData.deckIdx = -1;
-				inCard.cardData.status = CardData.Status.Discard;
-				inCard.cardData.discardIdx = curTalentDiscardIdx;
-				curTalentDiscardIdx += 1;
-				CompactPlayerHand(inCard.cardData.handIdx);
-				inCard.cardData.handIdx = -1;
-			}
-			else
-			{
-				Debug.Log("Hand Full");
-			}
-			
+
+			//Debug.Log(player.nextHandIdx);
+			player.hand[player.nextHandIdx].cardData.cardID = -1;
+			inCard.cardData.hand = -1;
+			inCard.cardData.deckIdx = -1;
+			inCard.cardData.status = CardData.Status.Discard;
+			inCard.cardData.discardIdx = curTalentDiscardIdx;
+			curTalentDiscardIdx += 1;
+			CompactPlayerHand(inCard.cardData.handIdx);
+			inCard.cardData.handIdx = -1;
+
 		}
 		else if (inCard.cardData.type == CardData.CardType.Action)
 		{

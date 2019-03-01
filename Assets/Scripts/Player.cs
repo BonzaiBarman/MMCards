@@ -11,6 +11,11 @@ public class Player : MonoBehaviour
     void Start()
     {
 	    hand = new Card[7];
+	    foreach(Card crd in hand)
+	    {
+	    	crd.cardData.cardID = -1;
+	    }
+
     }
 
     // Update is called once per frame
