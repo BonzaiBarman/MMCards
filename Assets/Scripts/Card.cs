@@ -135,7 +135,7 @@ public class Card : MonoBehaviour
 	{
 		
 		//also based on cardData.Hand (not implemented) just doing player0
-		
+		Debug.Log("carddata.handidx " + cardData.handIdx);
 		transform.DOMove(plyrHandIdx[cardData.handIdx], 1);
 		transform.DORotate(new Vector3(350f, 0f, 0f), 1);
 

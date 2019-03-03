@@ -20,6 +20,7 @@ public class GameControl : MonoBehaviour
 	}
 	
 	Name daname;
+	Utilities utils = new Utilities();
 	Card[] daCards;
 	Card[] actionCards;
 	int curActionCardsIdx = 0;
@@ -115,7 +116,7 @@ public class GameControl : MonoBehaviour
 		}
 
 		//shuffle
-		ShuffleListCards(actionCards);
+		utils.ShuffleCards(actionCards);
 
 		//Sort action cards by shuffle index
 		actionCards = actionCards.OrderByDescending(go => go.cardData.deckIdx).ToArray();
@@ -155,7 +156,7 @@ public class GameControl : MonoBehaviour
 		}
 		
 		//shuffle
-		ShuffleListCards(talentCards);
+		utils.ShuffleCards(talentCards);
 		
 		//Sort talent cards by shuffle index
 		talentCards = talentCards.OrderByDescending(go => go.cardData.deckIdx).ToArray();
@@ -177,33 +178,33 @@ public class GameControl : MonoBehaviour
 		
 	}
 	
-	void ShuffleListCards(Card[] inCards)
-	{
-		var cnt = inCards.Length;
-		var last = cnt -1;
-		for (var i = 0; i < last; i++)
-		{
-			var r = UnityEngine.Random.Range(i, cnt);
-			var tmp = inCards[i];
-			inCards[i] = inCards[r];
-			inCards[i].cardData.deckIdx = i;
-			inCards[r] = tmp;
-			inCards[r].cardData.deckIdx = r;
-		}
-	}
+	//void ShuffleListCards(Card[] inCards)
+	//{
+	//	var cnt = inCards.Length;
+	//	var last = cnt -1;
+	//	for (var i = 0; i < last; i++)
+	//	{
+	//		var r = UnityEngine.Random.Range(i, cnt);
+	//		var tmp = inCards[i];
+	//		inCards[i] = inCards[r];
+	//		inCards[i].cardData.deckIdx = i;
+	//		inCards[r] = tmp;
+	//		inCards[r].cardData.deckIdx = r;
+	//	}
+	//}
 	
-	void ShuffleIDCards(int[] inCards)
-	{
-		var cnt = inCards.Length;
-		var last = cnt -1;
-		for (var i = 0; i < last; i++)
-		{
-			var r = UnityEngine.Random.Range(i, cnt);
-			var tmp = inCards[i];
-			inCards[i] = inCards[r];
-			inCards[r] = tmp;
-		}
-	}
+	//void ShuffleIDCards(int[] inCards)
+	//{
+	//	var cnt = inCards.Length;
+	//	var last = cnt -1;
+	//	for (var i = 0; i < last; i++)
+	//	{
+	//		var r = UnityEngine.Random.Range(i, cnt);
+	//		var tmp = inCards[i];
+	//		inCards[i] = inCards[r];
+	//		inCards[r] = tmp;
+	//	}
+	//}
 	
 	void ReshuffleTalentCards()
 	{
@@ -227,7 +228,7 @@ public class GameControl : MonoBehaviour
 				cnt += 1;
 			}
 		}
-		ShuffleIDCards(newDeck);
+		utils.ShuffleCards(newDeck);
 		cnt =0;
 		foreach (int item in newDeck)
 		{
@@ -288,7 +289,7 @@ public class GameControl : MonoBehaviour
 				cnt += 1;
 			}
 		}
-		ShuffleIDCards(newDeck);
+		utils.ShuffleCards(newDeck);
 		cnt =0;
 		foreach (int item in newDeck)
 		{
@@ -349,7 +350,7 @@ public class GameControl : MonoBehaviour
 	void InitPlayer()
 	{
 		player = FindObjectOfType<Player>();
-		player.hand = new int[7];
+		player.hand = new int[] {-1, -1, -1, -1, -1, -1, -1};
 		player.nextHandIdx = 0;
 	}
 	
@@ -396,17 +397,18 @@ public class GameControl : MonoBehaviour
 	}
 	public void CardDiscard(Card inCard)
 	{
-		int playerHandIdx = player.GetHandIndexFromcardID(inCard.cardData.cardID);
+		int playerHandIdx = player.GetHandIndexFromCardID(inCard.cardData.cardID);
 		if (inCard.cardData.type == CardData.CardType.Talent)
 		{
 
 			Debug.Log(playerHandIdx);
-			player.hand[playerHandIdx] = -1;
+			
 			inCard.cardData.hand = -1;
 			inCard.cardData.deckIdx = -1;
 			inCard.cardData.status = CardData.Status.Discard;
 			inCard.cardData.discardIdx = curTalentDiscardIdx;
 			curTalentDiscardIdx += 1;
+			Debug.Log("playerhandidx" + playerHandIdx);
 			player.CompactHand(playerHandIdx);
 			inCard.cardData.handIdx = -1;
 

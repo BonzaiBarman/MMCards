@@ -40,7 +40,7 @@ public class Name : MonoBehaviour
         }
 	    //iTween.MoveTo(gameObject, iTween.Hash("y", 0.05, "x", transform.position.x - 0.15));
 	    transform.DOMoveY(0.03f, 0.8f, false);
-}
+	}
 
     public void ChangeName(string inName)
     {
