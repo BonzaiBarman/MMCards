@@ -9,9 +9,13 @@ public class Card : MonoBehaviour
 {
 
 	public CardData cardData;
+	public int nextHandIdx = 0;
 	GameControl gControl;
-	
-	Vector3[] plyrHandIdx = new [] {new Vector3(-2.1f, 2f, -3.2f), new Vector3(-0.8f, 2f, -3.2f), new Vector3(0.5f, 2f, -3.2f), new Vector3(1.8f, 2f, -3.2f), new Vector3(3.1f, 2f, -3.2f), new Vector3(4.4f, 2f, -3.2f), new Vector3(5.7f, 2f, -3.2f)};
+
+	Vector3[,] plyrHandLocs = new [,] {{new Vector3(-2.1f, 2f, -3.2f), new Vector3(-0.8f, 2f, -3.2f), new Vector3(0.5f, 2f, -3.2f), new Vector3(1.8f, 2f, -3.2f), new Vector3(3.1f, 2f, -3.2f), new Vector3(4.4f, 2f, -3.2f), new Vector3(5.7f, 2f, -3.2f)},
+	{new Vector3(-3f, 0.1f, 2.9f), new Vector3(-3f, 0.1f, 2.2f), new Vector3(-3f, 0.1f, 1.5f), new Vector3(-3f, 0.1f, 0.8f), new Vector3(-3f, 0.1f, 0.1f), new Vector3(-3f, 0.1f, -0.6f), new Vector3(-3f, 0.1f, -1.3f)},
+	{new Vector3(5.2f, 0.1f, 3.7f), new Vector3(4.5f, 0.1f, 3.7f), new Vector3(3.8f, 0.1f, 3.7f), new Vector3(3.1f, 0.1f, 3.7f), new Vector3(2.4f, 0.1f, 3.7f), new Vector3(1.7f, 0.1f, 3.7f), new Vector3(-0.3f, 0.1f, 3.7f)},
+	{new Vector3(7.3f, 0.1f, -1.3f), new Vector3(7.3f, 0.1f, -0.6f), new Vector3(7.3f, 0.1f, -0.1f), new Vector3(7.3f, 0.1f, 0.8f), new Vector3(7.3f, 0.1f, 1.5f), new Vector3(7.3f, 0.1f, 2.2f), new Vector3(7.3f, 0.1f, 2.9f)}};
 
 	
 	// Start is called before the first frame update
@@ -67,7 +71,7 @@ public class Card : MonoBehaviour
 		    }	    
 		    if (cardData.type == CardData.CardType.Talent)
 		    {
-			    StartCoroutine("DrawTalentCardAnim");
+			    StartCoroutine("DrawTalentCardAnim", 0);
 			    GetComponent<Rigidbody>().isKinematic = true;
 		    }	    	
 	    }
@@ -131,13 +135,28 @@ public class Card : MonoBehaviour
 		yield return new WaitForSeconds(1f);
 		
 	}
-	IEnumerator DrawTalentCardAnim()
+	IEnumerator DrawTalentCardAnim(int inPlayerIdx = 0)
 	{
 		
 		//also based on cardData.Hand (not implemented) just doing player0
-		Debug.Log("carddata.handidx " + cardData.handIdx);
-		transform.DOMove(plyrHandIdx[cardData.handIdx], 1);
-		transform.DORotate(new Vector3(350f, 0f, 0f), 1);
+		Debug.Log("carddata.cardname " + cardData.cardName);
+		transform.DOMove(plyrHandLocs[inPlayerIdx, cardData.handIdx], 1);
+		//transform.DORotate(new Vector3(350f, 0f, 0f), 1);
+		switch (inPlayerIdx)
+		{
+		case 0:
+			transform.DORotate(new Vector3(350f, 0f, 0f), 1);
+			break;
+		case 1:
+			transform.DORotate(new Vector3(0f, 90f, 0f), 1);
+			break;
+		case 2:
+			transform.DORotate(new Vector3(0f, 180f, 0f), 1);
+			break;
+		case 3:
+			transform.DORotate(new Vector3(0f, 270f, 0f), 1);
+			break;
+		}
 
 		yield return new WaitForSeconds(1f);
 		
@@ -161,8 +180,17 @@ public class Card : MonoBehaviour
 		yield return new WaitForSeconds(1f);
 		
 	}
-	public void MoveCard(int inHandIdx)
+	public  void DealCardAnim(int inPlayerIdx, int inHandIdx)
 	{
-		transform.DOMove(plyrHandIdx[inHandIdx], 0.1f);
+		//transform.DOMove(plyrHandLocs[inPlayerIdx, inHandIdx], 0.1f);
+		cardData.handIdx = inHandIdx;
+		StartCoroutine("DrawTalentCardAnim", inPlayerIdx);
+	}
+	
+	
+	
+	public void MoveCard(int inPlayer, int inHandIdx)
+	{
+		transform.DOMove(plyrHandLocs[inPlayer, inHandIdx], 0.1f);
 	}
 }

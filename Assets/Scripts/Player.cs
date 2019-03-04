@@ -46,7 +46,7 @@ public class Player : MonoBehaviour
 				hand[i] = hand[i + 1];
 				if (hand[i] != -1)
 				{
-					gControl.GetTalentCardFromID(hand[i]).MoveCard(i);				
+					gControl.GetTalentCardFromID(hand[i]).MoveCard(0,i);				
 				}
 			}
 		}

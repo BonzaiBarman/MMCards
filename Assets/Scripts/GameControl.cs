@@ -26,11 +26,11 @@ public class GameControl : MonoBehaviour
 	int curActionCardsIdx = 0;
 	int curActionDiscardIdx = 0;
 	Card[] talentCards;
-	int curTalenCardsIdx = 0;
+	int curTalentCardsIdx = 0;
 	int curTalentDiscardIdx = 0;
 	MovieTitles movieTitles;
 	
-	Player player;
+	Player[] player;
 	const int ActionCardCount = 50;
 	const int TalentCardCount = 70;
 	
@@ -59,7 +59,7 @@ public class GameControl : MonoBehaviour
 		InitActionCards();
 		InitTalentCards();
 		
-		InitPlayer();
+		InitPlayers();
 		
 		LoadMovieTitles();
 		
@@ -83,6 +83,8 @@ public class GameControl : MonoBehaviour
 			item.transform.DOMoveY(nvalue,0);
 			nvalue += .005f;
 		}
+		//set cards to deal somewhere
+		StartCoroutine("DealCards");
 	}
 
 	void LoadMovieTitles()
@@ -177,34 +179,6 @@ public class GameControl : MonoBehaviour
 		}
 		
 	}
-	
-	//void ShuffleListCards(Card[] inCards)
-	//{
-	//	var cnt = inCards.Length;
-	//	var last = cnt -1;
-	//	for (var i = 0; i < last; i++)
-	//	{
-	//		var r = UnityEngine.Random.Range(i, cnt);
-	//		var tmp = inCards[i];
-	//		inCards[i] = inCards[r];
-	//		inCards[i].cardData.deckIdx = i;
-	//		inCards[r] = tmp;
-	//		inCards[r].cardData.deckIdx = r;
-	//	}
-	//}
-	
-	//void ShuffleIDCards(int[] inCards)
-	//{
-	//	var cnt = inCards.Length;
-	//	var last = cnt -1;
-	//	for (var i = 0; i < last; i++)
-	//	{
-	//		var r = UnityEngine.Random.Range(i, cnt);
-	//		var tmp = inCards[i];
-	//		inCards[i] = inCards[r];
-	//		inCards[r] = tmp;
-	//	}
-	//}
 	
 	void ReshuffleTalentCards()
 	{
@@ -347,32 +321,36 @@ public class GameControl : MonoBehaviour
 		
 	}
 	
-	void InitPlayer()
+	void InitPlayers()
 	{
-		player = FindObjectOfType<Player>();
-		player.hand = new int[] {-1, -1, -1, -1, -1, -1, -1};
-		player.nextHandIdx = 0;
+		player = FindObjectsOfType<Player>();
+		foreach(Player ply in player)
+		{
+			ply.hand = new int[] {-1, -1, -1, -1, -1, -1, -1};
+			ply.nextHandIdx = 0;			
+		}
+
 	}
 	
 	public void CardDraw(Card inCard)
 	{
 		if (inCard.cardData.type == CardData.CardType.Talent)
 		{
-			if (player.nextHandIdx < 7)
+			if (player[0].nextHandIdx < 7)
 			{
 				//Debug.Log(inCard.cardData.deckIdx);
 				//Debug.Log(player.nextHandIdx);
-				player.hand[player.nextHandIdx] = inCard.cardData.cardID;
+				player[0].hand[player[0].nextHandIdx] = inCard.cardData.cardID;
 				inCard.cardData.hand = 0;
-				inCard.cardData.handIdx = player.nextHandIdx;
+				inCard.cardData.handIdx = player[0].nextHandIdx;
 				if (inCard.cardData.deckIdx == 69)
 				{
 					ReshuffleTalentCards();
 				}
 				inCard.cardData.deckIdx = -1;
 				inCard.cardData.status = CardData.Status.Hand;
-				player.nextHandIdx += 1;
-				curTalenCardsIdx += 1;
+				player[0].nextHandIdx += 1;
+				curTalentCardsIdx += 1;
 				
 			}
 			else
@@ -397,7 +375,7 @@ public class GameControl : MonoBehaviour
 	}
 	public void CardDiscard(Card inCard)
 	{
-		int playerHandIdx = player.GetHandIndexFromCardID(inCard.cardData.cardID);
+		int playerHandIdx = player[0].GetHandIndexFromCardID(inCard.cardData.cardID);
 		if (inCard.cardData.type == CardData.CardType.Talent)
 		{
 
@@ -409,7 +387,7 @@ public class GameControl : MonoBehaviour
 			inCard.cardData.discardIdx = curTalentDiscardIdx;
 			curTalentDiscardIdx += 1;
 			Debug.Log("playerhandidx" + playerHandIdx);
-			player.CompactHand(playerHandIdx);
+			player[0].CompactHand(playerHandIdx);
 			inCard.cardData.handIdx = -1;
 
 		}
@@ -436,5 +414,22 @@ public class GameControl : MonoBehaviour
 		
 	}
     
-    
+	IEnumerator DealCards()
+	{
+		for (int i = 0; i < (4); i++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				Debug.Log(talentCards[curTalentCardsIdx].cardData.cardName);
+				player[j].hand[player[j].nextHandIdx] = talentCards[curTalentCardsIdx].cardData.cardID;
+				talentCards[curTalentCardsIdx].DealCardAnim(j, i);
+				talentCards[curTalentCardsIdx].cardData.deckIdx = -1;
+				talentCards[curTalentCardsIdx].cardData.status = CardData.Status.Hand;
+				talentCards[curTalentCardsIdx].cardData.handIdx = i;
+				player[j].nextHandIdx = i + 1;
+				curTalentCardsIdx += 1;
+				yield return new WaitForSeconds(1f);
+			}
+		}
+	}
 }
