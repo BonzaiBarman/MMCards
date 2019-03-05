@@ -1,5 +1,5 @@
 ﻿/* SCRIPT INSPECTOR 3
- * version 3.0.24, January 2019
+ * version 3.0.25, March 2019
  * Copyright © 2012-2019, Flipbook Games
  * 
  * Unity's legendary editor for C#, UnityScript, Boo, Shaders, and text,
@@ -103,9 +103,14 @@ public class FindReplaceWindow : EditorWindow
 	
 	private static readonly string[] toolbarTexts = new[] { "Find in Files", "Replace in Files" };
 	
+#if UNITY_2018_3_OR_NEWER
+	[MenuItem("Window/Script Inspector 3/Find in Files... _&%#f", false, 600)]
+#else
 	[MenuItem("Window/Script Inspector 3/Find in Files... _%#f", false, 600)]
+#endif
 	public static void ShowFindInFilesWindow()
 	{
+#if !UNITY_2018_3_OR_NEWER
 		if (!SISettings.captureShiftCtrlF)
 		{
 			if ((FGTextBuffer.activeEditor == null || focusedWindow != FGTextBuffer.activeEditor.OwnerWindow) &&
@@ -115,6 +120,10 @@ public class FindReplaceWindow : EditorWindow
 					return;
 			}
 		}
+#endif
+
+		if (instance != null && instance.isReplace == false)
+			return;
 		
 		EditorApplication.delayCall += () => {
 			if (instance != null)
@@ -133,6 +142,9 @@ public class FindReplaceWindow : EditorWindow
 	[MenuItem("Window/Script Inspector 3/Replace in Files... _%#h", false, 600)]
 	public static void ShowReplaceInFilesWindow()
 	{
+		if (instance != null && instance.isReplace == true)
+			return;
+		
 		EditorApplication.delayCall += () => {
 			if (instance != null)
 			{
@@ -398,6 +410,21 @@ public class FindReplaceWindow : EditorWindow
 				else if (GUI.GetNameOfFocusedControl() == "Replace field")
 				{
 					ShowReplaceHistory();
+				}
+			}
+			else if (EditorGUI.actionKey && Event.current.shift)
+			{
+				if (Event.current.keyCode == KeyCode.F)
+				{
+					Event.current.Use();
+					ShowFindInFilesWindow();
+					return;
+				}
+				else if (Event.current.keyCode == KeyCode.H)
+				{
+					Event.current.Use();
+					ShowReplaceInFilesWindow();
+					return;
 				}
 			}
 		}

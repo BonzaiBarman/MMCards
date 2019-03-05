@@ -1,5 +1,5 @@
 ﻿/* SCRIPT INSPECTOR 3
- * version 3.0.24, January 2019
+ * version 3.0.25, March 2019
  * Copyright © 2012-2019, Flipbook Games
  * 
  * Unity's legendary editor for C#, UnityScript, Boo, Shaders, and text,
@@ -210,6 +210,7 @@ public static class SISettings
 	
 	public static BoolOption inspectPropertyValues = Create("InspectPropertyValues", false);
 	public static BoolOption tripleclickSelectsFullLine = Create("tripleclickSelectsFullLine", true);
+	public static BoolOption moveOpeningBraceOnEmptyLine = Create("moveOpeningBraceOnEmptyLine", false);
 	
 	private static System.Type preferencesWindowType;
 	private static System.Type sectionType;
@@ -573,7 +574,9 @@ Compile and reload assemblies with " + ctrlR + " or with a 'double-save'.",
 		GUILayout.Label("Editor Keyboard", EditorStyles.boldLabel, noLayoutOptions);
 		Draw("Show Auto-Complete on 'Esc' key", openAutoCompleteOnEscape);
 		Draw("Auto-Complete aggressively", autoCompleteAggressively);
+#if !UNITY_2018_3_OR_NEWER
 		Draw("Handle Shift+Ctrl+F globally", captureShiftCtrlF);
+#endif
 		Draw("Copy/Cut full line if no selection", copyCutFullLine);
 		Draw("Smart semicolon placement", smartSemicolonPlacement);
 		
@@ -629,6 +632,7 @@ Compile and reload assemblies with " + ctrlR + " or with a 'double-save'.",
 		Draw("Smooth scrolling", smoothScrolling);
 		Draw("Use Local Unity Documentation", useLocalUnityDocumentation);
 		Draw("Enable tripleclick line selection", tripleclickSelectsFullLine);
+		Draw("Move opening brace on empty line", moveOpeningBraceOnEmptyLine);
 		
 		EditorGUILayout.Space();
 		EditorGUILayout.EndScrollView();

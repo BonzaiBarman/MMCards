@@ -84,7 +84,7 @@ public class GameControl : MonoBehaviour
 			nvalue += .005f;
 		}
 		//set cards to deal somewhere
-		StartCoroutine("DealCards");
+		StartCoroutine("DealCards", 3);
 	}
 
 	void LoadMovieTitles()
@@ -414,22 +414,39 @@ public class GameControl : MonoBehaviour
 		
 	}
     
-	IEnumerator DealCards()
+	IEnumerator DealCards(int inDealer)
 	{
+		int[,] dealOrder = new int[4,4] {{1,2,3,0}, {2,3,0,1}, {3,0,1,2}, {0,1,2,3}};
+
+		
 		for (int i = 0; i < (4); i++)
 		{
-			for (int j = 0; j < 4; j++)
+			for (int plyr = 0; plyr < 4; plyr++)
 			{
 				Debug.Log(talentCards[curTalentCardsIdx].cardData.cardName);
-				player[j].hand[player[j].nextHandIdx] = talentCards[curTalentCardsIdx].cardData.cardID;
-				talentCards[curTalentCardsIdx].DealCardAnim(j, i);
+				player[dealOrder[inDealer, plyr]].hand[player[dealOrder[inDealer, plyr]].nextHandIdx] = talentCards[curTalentCardsIdx].cardData.cardID;
+				if(dealOrder[inDealer, plyr] != 0){talentCards[curTalentCardsIdx].GetComponent<Rigidbody>().isKinematic = false;}
+				talentCards[curTalentCardsIdx].DealCardAnim(dealOrder[inDealer, plyr], i);
 				talentCards[curTalentCardsIdx].cardData.deckIdx = -1;
 				talentCards[curTalentCardsIdx].cardData.status = CardData.Status.Hand;
+				talentCards[curTalentCardsIdx].cardData.hand = plyr;
 				talentCards[curTalentCardsIdx].cardData.handIdx = i;
-				player[j].nextHandIdx = i + 1;
+				player[dealOrder[inDealer, plyr]].nextHandIdx = i + 1;
 				curTalentCardsIdx += 1;
-				yield return new WaitForSeconds(1f);
+				yield return new WaitForSeconds(0.6f);
+				//talentCards[curTalentCardsIdx].MoveCard(dealOrder[inDealer, plyr], i);
+
+				//if(dealOrder[inDealer, plyr] != 0){talentCards[curTalentCardsIdx].GetComponent<Rigidbody>().isKinematic = true;}
 			}
 		}
+
+		for (int i = 1; i < player.Length; i++)
+		{
+			player[i].AlignHand();
+		}
+
+		
+		
+		
 	}
 }

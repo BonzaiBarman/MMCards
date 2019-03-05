@@ -1,5 +1,5 @@
 ﻿/* SCRIPT INSPECTOR 3
- * version 3.0.24, January 2019
+ * version 3.0.25, March 2019
  * Copyright © 2012-2019, Flipbook Games
  * 
  * Unity's legendary editor for C#, UnityScript, Boo, Shaders, and text,
@@ -485,7 +485,7 @@ public class FGListPopup : FGPopupWindow
 		public int index;
 	}
 
-	public void SetCompletionData(HashSet<SymbolDefinition> data)
+	public bool SetCompletionData(HashSet<SymbolDefinition> data)
 	{
 		this.data = data.Where(s => !s.IsOperator).ToArray();
 
@@ -537,6 +537,8 @@ public class FGListPopup : FGPopupWindow
 
 		System.Array.Sort(this.data, symbolDefinitionComparer);
 		UpdateTypedInPart();
+		
+		return filteredData.Count > 0;
 	}
 	
 	private int OrderByIndex(IndexNameTupple a, IndexNameTupple b)

@@ -1,6 +1,6 @@
 -------------------------------------
 SCRIPT INSPECTOR 3
-version 3.0.24, January 2019
+version 3.0.25, March 2019
 Copyright © 2012-2019, Flipbook Games
 -------------------------------------
 
@@ -23,6 +23,14 @@ Thank you @inventor2010 for being awesome!!! :)
 
 Script Inspector 3 - Version History
 =====================================
+
+New in version 3.0.25:
+- Added option to auto-move opening brace to next/empty line - thanks @RainbowWhale
+- Updated setting Si3 tabs position for Unity 2018.3+ - thanks @jrdev
+- Fixed saving of docked/floating state of Si3 tabs
+- Fixed keyboard shortcut for the Find in Files command - thanks @dpizzle & @jrdev
+- Fixed up/down arrow keys not working sometimes - thanks @sngdan
+- Other minor fixes
 
 New in version 3.0.24:
 - Made the Auto-Complete Great Again - thanks @JoeStrout

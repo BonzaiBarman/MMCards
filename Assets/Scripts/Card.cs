@@ -15,9 +15,11 @@ public class Card : MonoBehaviour
 	Vector3[,] plyrHandLocs = new [,] {{new Vector3(-2.1f, 2f, -3.2f), new Vector3(-0.8f, 2f, -3.2f), new Vector3(0.5f, 2f, -3.2f), new Vector3(1.8f, 2f, -3.2f), new Vector3(3.1f, 2f, -3.2f), new Vector3(4.4f, 2f, -3.2f), new Vector3(5.7f, 2f, -3.2f)},
 	{new Vector3(-3f, 0.1f, 2.9f), new Vector3(-3f, 0.1f, 2.2f), new Vector3(-3f, 0.1f, 1.5f), new Vector3(-3f, 0.1f, 0.8f), new Vector3(-3f, 0.1f, 0.1f), new Vector3(-3f, 0.1f, -0.6f), new Vector3(-3f, 0.1f, -1.3f)},
 	{new Vector3(5.2f, 0.1f, 3.7f), new Vector3(4.5f, 0.1f, 3.7f), new Vector3(3.8f, 0.1f, 3.7f), new Vector3(3.1f, 0.1f, 3.7f), new Vector3(2.4f, 0.1f, 3.7f), new Vector3(1.7f, 0.1f, 3.7f), new Vector3(-0.3f, 0.1f, 3.7f)},
-	{new Vector3(7.3f, 0.1f, -1.3f), new Vector3(7.3f, 0.1f, -0.6f), new Vector3(7.3f, 0.1f, -0.1f), new Vector3(7.3f, 0.1f, 0.8f), new Vector3(7.3f, 0.1f, 1.5f), new Vector3(7.3f, 0.1f, 2.2f), new Vector3(7.3f, 0.1f, 2.9f)}};
+	{new Vector3(7.3f, 0.1f, -1.3f), new Vector3(7.3f, 0.1f, -0.6f), new Vector3(7.3f, 0.1f, 0.1f), new Vector3(7.3f, 0.1f, 0.8f), new Vector3(7.3f, 0.1f, 1.5f), new Vector3(7.3f, 0.1f, 2.2f), new Vector3(7.3f, 0.1f, 2.9f)}};
+	Vector3[] plyrDealLocs = new [] {new Vector3(1.8f, 2f, -3.2f), new Vector3(-3f, 0.1f, 0.8f), new Vector3(3.1f, 0.1f, 3.7f), new Vector3(7.3f, 0.1f, 0.8f)};
+	Vector3[] plyrHandRots = new [] {new Vector3(350f, 0f, 0f), new Vector3(0f, 90f, 0f), new Vector3(0f, 180f, 0f), new Vector3(0f, 270f, 0f)};
 
-	
+
 	// Start is called before the first frame update
     void Start()
     {
@@ -140,27 +142,49 @@ public class Card : MonoBehaviour
 		
 		//also based on cardData.Hand (not implemented) just doing player0
 		Debug.Log("carddata.cardname " + cardData.cardName);
-		transform.DOMove(plyrHandLocs[inPlayerIdx, cardData.handIdx], 1);
-		//transform.DORotate(new Vector3(350f, 0f, 0f), 1);
-		switch (inPlayerIdx)
+		Vector3 orig = transform.rotation.eulerAngles;
+		//transform.DOMove(plyrHandLocs[inPlayerIdx, cardData.handIdx], 0.7f);
+		if (inPlayerIdx == 0)
 		{
-		case 0:
-			transform.DORotate(new Vector3(350f, 0f, 0f), 1);
-			break;
-		case 1:
-			transform.DORotate(new Vector3(0f, 90f, 0f), 1);
-			break;
-		case 2:
-			transform.DORotate(new Vector3(0f, 180f, 0f), 1);
-			break;
-		case 3:
-			transform.DORotate(new Vector3(0f, 270f, 0f), 1);
-			break;
+			transform.DOMove(plyrHandLocs[inPlayerIdx, cardData.handIdx], 0.5f);
+			transform.DORotate(new Vector3(350f, 0f, 0f), 0.6f);
 		}
-
-		yield return new WaitForSeconds(1f);
+		else
+		{
+			transform.DOMove(plyrDealLocs[inPlayerIdx], 0.5f);
+			GetComponent<Rigidbody>().AddRelativeForce(0, Random.Range(-10,10), Random.Range(-100,100), ForceMode.Impulse);
+			GetComponent<Rigidbody>().AddRelativeTorque(Random.Range(-10,10), Random.Range(-100,100), Random.Range(-10,10), ForceMode.Impulse);
+			
+		}
 		
+		//transform.DORotate(new Vector3(350f, 0f, 0f), 1);
+		//switch (inPlayerIdx)
+		//{
+		//case 0:
+		//	transform.DORotate(new Vector3(350f, 0f, 0f), 0.6f);
+		//	break;
+		//case 1:
+		//	transform.DOLocalRotate(new Vector3(orig.x, 90f, orig.z),0.6f);
+		//	//transform.DOPunchRotation(Vector3.up, 0.6f);
+		//	break;
+		//case 2:
+		//	transform.DOLocalRotate(new Vector3(orig.x, 180f, orig.z), 0.6f);
+		//	//transform.DOPunchRotation(new Vector3(orig.x, 180f, orig.z),0.6f);
+		//	//transform.DOPunchRotation(Vector3.up, 0.6f);
+		//	break;
+		//case 3:
+		//	transform.DOLocalRotate(new Vector3(orig.x, 270f, orig.z), 0.6f);
+		//	//transform.DOPunchRotation(new Vector3(orig.x, 270f, orig.z),0.6f);
+		//	//transform.DOPunchRotation(Vector3.up, 0.6f);
+		//	break;
+		//}
+
+		yield return new WaitForSeconds(0.5f);
+
 	}
+	
+	
+	
 	IEnumerator DiscardActionCardAnim()
 	{
 		
@@ -184,6 +208,9 @@ public class Card : MonoBehaviour
 	{
 		//transform.DOMove(plyrHandLocs[inPlayerIdx, inHandIdx], 0.1f);
 		cardData.handIdx = inHandIdx;
+		//Vector3 v = transform.position;
+		//transform.DOMove(new Vector3 (v.x - 2, 2f, v.z), 0f);
+		transform.DOMoveY(3f, 0.1f);
 		StartCoroutine("DrawTalentCardAnim", inPlayerIdx);
 	}
 	
@@ -191,6 +218,12 @@ public class Card : MonoBehaviour
 	
 	public void MoveCard(int inPlayer, int inHandIdx)
 	{
-		transform.DOMove(plyrHandLocs[inPlayer, inHandIdx], 0.1f);
+		Vector3 v = plyrHandLocs[inPlayer, inHandIdx];
+		transform.DOMove(new Vector3(v.x, (float)(v.y + (inHandIdx * 0.01)), v.z), 0.1f);
+	}
+	public void RotateCard(int inPlayer)
+	{
+		Vector3 v = transform.rotation.eulerAngles;
+		transform.DORotate(new Vector3(v.x, plyrHandRots[inPlayer].y, v.z), 0.1f);
 	}
 }

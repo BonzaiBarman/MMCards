@@ -126,4 +126,25 @@ public class Player : MonoBehaviour
 		//transform.DOMoveY(0.03f, 0.8f, false);
 	}
 	
+	public void AlignHand()
+	{
+		StartCoroutine("ProcessAlignHand");
+	}
+	
+	IEnumerator ProcessAlignHand()
+	{
+		for(int i = 0; i < hand.Length; i++)
+		{
+			if (hand[i] != -1)
+			{
+				Card daCard = gControl.GetTalentCardFromID(hand[i]);
+				daCard.MoveCard(daCard.cardData.hand, i);
+				daCard.RotateCard(daCard.cardData.hand);
+				yield return new WaitForSeconds(Random.Range(0.1f, 0.5f));
+			}
+
+		}		
+	}
+
+	
 }

@@ -1,5 +1,5 @@
 ﻿/* SCRIPT INSPECTOR 3
- * version 3.0.24, January 2019
+ * version 3.0.25, March 2019
  * Copyright © 2012-2019, Flipbook Games
  * 
  * Unity's legendary editor for C#, UnityScript, Boo, Shaders, and text,
@@ -2097,7 +2097,8 @@ public class FGTextEditor
 
 		var lineBreaks = _softLineBreaks[line] = NO_SOFT_LINE_BREAKS;
 		int maxWidth = (int) (codeViewRect.width / charSize.x);
-		
+		maxWidth = maxWidth < 8 ? 8 : maxWidth;
+
 		var tabSize = SISettings.tabSize;
 		lastTabSize = tabSize;
 		needsReformat = false;
@@ -5825,7 +5826,6 @@ public class FGTextEditor
 	}
 
 	private FGListPopup autocompleteWindow;
-	private string autoCompleteWord;
 
 	private class KeywordAsSD : SymbolDefinition
 	{
@@ -6328,7 +6328,10 @@ public class FGTextEditor
 				if (expectedDelegateType)
 					autocompleteWindow.defensiveMode = true;
 				
-				autocompleteWindow.SetCompletionData(data);
+				var anyMatches = autocompleteWindow.SetCompletionData(data);
+				if (!anyMatches)
+					CloseAutocomplete();
+					
 				//if (argumentsHint != null)
 				//	argumentsHint.Flipped = !autocompleteWindow.Flipped;
 			}
@@ -7220,6 +7223,18 @@ public class FGTextEditor
 				SaveBuffer();
 				return;
 			}
+			else if (current.keyCode == KeyCode.F && (mods & ~EventModifiers.Alt) == EventModifiers.Shift)
+			{
+				current.Use();
+				FindReplaceWindow.ShowFindInFilesWindow();
+				return;
+			}
+			else if (current.keyCode == KeyCode.H && (mods & ~EventModifiers.Alt) == EventModifiers.Shift)
+			{
+				current.Use();
+				FindReplaceWindow.ShowReplaceInFilesWindow();
+				return;
+			}
 			else if (current.keyCode == KeyCode.R && mods == (isOSX ? EventModifiers.Alt : EventModifiers.Shift))
 			{
 				current.Use();
@@ -7898,6 +7913,7 @@ public class FGTextEditor
 				
 				string text = typedChar != 0 ? typedChar.ToString() : Input.compositionString;
 				string autoTextAfter = null;
+				var putOpeningBraceOnNextLine = TextPosition.invalid;
 				
 				if (autoClosingStack.Count > 0 && "}])\">".IndexOf(typedChar) != -1)
 				{
@@ -7948,6 +7964,14 @@ public class FGTextEditor
 							if (nextLeaf != null && nextLeaf.line == caretPosition.line && nextLeaf.IsLit("}"))
 							{
 								autoTextAfter = text;
+								
+								if (SISettings.moveOpeningBraceOnEmptyLine)
+								{
+									if (tokenLeft.TokenIndex > 1 || tokenLeft.TokenIndex == 1 && tokenLeft.formatedLine.tokens[0].tokenKind != SyntaxToken.Kind.Whitespace)
+									{
+										putOpeningBraceOnNextLine = textBuffer.GetTokenSpan(tokenLeft.parent).StartPosition;
+									}
+								}
 							}
 							
 							text += "\t";
@@ -8022,6 +8046,15 @@ public class FGTextEditor
 				{
 					FGTextBufferManager.insertingTextAfterCaret = true;
 					updateToLine = textBuffer.InsertText(newCaretPosition, autoTextAfter).line;
+					if (putOpeningBraceOnNextLine.line >= 0)
+					{
+						var beforeBrace = new FGTextBuffer.CaretPos();
+						beforeBrace.Set(putOpeningBraceOnNextLine.line, putOpeningBraceOnNextLine.index, 0);
+						textBuffer.InsertText(beforeBrace, autoTextAfter);
+						newCaretPosition.line++;
+						++updateToLine;
+						putOpeningBraceOnNextLine = TextPosition.invalid;
+					}
 					FGTextBufferManager.insertingTextAfterCaret = false;
 
 					if (typedChar != '\n')
@@ -9659,8 +9692,9 @@ public class FGTextEditor
 				else
 				{
 					breadCrumbLeft = new GUIStyle(breadCrumbLeft);
-					breadCrumbLeft.padding.top -= 2;
-					breadCrumbLeft.alignment = TextAnchor.UpperRight;
+					breadCrumbLeft.padding.top -= 1;
+					breadCrumbLeft.padding.left = 0;
+					breadCrumbLeft.alignment = TextAnchor.UpperLeft;
 					breadCrumbLeftOn = new GUIStyle(breadCrumbLeft);
 					breadCrumbLeftOn.normal = breadCrumbLeftOn.onNormal;
 					breadCrumbLeftOn.active = breadCrumbLeftOn.onActive;
@@ -9672,8 +9706,8 @@ public class FGTextEditor
 					breadCrumbLeft.onFocused = breadCrumbLeft.focused;
 
 					breadCrumbMid = new GUIStyle(breadCrumbMid);
-					breadCrumbMid.padding.top -= 2;
-					breadCrumbMid.alignment = TextAnchor.UpperRight;
+					breadCrumbMid.padding.top -= 1;
+					breadCrumbMid.alignment = TextAnchor.UpperLeft;
 					breadCrumbMidOn = new GUIStyle(breadCrumbMid);
 					breadCrumbMidOn.normal = breadCrumbMidOn.onNormal;
 					breadCrumbMidOn.active = breadCrumbMidOn.onActive;

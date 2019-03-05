@@ -1,5 +1,5 @@
 ﻿/* SCRIPT INSPECTOR 3
- * version 3.0.24, January 2019
+ * version 3.0.25, March 2019
  * Copyright © 2012-2019, Flipbook Games
  * 
  * Unity's legendary editor for C#, UnityScript, Boo, Shaders, and text,
@@ -700,7 +700,12 @@ public class FGCodeWindow : EditorWindow
 		if (!window.TryDockNextToSimilarTab(nextTo))
 		{
 			var rc = defaultPosition;
+#if UNITY_2018_3_OR_NEWER
+			rc.y += 25f;
+			rc.height -= 3f;
+#else
 			rc.y -= 5f;
+#endif
 			window.position = rc;
 			window.Show();
 			window.position = rc;
@@ -1053,12 +1058,17 @@ public class FGCodeWindow : EditorWindow
 		var otherTabs = GetTabsInDockArea();
 		if (otherTabs != null)
 		{
+			defaultDockNextTo = null;
+			
 			var historyIndex = int.MaxValue;
 			for (var i = otherTabs.Count; i --> 0 && historyIndex != 0; )
 			{
 				var tab = otherTabs[i] as FGCodeWindow;
-				if (tab != null && tab != this)
+				if (tab != null)
 				{
+					if (tab != this)
+						continue;
+					
 					var index = guidHistory.IndexOf(tab.targetAssetGuid);
 					if (index >= 0 && index < historyIndex)
 					{
@@ -1077,6 +1087,8 @@ public class FGCodeWindow : EditorWindow
 				EditorApplication.update -= FocusNextTabOnUpdate;
 				EditorApplication.update += FocusNextTabOnUpdate;
 			}
+			
+			SaveDefaultDockNextTo();
 		}
 	}
 	
@@ -1182,6 +1194,11 @@ public class FGCodeWindow : EditorWindow
 			guidHistory.RemoveRange(50, guidHistory.Count - 50);
 		var joinedGuids = string.Join(";", guidHistory.ToArray());
 		EditorPrefs.SetString("ScriptInspectorRecentGUIDs", joinedGuids);
+		SaveDefaultDockNextTo();
+	}
+	
+	private static void SaveDefaultDockNextTo()
+	{
 		EditorPrefs.SetString("ScriptInspectorDefaultDockNextTo", defaultDockNextTo ?? "");
 	}
 	
@@ -1914,9 +1931,10 @@ public class FGCodeWindow : EditorWindow
 		{
 #if !UNITY_2017_1_OR_NEWER
 			rc.y -= 5f;
+#elif UNITY_2018_3_OR_NEWER
+			rc.y += 25f;
+			rc.height -= 3f;
 #endif
-			//rc.y += 25f;
-			//rc.height -= 3f;
 			
 			FGCodeWindow setFocusOn = null;
 			FGCodeWindow lastShown = null;
@@ -1941,9 +1959,12 @@ public class FGCodeWindow : EditorWindow
 				if (firstTab || !codeWindow.TryDockNextToSimilarTab(lastShown))
 				{
 					codeWindow.Show(true);
+					rc.yMin += 1f;
 					codeWindow.position = rc;
+					rc.yMin -= 1f;
 					codeWindow.Focus();
 					codeWindow.Repaint();
+					codeWindow.position = rc;
 					lastShown = codeWindow;
 					firstTab = false;
 				}
@@ -1960,10 +1981,6 @@ public class FGCodeWindow : EditorWindow
 		}
 		else if (codeWindows.Count > 0)
 		{
-//#if UNITY_EDITOR_OSX
-			rc.y -= 5f;
-//#endif
-			
 			var floatingSi3Tabs = new List<FGCodeWindow>(codeWindows);
 			for (var i = floatingSi3Tabs.Count; i --> 0; )
 			{
@@ -2014,9 +2031,6 @@ public class FGCodeWindow : EditorWindow
 				}
 			}
 			
-//#if UNITY_EDITOR_OSX
-			rc.y += 5f;
-//#endif
 			defaultPosition = rc;
 			SaveDefaultPosition();
 		}
@@ -2024,7 +2038,6 @@ public class FGCodeWindow : EditorWindow
 		guidHistory.Clear();
 		guidHistory.AddRange(oldHistory);
 		SaveGuidHistory();
-		SaveDefaultPosition();
 	}
 }
 
