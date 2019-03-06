@@ -28,6 +28,8 @@ public class GameControl : MonoBehaviour
 	Card[] talentCards;
 	int curTalentCardsIdx = 0;
 	int curTalentDiscardIdx = 0;
+	int curPlayer = 0;
+	bool gameStarted = false;
 	MovieTitles movieTitles;
 	
 	Player[] player;
@@ -48,8 +50,18 @@ public class GameControl : MonoBehaviour
     // Update is called once per frame
 	void Update()
     {
-        
-    }
+	    //if (gameStarted)
+	    //{
+		//    if (curPlayer == 0)
+		//    {
+		//    	StartCoroutine("PlayerTurn");
+		//    }
+		//    else
+		//    {
+		//    	StartCoroutine("ComputerTurn");
+		//    }
+	    //}
+	}
 
 	IEnumerator InitGame()
 	{
@@ -58,9 +70,7 @@ public class GameControl : MonoBehaviour
 		
 		InitActionCards();
 		InitTalentCards();
-		
 		InitPlayers();
-		
 		LoadMovieTitles();
 		
 		//wait for 2 seconds. cards should have fallen by then
@@ -83,18 +93,10 @@ public class GameControl : MonoBehaviour
 			item.transform.DOMoveY(nvalue,0);
 			nvalue += .005f;
 		}
-		//set cards to deal somewhere
+		//Deal Cards
 		StartCoroutine("DealCards", 3);
-	}
-
-	void LoadMovieTitles()
-	{
-		string filePath = Path.Combine(Application.streamingAssetsPath, "MovieTitles.json");
-		if (File.Exists(filePath))
-		{
-			string dataJson = File.ReadAllText(filePath);
-			movieTitles = JsonUtility.FromJson<MovieTitles>(dataJson);
-		}
+		//Start Game
+		gameStarted = true;
 	}
 
 	void InitActionCards()
@@ -177,12 +179,32 @@ public class GameControl : MonoBehaviour
 		{
 			item.GetComponent<Rigidbody>().isKinematic = false;
 		}
-		
 	}
-	
+
+	void InitPlayers()
+	{
+		player = FindObjectsOfType<Player>();
+		foreach(Player ply in player)
+		{
+			ply.hand = new int[] {-1, -1, -1, -1, -1, -1, -1};
+			ply.nextHandIdx = 0;			
+		}
+		//Sort players by playerID
+		player = player.OrderBy(go => go.playerID).ToArray();
+	}
+
+	void LoadMovieTitles()
+	{
+		string filePath = Path.Combine(Application.streamingAssetsPath, "MovieTitles.json");
+		if (File.Exists(filePath))
+		{
+			string dataJson = File.ReadAllText(filePath);
+			movieTitles = JsonUtility.FromJson<MovieTitles>(dataJson);
+		}
+	}
+
 	void ReshuffleTalentCards()
 	{
-		
 		int cnt = 0;
 		foreach(Card crd in talentCards)
 		{
@@ -213,21 +235,17 @@ public class GameControl : MonoBehaviour
 		talentCards = talentCards.OrderByDescending(go => go.cardData.deckIdx).ToArray();
 		//move cards to the height to drop from
 		float loc = 2f;
-		Debug.Log(talentCards.Length);
+		//Debug.Log(talentCards.Length);
 		foreach (Card item in talentCards)
 		{
-
 			if (item.cardData.status ==	CardData.Status.Deck)
 			{
-
 				item.GetComponent<Rigidbody>().isKinematic = true;
 				loc = loc + 0.1f;
 				item.transform.DOMove(new Vector3(3f,loc,0f), 0f);
 				item.transform.DORotate(new Vector3(180f,180f,0f), 0f);
 				//item.transform.DOMoveY(loc,0);
 			}
-
-
 		}
 		//turn off Kinematic to activate gravity
 		foreach (Card item in talentCards)
@@ -236,14 +254,11 @@ public class GameControl : MonoBehaviour
 			{
 				item.GetComponent<Rigidbody>().isKinematic = false;
 			}
-
 		}
-		
 	}
 	
 	IEnumerator ReshuffleActionCards()
 	{
-		
 		int cnt = 0;
 		foreach(Card crd in actionCards)
 		{
@@ -277,18 +292,14 @@ public class GameControl : MonoBehaviour
 		//Debug.Log(actionCards.Length);
 		foreach (Card item in actionCards)
 		{
-
 			if (item.cardData.status ==	CardData.Status.Deck)
 			{
-
 				item.GetComponent<Rigidbody>().isKinematic = true;
 				loc = loc + 0.1f;
-				item.transform.DOMove(new Vector3(-0.5f,loc,0f), 0f);
+				item.transform.DOMove(new Vector3(-0.9f,loc,0f), 0f);
 				item.transform.DORotate(new Vector3(180f,180f,0f), 0f);
 				//item.transform.DOMoveY(loc,0f);
 			}
-
-
 		}
 		//turn off Kinematic to activate gravity
 		foreach (Card item in actionCards)
@@ -297,9 +308,7 @@ public class GameControl : MonoBehaviour
 			{
 				item.GetComponent<Rigidbody>().isKinematic = false;
 			}
-
 		}
-		
 		//wait for 2 seconds. cards should have fallen by then
 		yield return new WaitForSeconds(2f);
 		//stop gravity on cards
@@ -313,24 +322,12 @@ public class GameControl : MonoBehaviour
 		{
 			if (item.cardData.status ==	CardData.Status.Deck)
 			{
-				item.transform.DOMoveY(nvalue,0);
+				item.transform.DOMove(new Vector3(-0.9f, nvalue, 0f),0f);
 				nvalue += .005f;				
 			}
-
 		}
-		
 	}
 	
-	void InitPlayers()
-	{
-		player = FindObjectsOfType<Player>();
-		foreach(Player ply in player)
-		{
-			ply.hand = new int[] {-1, -1, -1, -1, -1, -1, -1};
-			ply.nextHandIdx = 0;			
-		}
-
-	}
 	
 	public void CardDraw(Card inCard)
 	{
@@ -345,7 +342,7 @@ public class GameControl : MonoBehaviour
 				inCard.cardData.handIdx = player[0].nextHandIdx;
 				if (inCard.cardData.deckIdx == 69)
 				{
-					ReshuffleTalentCards();
+					StartCoroutine("ReshuffleTalentCards");
 				}
 				inCard.cardData.deckIdx = -1;
 				inCard.cardData.status = CardData.Status.Hand;
@@ -357,13 +354,11 @@ public class GameControl : MonoBehaviour
 			{
 				Debug.Log("Hand Full");
 			}
-			
-			
-			
+
 		}
 		else if (inCard.cardData.type == CardData.CardType.Action)
 		{
-			Debug.Log(inCard.cardData.deckIdx);
+			//Debug.Log(inCard.cardData.deckIdx);
 			if (inCard.cardData.deckIdx == 49)
 			{
 				StartCoroutine("ReshuffleActionCards");
@@ -373,20 +368,21 @@ public class GameControl : MonoBehaviour
 			inCard.cardData.status = CardData.Status.Hand;
 		}
 	}
+	
 	public void CardDiscard(Card inCard)
 	{
-		int playerHandIdx = player[0].GetHandIndexFromCardID(inCard.cardData.cardID);
 		if (inCard.cardData.type == CardData.CardType.Talent)
 		{
+			int playerHandIdx = player[0].GetHandIndexFromCardID(inCard.cardData.cardID);
 
-			Debug.Log(playerHandIdx);
+			//Debug.Log(playerHandIdx);
 			
 			inCard.cardData.hand = -1;
 			inCard.cardData.deckIdx = -1;
 			inCard.cardData.status = CardData.Status.Discard;
 			inCard.cardData.discardIdx = curTalentDiscardIdx;
 			curTalentDiscardIdx += 1;
-			Debug.Log("playerhandidx" + playerHandIdx);
+			//Debug.Log("playerhandidx" + playerHandIdx);
 			player[0].CompactHand(playerHandIdx);
 			inCard.cardData.handIdx = -1;
 
@@ -423,7 +419,7 @@ public class GameControl : MonoBehaviour
 		{
 			for (int plyr = 0; plyr < 4; plyr++)
 			{
-				Debug.Log(talentCards[curTalentCardsIdx].cardData.cardName);
+				//Debug.Log(talentCards[curTalentCardsIdx].cardData.cardName);
 				player[dealOrder[inDealer, plyr]].hand[player[dealOrder[inDealer, plyr]].nextHandIdx] = talentCards[curTalentCardsIdx].cardData.cardID;
 				if(dealOrder[inDealer, plyr] != 0){talentCards[curTalentCardsIdx].GetComponent<Rigidbody>().isKinematic = false;}
 				talentCards[curTalentCardsIdx].DealCardAnim(dealOrder[inDealer, plyr], i);
@@ -445,8 +441,16 @@ public class GameControl : MonoBehaviour
 			player[i].AlignHand();
 		}
 
-		
-		
+		for (int i = 0; i < (4); i++)
+		{
+			for (int plyr = 1; plyr < 4; plyr++)
+			{
+				GetTalentCardFromID(player[plyr].hand[i]).GetComponent<Rigidbody>().isKinematic = true;
+			}
+		}
+
 		
 	}
+	
+	
 }

@@ -7,6 +7,7 @@ using TMPro;
 public class Player : MonoBehaviour
 {
     
+	public int playerID;
 	public Material goldMaterial;
 	public Material redMaterial;
 	public Material greenMaterial;
@@ -22,7 +23,7 @@ public class Player : MonoBehaviour
     void Start()
     {
 
-    	Debug.Log(hand.Length);
+    	//Debug.Log(hand.Length);
 	    gControl = FindObjectOfType<GameControl>();
 	    //playerName.text = "Waldorf";
 	    score = 0;
@@ -138,8 +139,9 @@ public class Player : MonoBehaviour
 			if (hand[i] != -1)
 			{
 				Card daCard = gControl.GetTalentCardFromID(hand[i]);
-				daCard.MoveCard(daCard.cardData.hand, i);
-				daCard.RotateCard(daCard.cardData.hand);
+				
+				daCard.MoveCard(playerID, i);
+				daCard.RotateCard(playerID);
 				yield return new WaitForSeconds(Random.Range(0.1f, 0.5f));
 			}
 

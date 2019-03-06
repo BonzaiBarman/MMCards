@@ -61,10 +61,10 @@ public class Card : MonoBehaviour
 	void OnMouseDown()
     {
 
-	    Debug.Log("CardID: " + cardData.cardID);
+	    //Debug.Log("CardID: " + cardData.cardID);
 	    if (cardData.status == CardData.Status.Deck)
 	    {
-		    Debug.Log(cardData.cardName + ", " + cardData.deckIdx);
+		    //Debug.Log(cardData.cardName + ", " + cardData.deckIdx);
 		    gControl.CardDraw(this);
 		    if (cardData.type == CardData.CardType.Action)
 		    {
@@ -85,13 +85,13 @@ public class Card : MonoBehaviour
 		    {
 			    GetComponent<Rigidbody>().isKinematic = false;
 			    StartCoroutine("DiscardActionCardAnim");
-			    GetComponent<Rigidbody>().isKinematic = true;
+			    //GetComponent<Rigidbody>().isKinematic = true;
 		    }	    
 		    if (cardData.type == CardData.CardType.Talent)
 		    {
 			    GetComponent<Rigidbody>().isKinematic = false;
 			    StartCoroutine("DiscardTalentCardAnim");
-			    GetComponent<Rigidbody>().isKinematic = true;
+			    //GetComponent<Rigidbody>().isKinematic = true;
 		    }	    	
 	    }
 
@@ -141,7 +141,7 @@ public class Card : MonoBehaviour
 	{
 		
 		//also based on cardData.Hand (not implemented) just doing player0
-		Debug.Log("carddata.cardname " + cardData.cardName);
+		//Debug.Log("carddata.cardname " + cardData.cardName);
 		Vector3 orig = transform.rotation.eulerAngles;
 		//transform.DOMove(plyrHandLocs[inPlayerIdx, cardData.handIdx], 0.7f);
 		if (inPlayerIdx == 0)
@@ -188,18 +188,25 @@ public class Card : MonoBehaviour
 	IEnumerator DiscardActionCardAnim()
 	{
 		
+		//GetComponent<Rigidbody>().isKinematic = false;
+		GetComponent<Rigidbody>().AddRelativeTorque(Random.Range(-5,5), Random.Range(-20,20), Random.Range(-5,5), ForceMode.Impulse);
+		GetComponent<Rigidbody>().AddRelativeForce(0, Random.Range(-10,10), Random.Range(-30,30), ForceMode.Impulse);
 		transform.DOMove(new Vector3(0.8f, 0.1f, 0f), 1);
-		transform.DORotate(new Vector3(0f, 0f, 0f), 1);
+		//transform.DORotate(new Vector3(0f, 0f, 0f), 1);
+
 		yield return new WaitForSeconds(1f);
+		//GetComponent<Rigidbody>().isKinematic = true;
 		
 	}
 	IEnumerator DiscardTalentCardAnim()
 	{
 		
 		//also based on cardData.Hand (not implemented) just doing player0
-		
-		transform.DOMove(new Vector3(4.3f, 0.1f, 0f), 1);
-		transform.DORotate(new Vector3(0f, 0f, 0f), 1);
+		transform.DORotate(new Vector3(0f, 0f, 0f), 0);		
+		GetComponent<Rigidbody>().AddRelativeTorque(Random.Range(-5,5), Random.Range(-20,20), Random.Range(-5,5), ForceMode.Impulse);
+		GetComponent<Rigidbody>().AddRelativeForce(0, Random.Range(-10,10), Random.Range(-30,30), ForceMode.Impulse);
+		transform.DOMove(new Vector3(4.7f, 0.1f, 0f), 1);
+		//transform.DORotate(new Vector3(0f, 0f, 0f), 1);
 
 		yield return new WaitForSeconds(1f);
 		
