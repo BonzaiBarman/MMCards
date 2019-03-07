@@ -61,7 +61,7 @@ public class Card : MonoBehaviour
 	void OnMouseDown()
     {
 
-	    //Debug.Log("CardID: " + cardData.cardID);
+	    //Debug.Log("CardID: " + cardData.cardID + "Name: " + cardData.cardName);
 	    if (cardData.status == CardData.Status.Deck)
 	    {
 		    //Debug.Log(cardData.cardName + ", " + cardData.deckIdx);
@@ -73,7 +73,7 @@ public class Card : MonoBehaviour
 		    }	    
 		    if (cardData.type == CardData.CardType.Talent)
 		    {
-			    StartCoroutine("DrawTalentCardAnim", 0);
+			    StartCoroutine("DrawTalentCardAnim", gControl.thePlayerIndex);
 			    GetComponent<Rigidbody>().isKinematic = true;
 		    }	    	
 	    }

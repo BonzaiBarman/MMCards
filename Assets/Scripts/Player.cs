@@ -3,11 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using TMPro;
+//using System.Linq;
 
 public class Player : MonoBehaviour
 {
-    
+	public enum PlayerType
+	{
+		Human,
+		Computer,
+	}
+	
+	
 	public int playerID;
+	public PlayerType playerType;
 	public Material goldMaterial;
 	public Material redMaterial;
 	public Material greenMaterial;
@@ -15,6 +23,7 @@ public class Player : MonoBehaviour
 	public TextMeshPro playerName;
 	public TextMeshPro scoreText;
 	public int score;
+	public bool playerActed = false;
 	
 	public int[] hand = new int[] {-1, -1, -1, -1, -1, -1, -1};
 	public int nextHandIdx = 0;
@@ -147,6 +156,41 @@ public class Player : MonoBehaviour
 
 		}		
 	}
+	
+	public void DoTurn()
+	{
+		if (playerType == PlayerType.Human)
+		{
+			StartCoroutine("HumanTurn");
+		}
+		else if (playerType == PlayerType.Computer)
+		{
+			StartCoroutine("ComputerTurn");
+		}
+	}
+	
+	IEnumerator HumanTurn()
+	{
+		Debug.Log("Player Turn: " + playerName.text);
 
+		yield return new WaitUntil(() => playerActed == true);
+
+		playerActed = false;
+		gControl.curPlayer += 1; //testing, not good for real
+	}
+
+	IEnumerator ComputerTurn()
+	{
+		Debug.Log("Player Turn: " + playerName.text);
+		
+		while (!playerActed)
+		{
+			playerActed = true;
+
+			yield return null;
+		}
+		gControl.curPlayer += 1;
+		if (gControl.curPlayer >= gControl.playerCount){gControl.curPlayer = 0;}
+	}
 	
 }

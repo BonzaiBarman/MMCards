@@ -28,11 +28,16 @@ public class GameControl : MonoBehaviour
 	Card[] talentCards;
 	int curTalentCardsIdx = 0;
 	int curTalentDiscardIdx = 0;
-	int curPlayer = 0;
+	public int curPlayer = 0;
+	int holdPlayer = -1;
 	bool gameStarted = false;
+	bool gameOver = false;
+	public int thePlayerIndex;
 	MovieTitles movieTitles;
 	
 	Player[] player;
+	public int playerCount;
+	
 	const int ActionCardCount = 50;
 	const int TalentCardCount = 70;
 	
@@ -50,21 +55,31 @@ public class GameControl : MonoBehaviour
     // Update is called once per frame
 	void Update()
     {
-	    //if (gameStarted)
-	    //{
-		//    if (curPlayer == 0)
-		//    {
-		//    	StartCoroutine("PlayerTurn");
-		//    }
-		//    else
-		//    {
-		//    	StartCoroutine("ComputerTurn");
-		//    }
-	    //}
+	    
+	    if(!gameOver)
+	    {
+		    if (gameStarted)
+		    {
+			    if (holdPlayer != curPlayer)
+			    {
+			    	holdPlayer = curPlayer;
+			    	Debug.Log(curPlayer);
+			    	player[curPlayer].DoTurn();
+			    }
+			}	    	
+	    }
+	    else
+	    {
+	    	
+	    }
+
 	}
 
 	IEnumerator InitGame()
 	{
+		
+		//sets the player number on this machine
+		thePlayerIndex = 0;
 		//get all the cards
 		daCards = FindObjectsOfType<Card>();
 		
@@ -81,23 +96,39 @@ public class GameControl : MonoBehaviour
 			item.GetComponent<Rigidbody>().isKinematic = true;
 		}
 		//move cards in both decks physically to match order in deck
+		actionCards = actionCards.OrderBy(go => go.cardData.deckIdx).ToArray();
 		float nvalue = 0.02f;
-		foreach (Card item in actionCards)
+		for (int i = 49; i >= 0; i--)
 		{
-			item.transform.DOMoveY(nvalue,0);
+			actionCards[i].transform.DOMoveY(nvalue,0);
 			nvalue += .005f;
 		}
+		talentCards = talentCards.OrderBy(go => go.cardData.deckIdx).ToArray();
 		nvalue = 0.02f;
-		foreach (Card item in talentCards)
+		for (int i = 69; i >= 0; i--)
 		{
-			item.transform.DOMoveY(nvalue,0);
+			talentCards[i].transform.DOMoveY(nvalue,0);
 			nvalue += .005f;
 		}
+		
+		
 		//Deal Cards
 		StartCoroutine("DealCards", 3);
 		//Start Game
+		yield return new WaitForSeconds(10f);
 		gameStarted = true;
+		//StartCoroutine("MainGameLoop");
+		
 	}
+
+	//IEnumerator MainGameLoop()
+	//{
+	//	gameStarted = true;
+	//	while (!gameOver)
+	//	{
+			
+	//	}
+	//}
 
 	void InitActionCards()
 	{
@@ -123,13 +154,13 @@ public class GameControl : MonoBehaviour
 		utils.ShuffleCards(actionCards);
 
 		//Sort action cards by shuffle index
-		actionCards = actionCards.OrderByDescending(go => go.cardData.deckIdx).ToArray();
+		actionCards = actionCards.OrderBy(go => go.cardData.deckIdx).ToArray();
 		//move cards to the height to drop from
 		float loc = 2f;
-		foreach (Card item in actionCards)
+		for (int i = 49; i >= 0; i--)
 		{
 			loc = loc + 0.1f;
-			item.transform.DOMoveY(loc,0);
+			actionCards[i].transform.DOMoveY(loc,0);
 		}
 		//turn off Kinematic to activate gravity
 		foreach (Card item in actionCards)
@@ -163,23 +194,32 @@ public class GameControl : MonoBehaviour
 		utils.ShuffleCards(talentCards);
 		
 		//Sort talent cards by shuffle index
-		talentCards = talentCards.OrderByDescending(go => go.cardData.deckIdx).ToArray();
+		talentCards = talentCards.OrderBy(go => go.cardData.deckIdx).ToArray();
 		//move cards to the height to drop from
 		float loc = 2f;
-		foreach (Card item in talentCards)
+		for (int i = 69; i >= 0; i--)
 		{
-			//if (item.cardData.type == CardData.CardType.Action)
-			//{
+			//Debug.Log(talentCards[i].cardData.deckIdx);
 			loc = loc + 0.1f;
-			item.transform.DOMoveY(loc,0);
-			//}
+			talentCards[i].transform.DOMoveY(loc,0);
 		}
 		//turn off Kinematic to activate gravity
+		//talentCards = talentCards.OrderByDescending(go => go.cardData.deckIdx).ToArray();
 		foreach (Card item in talentCards)
 		{
 			item.GetComponent<Rigidbody>().isKinematic = false;
 		}
+		//talentCards = talentCards.OrderBy(go => go.cardData.deckIdx).ToArray();
 	}
+
+	//IEnumerator DropTalentCards()
+	//{
+	//	for (int i = 69; i >= 0; i--)
+	//	{
+	//		talentCards[i].GetComponent<Rigidbody>().isKinematic = false;
+	//		yield return new WaitForSeconds(0.01f);
+	//	}
+	//}
 
 	void InitPlayers()
 	{
@@ -191,6 +231,7 @@ public class GameControl : MonoBehaviour
 		}
 		//Sort players by playerID
 		player = player.OrderBy(go => go.playerID).ToArray();
+		playerCount = player.Length;
 	}
 
 	void LoadMovieTitles()
@@ -233,6 +274,7 @@ public class GameControl : MonoBehaviour
 		}
 		//Sort talent cards by shuffle index
 		talentCards = talentCards.OrderByDescending(go => go.cardData.deckIdx).ToArray();
+
 		//move cards to the height to drop from
 		float loc = 2f;
 		//Debug.Log(talentCards.Length);
@@ -255,6 +297,8 @@ public class GameControl : MonoBehaviour
 				item.GetComponent<Rigidbody>().isKinematic = false;
 			}
 		}
+		curTalentCardsIdx = 0;
+		curTalentDiscardIdx = 0;
 	}
 	
 	IEnumerator ReshuffleActionCards()
@@ -326,29 +370,34 @@ public class GameControl : MonoBehaviour
 				nvalue += .005f;				
 			}
 		}
+		curActionCardsIdx = 0;
+		curActionDiscardIdx = 0;
 	}
 	
 	
 	public void CardDraw(Card inCard)
 	{
+		player[thePlayerIndex].playerActed = true;
 		if (inCard.cardData.type == CardData.CardType.Talent)
 		{
-			if (player[0].nextHandIdx < 7)
+			Debug.Log(inCard.cardData.deckIdx);
+			Debug.Log(curTalentCardsIdx);
+			if (inCard.cardData.deckIdx == 69)
+			{
+				StartCoroutine("ReshuffleTalentCards");
+			}
+			if (player[thePlayerIndex].nextHandIdx < 7)
 			{
 				//Debug.Log(inCard.cardData.deckIdx);
 				//Debug.Log(player.nextHandIdx);
-				player[0].hand[player[0].nextHandIdx] = inCard.cardData.cardID;
+				player[thePlayerIndex].hand[player[thePlayerIndex].nextHandIdx] = inCard.cardData.cardID;
 				inCard.cardData.hand = 0;
-				inCard.cardData.handIdx = player[0].nextHandIdx;
-				if (inCard.cardData.deckIdx == 69)
-				{
-					StartCoroutine("ReshuffleTalentCards");
-				}
+				inCard.cardData.handIdx = player[thePlayerIndex].nextHandIdx;
+
 				inCard.cardData.deckIdx = -1;
 				inCard.cardData.status = CardData.Status.Hand;
 				player[0].nextHandIdx += 1;
 				curTalentCardsIdx += 1;
-				
 			}
 			else
 			{
@@ -358,7 +407,8 @@ public class GameControl : MonoBehaviour
 		}
 		else if (inCard.cardData.type == CardData.CardType.Action)
 		{
-			//Debug.Log(inCard.cardData.deckIdx);
+			Debug.Log(inCard.cardData.deckIdx);
+			Debug.Log(curActionCardsIdx);
 			if (inCard.cardData.deckIdx == 49)
 			{
 				StartCoroutine("ReshuffleActionCards");
@@ -373,7 +423,7 @@ public class GameControl : MonoBehaviour
 	{
 		if (inCard.cardData.type == CardData.CardType.Talent)
 		{
-			int playerHandIdx = player[0].GetHandIndexFromCardID(inCard.cardData.cardID);
+			int playerHandIdx = player[thePlayerIndex].GetHandIndexFromCardID(inCard.cardData.cardID);
 
 			//Debug.Log(playerHandIdx);
 			
@@ -383,7 +433,7 @@ public class GameControl : MonoBehaviour
 			inCard.cardData.discardIdx = curTalentDiscardIdx;
 			curTalentDiscardIdx += 1;
 			//Debug.Log("playerhandidx" + playerHandIdx);
-			player[0].CompactHand(playerHandIdx);
+			player[thePlayerIndex].CompactHand(playerHandIdx);
 			inCard.cardData.handIdx = -1;
 
 		}
@@ -423,6 +473,7 @@ public class GameControl : MonoBehaviour
 				player[dealOrder[inDealer, plyr]].hand[player[dealOrder[inDealer, plyr]].nextHandIdx] = talentCards[curTalentCardsIdx].cardData.cardID;
 				if(dealOrder[inDealer, plyr] != 0){talentCards[curTalentCardsIdx].GetComponent<Rigidbody>().isKinematic = false;}
 				talentCards[curTalentCardsIdx].DealCardAnim(dealOrder[inDealer, plyr], i);
+				//Debug.Log(talentCards[curTalentCardsIdx].cardData.deckIdx);
 				talentCards[curTalentCardsIdx].cardData.deckIdx = -1;
 				talentCards[curTalentCardsIdx].cardData.status = CardData.Status.Hand;
 				talentCards[curTalentCardsIdx].cardData.hand = plyr;
@@ -443,14 +494,14 @@ public class GameControl : MonoBehaviour
 
 		for (int i = 0; i < (4); i++)
 		{
-			for (int plyr = 1; plyr < 4; plyr++)
+			for (int plyr = 0; plyr < 4; plyr++)
 			{
-				GetTalentCardFromID(player[plyr].hand[i]).GetComponent<Rigidbody>().isKinematic = true;
+				if (plyr != thePlayerIndex)
+				{
+					GetTalentCardFromID(player[plyr].hand[i]).GetComponent<Rigidbody>().isKinematic = true;					
+				}
 			}
 		}
-
-		
 	}
-	
-	
+
 }

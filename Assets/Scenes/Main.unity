@@ -5606,6 +5606,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12054f272ad96524eb0c74ae8e8b140f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  curPlayer: 0
+  thePlayerIndex: 0
+  playerCount: 0
 --- !u!1001 &941827760
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10817,6 +10820,11 @@ PrefabInstance:
       propertyPath: playerID
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 5541581011063969313, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
+        type: 3}
+      propertyPath: playerType
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bd87fefaf5e4cd94f9f9e223e81a2d82, type: 3}
 --- !u!1 &1749658629
@@ -11833,6 +11841,11 @@ PrefabInstance:
     - target: {fileID: 5541581011063969313, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
         type: 3}
       propertyPath: playerID
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5541581011063969313, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
+        type: 3}
+      propertyPath: playerType
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -13117,6 +13130,11 @@ PrefabInstance:
         type: 3}
       propertyPath: playerID
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5541581011063969313, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
+        type: 3}
+      propertyPath: playerType
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bd87fefaf5e4cd94f9f9e223e81a2d82, type: 3}
