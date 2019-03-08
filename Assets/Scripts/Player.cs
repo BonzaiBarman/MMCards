@@ -12,7 +12,13 @@ public class Player : MonoBehaviour
 		Human,
 		Computer,
 	}
-	
+	public enum PlayerAction
+	{
+		DrawTalent,
+		DrawTalentDiscard,
+		DrawAction,
+		MakeMovie
+	}
 	
 	public int playerID;
 	public PlayerType playerType;
@@ -24,9 +30,13 @@ public class Player : MonoBehaviour
 	public TextMeshPro scoreText;
 	public int score;
 	public bool playerActed = false;
+	public int discardedCardIdx = 0;
+	public int holdCardID = 0;
+	public PlayerAction playerAction =	PlayerAction.DrawTalent;
 	
 	public int[] hand = new int[] {-1, -1, -1, -1, -1, -1, -1};
 	public int nextHandIdx = 0;
+	
 	GameControl gControl;
 	// Start is called before the first frame update
     void Start()
@@ -174,9 +184,28 @@ public class Player : MonoBehaviour
 		Debug.Log("Player Turn: " + playerName.text);
 
 		yield return new WaitUntil(() => playerActed == true);
-
+		switch (playerAction)
+		{
+		case	PlayerAction.DrawAction:
+			StartCoroutine("DrawAction");
+			break;
+		case	PlayerAction.DrawTalent:
+			StartCoroutine("DrawTalent");
+			break;
+		case	PlayerAction.DrawTalentDiscard:
+			playerActed = false;
+			StartCoroutine("DrawTalentDiscard");
+			yield return new WaitUntil(() => playerActed == true);
+			break;
+		case PlayerAction.MakeMovie:
+			break;
+		}
+		
+		//yield return new WaitUntil(() => playerActed == true);
+		
 		playerActed = false;
 		gControl.curPlayer += 1; //testing, not good for real
+		if (gControl.curPlayer >= gControl.playerCount){gControl.curPlayer = 0;}
 	}
 
 	IEnumerator ComputerTurn()
@@ -185,12 +214,100 @@ public class Player : MonoBehaviour
 		
 		while (!playerActed)
 		{
-			playerActed = true;
+			//pause before turn
+			yield return new WaitForSeconds(0.5f);
+			
+			//Determine What Computer Player Does
+			int rnd = Random.Range(0,0); //2
+			switch (rnd)
+			{
+			case 0:
+				//draw a talent card
+				int cardToFillIdx;
+				if (nextHandIdx >= 7)
+				{
+					//for now throw away random card
+					cardToFillIdx = Random.Range(0,6);
+					
+					//*******
+					//throw card away
+					//Needs tobe done
+					//***********
+				}
+				else
+				{
+					cardToFillIdx = nextHandIdx;
+				}
+				Card tempCard;
+				hand[cardToFillIdx] = gControl.GetNextTalentCardID();
+				tempCard = gControl.GetTalentCardFromID(hand[cardToFillIdx]);
+				if(playerType == PlayerType.Computer){tempCard.GetComponent<Rigidbody>().isKinematic = false;}
+				tempCard.DealCardAnim(playerID, cardToFillIdx);
+				tempCard.cardData.deckIdx = -1;
+				tempCard.cardData.status = CardData.Status.Hand;
+				tempCard.cardData.hand = playerID;
+				tempCard.cardData.handIdx = cardToFillIdx;
+				nextHandIdx += 1;
+				gControl.curTalentCardsIdx += 1;
+				//pause after card drawn but before align
+				yield return new WaitForSeconds(0.05f);
+				AlignHand();
+				//pause to wait for next player turn
+				yield return new WaitForSeconds(1f);
+				playerActed = true;
+				break;
+			case 1: 
+				break;
+			case 2:
+				break;
+			}
+			
+			
 
-			yield return null;
+
 		}
+		playerActed = false;
 		gControl.curPlayer += 1;
 		if (gControl.curPlayer >= gControl.playerCount){gControl.curPlayer = 0;}
+	}
+	
+	IEnumerator DrawTalent()
+	{
+
+		//playerActed = false;
+		yield return new WaitForSeconds(0.1f);
+		//playerActed = true;
+	}
+	
+	IEnumerator DrawTalentDiscard()
+	{
+		if (playerType ==	PlayerType.Human)
+		{
+			playerActed = false;
+		
+			yield return new WaitUntil(() => playerActed == true);
+
+			if (discardedCardIdx == 99)
+			{
+				//so be it
+			}
+			else
+			{
+				Debug.Log(discardedCardIdx);
+				CompactHand(discardedCardIdx);
+				hand[nextHandIdx] = holdCardID;
+				gControl.GetTalentCardFromID(holdCardID).MoveCard(playerID, nextHandIdx);
+			}
+		
+			playerActed = true;
+			yield return new WaitForSeconds(0.3f);			
+		}
+		else if (playerType ==	PlayerType.Computer)
+		{
+			
+		}
+		
+
 	}
 	
 }

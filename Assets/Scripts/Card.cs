@@ -14,11 +14,12 @@ public class Card : MonoBehaviour
 
 	Vector3[,] plyrHandLocs = new [,] {{new Vector3(-2.1f, 2f, -3.2f), new Vector3(-0.8f, 2f, -3.2f), new Vector3(0.5f, 2f, -3.2f), new Vector3(1.8f, 2f, -3.2f), new Vector3(3.1f, 2f, -3.2f), new Vector3(4.4f, 2f, -3.2f), new Vector3(5.7f, 2f, -3.2f)},
 	{new Vector3(-3f, 0.1f, 2.9f), new Vector3(-3f, 0.1f, 2.2f), new Vector3(-3f, 0.1f, 1.5f), new Vector3(-3f, 0.1f, 0.8f), new Vector3(-3f, 0.1f, 0.1f), new Vector3(-3f, 0.1f, -0.6f), new Vector3(-3f, 0.1f, -1.3f)},
-	{new Vector3(5.2f, 0.1f, 3.7f), new Vector3(4.5f, 0.1f, 3.7f), new Vector3(3.8f, 0.1f, 3.7f), new Vector3(3.1f, 0.1f, 3.7f), new Vector3(2.4f, 0.1f, 3.7f), new Vector3(1.7f, 0.1f, 3.7f), new Vector3(-0.3f, 0.1f, 3.7f)},
+	{new Vector3(5.2f, 0.1f, 3.7f), new Vector3(4.5f, 0.1f, 3.7f), new Vector3(3.8f, 0.1f, 3.7f), new Vector3(3.1f, 0.1f, 3.7f), new Vector3(2.4f, 0.1f, 3.7f), new Vector3(1.7f, 0.1f, 3.7f), new Vector3(1f, 0.1f, 3.7f)},
 	{new Vector3(7.3f, 0.1f, -1.3f), new Vector3(7.3f, 0.1f, -0.6f), new Vector3(7.3f, 0.1f, 0.1f), new Vector3(7.3f, 0.1f, 0.8f), new Vector3(7.3f, 0.1f, 1.5f), new Vector3(7.3f, 0.1f, 2.2f), new Vector3(7.3f, 0.1f, 2.9f)}};
 	Vector3[] plyrDealLocs = new [] {new Vector3(1.8f, 2f, -3.2f), new Vector3(-3f, 0.1f, 0.8f), new Vector3(3.1f, 0.1f, 3.7f), new Vector3(7.3f, 0.1f, 0.8f)};
 	Vector3[] plyrHandRots = new [] {new Vector3(350f, 0f, 0f), new Vector3(0f, 90f, 0f), new Vector3(0f, 180f, 0f), new Vector3(0f, 270f, 0f)};
 
+	Vector3 playerActionLoc = new Vector3(1.5f, 3f, -1.5f);
 
 	// Start is called before the first frame update
     void Start()
@@ -32,30 +33,7 @@ public class Card : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if (GetComponent<Rigidbody>().velocity.magnitude < 0.5 && runOnce)
-        //{
-        //    if (Mathf.Abs(transform.rotation.eulerAngles.x + 180) < 2)
-        //    {
-        //        runOnce = false;
-	    //        //Debug.Log("in x");
-	    //        GetComponent<Rigidbody>().AddForce(0, 200, 0, ForceMode.Impulse);
-	    //        GetComponent<Rigidbody>().AddTorque(100, 0, 0, ForceMode.Impulse);
-        //    }
-        //    else if (Mathf.Abs(transform.rotation.eulerAngles.z - 180) < 2)
-        //    {
-        //        runOnce = false;
-	    //        //Debug.Log("in z");
-	    //        GetComponent<Rigidbody>().AddForce(0, 200, 0, ForceMode.Impulse);
-	    //        GetComponent<Rigidbody>().AddTorque(0, 0, 100, ForceMode.Impulse);
-        //    }
-        //}
-        //if (Input.GetKey(KeyCode.D))
-        //{
-	    //    GetComponent<Rigidbody>().isKinematic = true;
-        //    runOnce = false;
-	    //    transform.position = new Vector3(2f, 2f, -3.2f);
-	    //    transform.rotation = Quaternion.Euler(350f, 0f, 0f);
-        //}
+
 	}
 
 	void OnMouseDown()
@@ -95,48 +73,17 @@ public class Card : MonoBehaviour
 		    }	    	
 	    }
 
-	    
-	    //Destroy(gameObject);
-	    //transform.DORotate(new Vector3(0,0,0), 0.02f);
-	    //transform.DOMoveY(2.5f, 0.01f);
-
-	    //GetComponent<Rigidbody>().isKinematic = false;
-        //runOnce = true;
-	    //GetComponent<Rigidbody>().AddForce(Random.Range(-5, 5), 1325, 1600, ForceMode.Impulse);
-
-		//switch (Random.Range((int)1, (int)4))
-        //{
-        //    case 1:
-        //        //flip
-	    //        //GetComponent<Rigidbody>().AddTorque(Random.Range(200, 300), Random.Range(-10, 10), Random.Range(-10, 10), ForceMode.Impulse);
-	    //        GetComponent<Rigidbody>().AddTorque(Random.Range(900, 1200), Random.Range(-10, 10), Random.Range(-10, 10), ForceMode.Impulse);
-	    //        break;
-        //    case 2:
-        //        //spin
-        //        transform.rotation = Quaternion.Euler(-5f, 0f, 0f);
-	    //        //GetComponent<Rigidbody>().AddTorque(Random.Range(-3, 3), Random.Range(-150, 150), Random.Range(-3, 3), ForceMode.Impulse);
-	    //        GetComponent<Rigidbody>().AddTorque(Random.Range(-3, 3), Random.Range(-300, 300), Random.Range(-3, 3), ForceMode.Impulse);
-	    //        break;
-        //    case 3:
-        //    	//flat spin
-	    //        GetComponent<Rigidbody>().AddTorque(Random.Range(-5, 5), Random.Range(-5, 5), Random.Range(-5, 5), ForceMode.Impulse);
-	    //        break;
-        //    default:
-        //        //flat
-	    //        //GetComponent<Rigidbody>().AddTorque(Random.Range(-10, 10), Random.Range(-10, 10), Random.Range(-10, 10), ForceMode.Impulse);
-	    //        GetComponent<Rigidbody>().AddTorque(Random.Range(-0.3f, 0.3f), Random.Range(-0.3f, 0.3f), Random.Range(-0.3f, 0.3f), ForceMode.Impulse);
-		//		break;
-        //}
     }
 	
 	IEnumerator DrawActionCardAnim()
 	{
 		
-		transform.DOMove(new Vector3(1.8f, 3f, -1.5f), 1);
+		transform.DOMove(playerActionLoc, 1); //x was 1.8
 		transform.DORotate(new Vector3(350f, 0f, 0f), 1);
 		yield return new WaitForSeconds(1f);
 		
 	}
+	
 	IEnumerator DrawTalentCardAnim(int inPlayerIdx = 0)
 	{
 		
@@ -144,10 +91,19 @@ public class Card : MonoBehaviour
 		//Debug.Log("carddata.cardname " + cardData.cardName);
 		Vector3 orig = transform.rotation.eulerAngles;
 		//transform.DOMove(plyrHandLocs[inPlayerIdx, cardData.handIdx], 0.7f);
-		if (inPlayerIdx == 0)
+		if (inPlayerIdx == gControl.thePlayerIndex)
 		{
-			transform.DOMove(plyrHandLocs[inPlayerIdx, cardData.handIdx], 0.5f);
-			transform.DORotate(new Vector3(350f, 0f, 0f), 0.6f);
+			if(cardData.handIdx == 99)
+			{
+				transform.DOMove(playerActionLoc, 0.5f);
+				transform.DORotate(new Vector3(350f, 0f, 0f), 0.6f);				
+			}
+			else
+			{
+				transform.DOMove(plyrHandLocs[inPlayerIdx, cardData.handIdx], 0.5f);
+				transform.DORotate(new Vector3(350f, 0f, 0f), 0.6f);				
+			}
+
 		}
 		else
 		{
@@ -156,28 +112,8 @@ public class Card : MonoBehaviour
 			GetComponent<Rigidbody>().AddRelativeTorque(Random.Range(-10,10), Random.Range(-100,100), Random.Range(-10,10), ForceMode.Impulse);
 			
 		}
-		
-		//transform.DORotate(new Vector3(350f, 0f, 0f), 1);
-		//switch (inPlayerIdx)
-		//{
-		//case 0:
-		//	transform.DORotate(new Vector3(350f, 0f, 0f), 0.6f);
-		//	break;
-		//case 1:
-		//	transform.DOLocalRotate(new Vector3(orig.x, 90f, orig.z),0.6f);
-		//	//transform.DOPunchRotation(Vector3.up, 0.6f);
-		//	break;
-		//case 2:
-		//	transform.DOLocalRotate(new Vector3(orig.x, 180f, orig.z), 0.6f);
-		//	//transform.DOPunchRotation(new Vector3(orig.x, 180f, orig.z),0.6f);
-		//	//transform.DOPunchRotation(Vector3.up, 0.6f);
-		//	break;
-		//case 3:
-		//	transform.DOLocalRotate(new Vector3(orig.x, 270f, orig.z), 0.6f);
-		//	//transform.DOPunchRotation(new Vector3(orig.x, 270f, orig.z),0.6f);
-		//	//transform.DOPunchRotation(Vector3.up, 0.6f);
-		//	break;
-		//}
+
+
 
 		yield return new WaitForSeconds(0.5f);
 
@@ -225,6 +161,7 @@ public class Card : MonoBehaviour
 	
 	public void MoveCard(int inPlayer, int inHandIdx)
 	{
+		Debug.Log(inPlayer + " " + inHandIdx);
 		Vector3 v = plyrHandLocs[inPlayer, inHandIdx];
 		transform.DOMove(new Vector3(v.x, (float)(v.y + (inHandIdx * 0.01)), v.z), 0.1f);
 	}

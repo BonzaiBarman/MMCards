@@ -23,11 +23,11 @@ public class GameControl : MonoBehaviour
 	Utilities utils = new Utilities();
 	Card[] daCards;
 	Card[] actionCards;
-	int curActionCardsIdx = 0;
-	int curActionDiscardIdx = 0;
+	public int curActionCardsIdx = 0;
+	public int curActionDiscardIdx = 0;
 	Card[] talentCards;
-	int curTalentCardsIdx = 0;
-	int curTalentDiscardIdx = 0;
+	public int curTalentCardsIdx = 0;
+	public int curTalentDiscardIdx = 0;
 	public int curPlayer = 0;
 	int holdPlayer = -1;
 	bool gameStarted = false;
@@ -377,11 +377,11 @@ public class GameControl : MonoBehaviour
 	
 	public void CardDraw(Card inCard)
 	{
-		player[thePlayerIndex].playerActed = true;
+		
 		if (inCard.cardData.type == CardData.CardType.Talent)
 		{
-			Debug.Log(inCard.cardData.deckIdx);
-			Debug.Log(curTalentCardsIdx);
+			//Debug.Log(inCard.cardData.deckIdx);
+			//Debug.Log(curTalentCardsIdx);
 			if (inCard.cardData.deckIdx == 69)
 			{
 				StartCoroutine("ReshuffleTalentCards");
@@ -396,11 +396,18 @@ public class GameControl : MonoBehaviour
 
 				inCard.cardData.deckIdx = -1;
 				inCard.cardData.status = CardData.Status.Hand;
-				player[0].nextHandIdx += 1;
+				player[thePlayerIndex].nextHandIdx += 1;
 				curTalentCardsIdx += 1;
+				player[thePlayerIndex].playerAction =	Player.PlayerAction.DrawTalent;
 			}
 			else
 			{
+				inCard.cardData.hand = 0;
+				inCard.cardData.deckIdx = -1;
+				inCard.cardData.handIdx = 99;
+				inCard.cardData.status = CardData.Status.Hand;
+				player[thePlayerIndex].playerAction =	Player.PlayerAction.DrawTalentDiscard;
+				player[thePlayerIndex].holdCardID = inCard.cardData.cardID;
 				Debug.Log("Hand Full");
 			}
 
@@ -416,25 +423,44 @@ public class GameControl : MonoBehaviour
 			inCard.cardData.deckIdx = -1;
 			curActionCardsIdx += 1;
 			inCard.cardData.status = CardData.Status.Hand;
+			player[thePlayerIndex].playerAction =	Player.PlayerAction.DrawAction;
 		}
+		player[thePlayerIndex].playerActed = true;
 	}
 	
 	public void CardDiscard(Card inCard)
 	{
 		if (inCard.cardData.type == CardData.CardType.Talent)
 		{
-			int playerHandIdx = player[thePlayerIndex].GetHandIndexFromCardID(inCard.cardData.cardID);
-
-			//Debug.Log(playerHandIdx);
 			
-			inCard.cardData.hand = -1;
-			inCard.cardData.deckIdx = -1;
-			inCard.cardData.status = CardData.Status.Discard;
-			inCard.cardData.discardIdx = curTalentDiscardIdx;
-			curTalentDiscardIdx += 1;
-			//Debug.Log("playerhandidx" + playerHandIdx);
-			player[thePlayerIndex].CompactHand(playerHandIdx);
-			inCard.cardData.handIdx = -1;
+			if (player[thePlayerIndex].playerAction == Player.PlayerAction.DrawTalentDiscard)
+			{
+				inCard.cardData.hand = -1;
+				inCard.cardData.deckIdx = -1;
+				inCard.cardData.status = CardData.Status.Discard;
+				inCard.cardData.discardIdx = curTalentDiscardIdx;
+				curTalentDiscardIdx += 1;
+				player[thePlayerIndex].discardedCardIdx = inCard.cardData.handIdx;
+				inCard.cardData.handIdx = -1;
+				//player[thePlayerIndex].discardedCardIdx = inCard.cardData.cardID;
+				
+			}
+			else
+			{
+				int playerHandIdx = player[thePlayerIndex].GetHandIndexFromCardID(inCard.cardData.cardID);
+
+				//Debug.Log(playerHandIdx);
+			
+				inCard.cardData.hand = -1;
+				inCard.cardData.deckIdx = -1;
+				inCard.cardData.status = CardData.Status.Discard;
+				inCard.cardData.discardIdx = curTalentDiscardIdx;
+				curTalentDiscardIdx += 1;
+				//Debug.Log("playerhandidx" + playerHandIdx);
+				player[thePlayerIndex].CompactHand(playerHandIdx);
+				inCard.cardData.handIdx = -1;				
+			}
+			player[thePlayerIndex].playerActed = true;	
 
 		}
 		else if (inCard.cardData.type == CardData.CardType.Action)
@@ -458,6 +484,11 @@ public class GameControl : MonoBehaviour
 		//an error if here
 		return talentCards[0];
 		
+	}
+	
+	public int GetNextTalentCardID()
+	{
+		return talentCards[curTalentCardsIdx].cardData.cardID;
 	}
     
 	IEnumerator DealCards(int inDealer)
