@@ -251,11 +251,13 @@ public class Player : MonoBehaviour
 				int cardToFillIdx;
 				drawCard = gControl.GetTalentCardFromID(gControl.GetNextTalentCardID());
 				Debug.Log(drawCard.cardData.cardName);
-				if(playerType == PlayerType.Computer){drawCard.GetComponent<Rigidbody>().isKinematic = false;}
-				drawCard.cardData.handIdx = 99;
-				drawCard.DealCardAnim(playerID, nextHandIdx);
+
+
 				if (nextHandIdx >= 7)
 				{
+					if(playerType == PlayerType.Computer){drawCard.GetComponent<Rigidbody>().isKinematic = false;}
+					drawCard.cardData.handIdx = 99;
+					drawCard.DealCardAnim(playerID, nextHandIdx);
 					cardToFillIdx = ComputerDetermineDiscard();
 					//Debug.Log(cardToFillIdx);
 					//Debug.Log(gControl.GetTalentCardFromID(hand[cardToFillIdx]).cardData.cardName);
@@ -272,6 +274,7 @@ public class Player : MonoBehaviour
 				}
 				else
 				{
+					drawCard.DealCardAnim(playerID, nextHandIdx);
 					cardToFillIdx = nextHandIdx;
 				}
 
@@ -286,6 +289,7 @@ public class Player : MonoBehaviour
 				gControl.curTalentCardsIdx += 1;
 				//pause after card drawn but before align
 				yield return new WaitForSeconds(0.05f);
+				if(playerType == PlayerType.Computer){drawCard.GetComponent<Rigidbody>().isKinematic = true;}
 				AlignHand();
 				//pause to wait for next player turn
 				yield return new WaitForSeconds(1f);
@@ -325,14 +329,23 @@ public class Player : MonoBehaviour
 			if (discardedCardIdx == 99)
 			{
 				//so be it
+				discardedCardIdx = -1;
+				holdCardID = -1;
+				//playerAction =	PlayerAction.DrawTalent;
 			}
 			else
 			{
 				//Debug.Log(discardedCardIdx);
+				//so be it
+				//Debug.Log("nexthandidx: " + nextHandIdx);
+				//nextHandIdx = 6;
 				CompactHand(discardedCardIdx);
+				Debug.Log("nexthandidx: " + nextHandIdx);
 				hand[nextHandIdx] = holdCardID;
 				gControl.GetTalentCardFromID(holdCardID).MoveCard(playerID, nextHandIdx);
 				nextHandIdx += 1;
+				discardedCardIdx = -1;
+				holdCardID = -1;
 			}
 			playerActed = true;
 			yield return new WaitForSeconds(0.8f);			
