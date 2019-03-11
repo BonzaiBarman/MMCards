@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using TMPro;
-//using System.Linq;
+using System.Linq;
 
 public class Player : MonoBehaviour
 {
@@ -36,6 +36,29 @@ public class Player : MonoBehaviour
 	
 	public int[] hand = new int[] {-1, -1, -1, -1, -1, -1, -1};
 	public int nextHandIdx = 0;
+	
+	int actorCnt = 0;
+	int directorCnt = 0;
+	int musicCnt = 0;
+	int screenplayCnt = 0;
+	int raidProtectionCnt = 0;
+	int sabotageProtectionCnt = 0;
+	int lowActor= -1;
+	int lowActorValue = 99;
+	int hiActor= -1;
+	int hiActorValue = -1;
+	int lowDirector = -1;
+	int lowDirectorValue = 99;
+	int hiDirector = -1;
+	int hiDirectorValue = -1;
+	int lowMusic = -1;
+	int lowMusicValue = 99;
+	int hiMusic = -1;
+	int hiMusicValue = -1;
+	int lastScreenplay = -1;
+	int lastSabotageProtection = -1;
+	int lastRaidProtection = -1;
+	
 	
 	GameControl gControl;
 	// Start is called before the first frame update
@@ -223,30 +246,42 @@ public class Player : MonoBehaviour
 			{
 			case 0:
 				//draw a talent card
+				Card drawCard;
+				Card discardCard;
 				int cardToFillIdx;
+				drawCard = gControl.GetTalentCardFromID(gControl.GetNextTalentCardID());
+				Debug.Log(drawCard.cardData.cardName);
+				if(playerType == PlayerType.Computer){drawCard.GetComponent<Rigidbody>().isKinematic = false;}
+				drawCard.cardData.handIdx = 99;
+				drawCard.DealCardAnim(playerID, nextHandIdx);
 				if (nextHandIdx >= 7)
 				{
-					//for now throw away random card
-					cardToFillIdx = Random.Range(0,6);
-					
-					//*******
-					//throw card away
+					cardToFillIdx = ComputerDetermineDiscard();
+					//Debug.Log(cardToFillIdx);
+					//Debug.Log(gControl.GetTalentCardFromID(hand[cardToFillIdx]).cardData.cardName);
+					nextHandIdx -= 1;
+					//throw away card
 					//Needs tobe done
 					//***********
+					discardCard = gControl.GetTalentCardFromID(hand[cardToFillIdx]);
+					Debug.Log(discardCard.cardData.cardName);
+					if(playerType == PlayerType.Computer){discardCard.GetComponent<Rigidbody>().isKinematic = false;}
+					
+					discardCard.DiscardTalentCard();
+					
 				}
 				else
 				{
 					cardToFillIdx = nextHandIdx;
 				}
-				Card tempCard;
-				hand[cardToFillIdx] = gControl.GetNextTalentCardID();
-				tempCard = gControl.GetTalentCardFromID(hand[cardToFillIdx]);
-				if(playerType == PlayerType.Computer){tempCard.GetComponent<Rigidbody>().isKinematic = false;}
-				tempCard.DealCardAnim(playerID, cardToFillIdx);
-				tempCard.cardData.deckIdx = -1;
-				tempCard.cardData.status = CardData.Status.Hand;
-				tempCard.cardData.hand = playerID;
-				tempCard.cardData.handIdx = cardToFillIdx;
+
+				//Debug.Log("card to fill: " + cardToFillIdx);
+
+				hand[cardToFillIdx] = drawCard.cardData.cardID; //gControl.GetNextTalentCardID();
+				drawCard.cardData.deckIdx = -1;
+				drawCard.cardData.status = CardData.Status.Hand;
+				drawCard.cardData.hand = playerID;
+				drawCard.cardData.handIdx = cardToFillIdx;
 				nextHandIdx += 1;
 				gControl.curTalentCardsIdx += 1;
 				//pause after card drawn but before align
@@ -293,21 +328,178 @@ public class Player : MonoBehaviour
 			}
 			else
 			{
-				Debug.Log(discardedCardIdx);
+				//Debug.Log(discardedCardIdx);
 				CompactHand(discardedCardIdx);
 				hand[nextHandIdx] = holdCardID;
 				gControl.GetTalentCardFromID(holdCardID).MoveCard(playerID, nextHandIdx);
+				nextHandIdx += 1;
 			}
-		
 			playerActed = true;
-			yield return new WaitForSeconds(0.3f);			
+			yield return new WaitForSeconds(0.8f);			
 		}
-		else if (playerType ==	PlayerType.Computer)
-		{
-			
-		}
-		
-
 	}
 	
+	int ComputerDetermineDiscard()
+	{
+		int handIdxToReturn = -1;
+		PopHandInfo();
+		//Debug.Log("actor:" + actorCnt + " director:" + directorCnt + " music:" + musicCnt + " scrn:" + screenplayCnt + " raid:" + raidProtectionCnt + " sabotage:" + sabotageProtectionCnt);
+
+		if (raidProtectionCnt > 1)
+		{
+			handIdxToReturn = lastRaidProtection;
+		}
+		else if (sabotageProtectionCnt > 1)
+		{
+			handIdxToReturn = lastSabotageProtection;
+		}
+		else if (directorCnt > 2)
+		{
+			handIdxToReturn = lowDirector;
+		}
+		else if (musicCnt > 2)
+		{
+			handIdxToReturn = lowMusic;			
+		}
+		else if (screenplayCnt > 2)
+		{
+			handIdxToReturn = lastScreenplay;
+		}
+		else  if (actorCnt > 2)
+		{
+			handIdxToReturn = lowActor;
+		}
+		else
+		{
+			if (screenplayCnt > 1)
+			{
+				handIdxToReturn = lastScreenplay;
+			}
+			else if (musicCnt > 1)
+			{
+				handIdxToReturn = lowMusic;
+			}
+			else if (directorCnt > 1)
+			{
+				handIdxToReturn = lowDirector;
+			}
+			else
+			{
+				handIdxToReturn = lowActor;
+			}
+		}
+		return handIdxToReturn;
+	}
+	
+	public void PopHandInfo()
+	{
+		//reset vars
+		actorCnt = 0;
+		directorCnt = 0;
+		musicCnt = 0;
+		screenplayCnt = 0;
+		raidProtectionCnt = 0;
+		sabotageProtectionCnt = 0;
+		lowActor = -1;
+		lowActorValue = 99;
+		hiActor= -1;
+		hiActorValue = -1;
+		lowDirector = -1;
+		lowDirectorValue = 99;
+		hiDirector = -1;
+		hiDirectorValue = -1;
+		lowMusic = -1;
+		lowMusicValue = 99;
+		hiMusic = -1;
+		hiMusicValue = -1;
+		lastScreenplay = -1;
+		lastSabotageProtection = -1;
+		lastRaidProtection = -1;
+			
+		Card tmpCard;
+		//Debug.Log(hand[0] + ", " + hand[1] + ", " + hand[2] + ", " + hand[3] + ", " + hand[4] + ", " + hand[5] + ", " + hand[6]);
+		//Debug.Log("hand length: " + hand.Length);
+		for (int i = 0; i < hand.Length; i++)
+		{
+			if (hand[i] != -1)
+			{
+				
+				tmpCard = gControl.GetTalentCardFromID(hand[i]);
+				//Debug.Log(tmpCard.cardData.cardName);
+				switch (tmpCard.cardData.subType)
+				{
+				case CardData.SubType.Actor: 
+					actorCnt += 1;
+					if (tmpCard.cardData.value.Sum() > hiActorValue)
+					{
+						hiActor = i;
+						hiActorValue = tmpCard.cardData.value.Sum(); 
+					}
+					if (tmpCard.cardData.value.Sum() < lowActorValue)
+					{
+						lowActor = i;
+						lowActorValue = tmpCard.cardData.value.Sum(); 
+					}
+					break;
+				case CardData.SubType.Actress:
+					actorCnt += 1;
+					if (tmpCard.cardData.value.Sum() > hiActorValue)
+					{
+						hiActor = i;
+						hiActorValue = tmpCard.cardData.value.Sum(); 
+					}
+					if (tmpCard.cardData.value.Sum() < lowActorValue)
+					{
+						lowActor = i;
+						lowActorValue = tmpCard.cardData.value.Sum(); 
+					}
+					break;
+				case CardData.SubType.Director:
+					directorCnt += 1;
+					if (tmpCard.cardData.value.Sum() > hiDirectorValue)
+					{
+						hiDirector = i;
+						hiDirectorValue = tmpCard.cardData.value.Sum(); 
+					}
+					if (tmpCard.cardData.value.Sum() < lowDirectorValue)
+					{
+						lowDirector = i;
+						lowDirectorValue = tmpCard.cardData.value.Sum(); 
+					}
+					break;
+				case CardData.SubType.Music:
+					musicCnt += 1;
+					if (tmpCard.cardData.value.Sum() > hiMusicValue)
+					{
+						hiMusic = i;
+						hiMusicValue = tmpCard.cardData.value.Sum(); 
+					}
+					if (tmpCard.cardData.value.Sum() < lowMusicValue)
+					{
+						lowMusic = i;
+						lowMusicValue = tmpCard.cardData.value.Sum(); 
+					}					
+					break;
+				case CardData.SubType.Screenplay:
+					screenplayCnt += 1;
+					lastScreenplay = i;
+					break;
+				case CardData.SubType.RaidProtection:
+					raidProtectionCnt += 1;
+					lastRaidProtection = i;
+					break;
+				case CardData.SubType.SabotageProtection:
+					sabotageProtectionCnt += 1;
+					lastSabotageProtection = i;
+					break;
+				}					
+			}
+		}
+	}
+	
+	
+	
+	
 }
+
+

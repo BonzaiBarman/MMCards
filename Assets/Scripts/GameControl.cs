@@ -403,11 +403,14 @@ public class GameControl : MonoBehaviour
 			else
 			{
 				inCard.cardData.hand = 0;
-				inCard.cardData.deckIdx = -1;
 				inCard.cardData.handIdx = 99;
+				
+				inCard.cardData.deckIdx = -1;
 				inCard.cardData.status = CardData.Status.Hand;
-				player[thePlayerIndex].playerAction =	Player.PlayerAction.DrawTalentDiscard;
+				
+				curTalentCardsIdx += 1;
 				player[thePlayerIndex].holdCardID = inCard.cardData.cardID;
+				player[thePlayerIndex].playerAction = Player.PlayerAction.DrawTalentDiscard;
 				Debug.Log("Hand Full");
 			}
 
