@@ -89,7 +89,8 @@ public class Player : MonoBehaviour
 				hand[i] = hand[i + 1];
 				if (hand[i] != -1)
 				{
-					gControl.GetTalentCardFromID(hand[i]).MoveCard(0,i);				
+					gControl.GetTalentCardFromID(hand[i]).MoveCard(playerID,i);
+					gControl.GetTalentCardFromID(hand[i]).cardData.handIdx = i;
 				}
 			}
 		}
@@ -257,7 +258,7 @@ public class Player : MonoBehaviour
 				{
 					if(playerType == PlayerType.Computer){drawCard.GetComponent<Rigidbody>().isKinematic = false;}
 					drawCard.cardData.handIdx = 99;
-					drawCard.DealCardAnim(playerID, nextHandIdx);
+					drawCard.DrawCardAnim(playerID, nextHandIdx);
 					cardToFillIdx = ComputerDetermineDiscard();
 					//Debug.Log(cardToFillIdx);
 					//Debug.Log(gControl.GetTalentCardFromID(hand[cardToFillIdx]).cardData.cardName);
@@ -274,7 +275,7 @@ public class Player : MonoBehaviour
 				}
 				else
 				{
-					drawCard.DealCardAnim(playerID, nextHandIdx);
+					drawCard.DrawCardAnim(playerID, nextHandIdx);
 					cardToFillIdx = nextHandIdx;
 				}
 
@@ -288,7 +289,7 @@ public class Player : MonoBehaviour
 				nextHandIdx += 1;
 				gControl.curTalentCardsIdx += 1;
 				//pause after card drawn but before align
-				yield return new WaitForSeconds(0.05f);
+				//yield return new WaitForSeconds(0.01f);
 				if(playerType == PlayerType.Computer){drawCard.GetComponent<Rigidbody>().isKinematic = true;}
 				AlignHand();
 				//pause to wait for next player turn
@@ -329,8 +330,11 @@ public class Player : MonoBehaviour
 			if (discardedCardIdx == 99)
 			{
 				//so be it
+				
+				gControl.GetTalentCardFromID(holdCardID).cardData.handIdx = -1;
 				discardedCardIdx = -1;
 				holdCardID = -1;
+				
 				//playerAction =	PlayerAction.DrawTalent;
 			}
 			else
@@ -339,6 +343,7 @@ public class Player : MonoBehaviour
 				//so be it
 				//Debug.Log("nexthandidx: " + nextHandIdx);
 				//nextHandIdx = 6;
+				Debug.Log("discardedCardIdx: " + discardedCardIdx);
 				CompactHand(discardedCardIdx);
 				Debug.Log("nexthandidx: " + nextHandIdx);
 				hand[nextHandIdx] = holdCardID;

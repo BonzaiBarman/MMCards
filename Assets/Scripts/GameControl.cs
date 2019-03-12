@@ -444,7 +444,7 @@ public class GameControl : MonoBehaviour
 				inCard.cardData.discardIdx = curTalentDiscardIdx;
 				curTalentDiscardIdx += 1;
 				player[thePlayerIndex].discardedCardIdx = inCard.cardData.handIdx;
-				inCard.cardData.handIdx = -1;
+				//inCard.cardData.handIdx = -1;
 				//player[thePlayerIndex].discardedCardIdx = inCard.cardData.cardID;
 				
 			}
