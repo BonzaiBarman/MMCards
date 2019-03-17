@@ -89,7 +89,8 @@ public class Player : MonoBehaviour
 				hand[i] = hand[i + 1];
 				if (hand[i] != -1)
 				{
-					gControl.GetTalentCardFromID(hand[i]).MoveCard(0,i);				
+					gControl.GetTalentCardFromID(hand[i]).MoveCard(playerID,i);
+					gControl.GetTalentCardFromID(hand[i]).cardData.handIdx = i;
 				}
 			}
 		}
@@ -257,7 +258,7 @@ public class Player : MonoBehaviour
 				{
 					if(playerType == PlayerType.Computer){drawCard.GetComponent<Rigidbody>().isKinematic = false;}
 					drawCard.cardData.handIdx = 99;
-					drawCard.DealCardAnim(playerID, nextHandIdx);
+					drawCard.DrawCardAnim(playerID, nextHandIdx);
 					cardToFillIdx = ComputerDetermineDiscard();
 					//Debug.Log(cardToFillIdx);
 					//Debug.Log(gControl.GetTalentCardFromID(hand[cardToFillIdx]).cardData.cardName);
@@ -274,7 +275,7 @@ public class Player : MonoBehaviour
 				}
 				else
 				{
-					drawCard.DealCardAnim(playerID, nextHandIdx);
+					drawCard.DrawCardAnim(playerID, nextHandIdx);
 					cardToFillIdx = nextHandIdx;
 				}
 
@@ -329,8 +330,10 @@ public class Player : MonoBehaviour
 			if (discardedCardIdx == 99)
 			{
 				//so be it
-				discardedCardIdx = -1;
-				holdCardID = -1;
+				
+				discardedCardIdx = 0;
+				holdCardID = 0;
+				gControl.GetTalentCardFromID(holdCardID).cardData.handIdx = -1;
 				//playerAction =	PlayerAction.DrawTalent;
 			}
 			else
@@ -343,9 +346,10 @@ public class Player : MonoBehaviour
 				Debug.Log("nexthandidx: " + nextHandIdx);
 				hand[nextHandIdx] = holdCardID;
 				gControl.GetTalentCardFromID(holdCardID).MoveCard(playerID, nextHandIdx);
+				gControl.GetTalentCardFromID(holdCardID).cardData.handIdx = nextHandIdx;
 				nextHandIdx += 1;
-				discardedCardIdx = -1;
-				holdCardID = -1;
+				discardedCardIdx = 0;
+				holdCardID = 0;
 			}
 			playerActed = true;
 			yield return new WaitForSeconds(0.8f);			

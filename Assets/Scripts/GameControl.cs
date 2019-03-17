@@ -398,7 +398,7 @@ public class GameControl : MonoBehaviour
 				inCard.cardData.status = CardData.Status.Hand;
 				player[thePlayerIndex].nextHandIdx += 1;
 				curTalentCardsIdx += 1;
-				player[thePlayerIndex].playerAction =	Player.PlayerAction.DrawTalent;
+				player[thePlayerIndex].playerAction = Player.PlayerAction.DrawTalent;
 			}
 			else
 			{
