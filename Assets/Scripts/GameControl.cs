@@ -38,6 +38,8 @@ public class GameControl : MonoBehaviour
 	Player[] player;
 	public int playerCount;
 	
+	public GameObject makeMovieButton;
+	
 	const int ActionCardCount = 50;
 	const int TalentCardCount = 70;
 	
@@ -87,6 +89,8 @@ public class GameControl : MonoBehaviour
 		InitTalentCards();
 		InitPlayers();
 		LoadMovieTitles();
+		
+		makeMovieButton.SetActive(false);
 		
 		//wait for 2 seconds. cards should have fallen by then
 		yield return new WaitForSeconds(2f);
