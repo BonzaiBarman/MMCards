@@ -28,12 +28,15 @@ public class GameControl : MonoBehaviour
 	Card[] talentCards;
 	public int curTalentCardsIdx = 0;
 	public int curTalentDiscardIdx = 0;
-	public int curPlayer = 0;
+	public int curPlayer = -1;
 	int holdPlayer = -1;
 	bool gameStarted = false;
 	bool gameOver = false;
+	int dealer = 3;
+	public bool dealing = false;
 	public int thePlayerIndex;
 	MovieTitles movieTitles;
+	
 	
 	Player[] player;
 	public int playerCount;
@@ -117,7 +120,7 @@ public class GameControl : MonoBehaviour
 		
 		
 		//Deal Cards
-		StartCoroutine("DealCards", 3);
+		StartCoroutine("DealCards", dealer);
 		//Start Game
 		yield return new WaitForSeconds(10f);
 		gameStarted = true;
@@ -402,7 +405,7 @@ public class GameControl : MonoBehaviour
 				inCard.cardData.status = CardData.Status.Hand;
 				player[thePlayerIndex].nextHandIdx += 1;
 				curTalentCardsIdx += 1;
-				player[thePlayerIndex].playerAction = Player.PlayerAction.DrawTalent;
+				player[thePlayerIndex].playerAction = PlayerAction.DrawTalent;
 			}
 			else
 			{
@@ -414,7 +417,7 @@ public class GameControl : MonoBehaviour
 				
 				curTalentCardsIdx += 1;
 				player[thePlayerIndex].holdCardID = inCard.cardData.cardID;
-				player[thePlayerIndex].playerAction = Player.PlayerAction.DrawTalentDiscard;
+				player[thePlayerIndex].playerAction = PlayerAction.DrawTalentDiscard;
 				Debug.Log("Hand Full");
 			}
 
@@ -430,7 +433,28 @@ public class GameControl : MonoBehaviour
 			inCard.cardData.deckIdx = -1;
 			curActionCardsIdx += 1;
 			inCard.cardData.status = CardData.Status.Hand;
-			player[thePlayerIndex].playerAction =	Player.PlayerAction.DrawAction;
+			switch(inCard.cardData.subType)
+			{
+			case	CardData.SubType.Collect:
+				player[thePlayerIndex].playerAction =	PlayerAction.DrawActionCollect;
+				break;
+			case	CardData.SubType.Raid:
+				player[thePlayerIndex].playerAction =	PlayerAction.DrawActionRaid;
+				break;
+			case	CardData.SubType.Sabotage:
+				player[thePlayerIndex].playerAction =	PlayerAction.DrawActionSabotage;
+				break;
+			case	CardData.SubType.Trade:
+				player[thePlayerIndex].playerAction =	PlayerAction.DrawActionTrade;
+				break;
+			case	CardData.SubType.Chaos:
+				player[thePlayerIndex].playerAction =	PlayerAction.DrawActionChaos;
+				break;
+			case	CardData.SubType.RunOver:
+				player[thePlayerIndex].playerAction =	PlayerAction.DrawActionRunOver;
+				break;
+			}
+			
 		}
 		player[thePlayerIndex].playerActed = true;
 	}
@@ -440,7 +464,7 @@ public class GameControl : MonoBehaviour
 		if (inCard.cardData.type == CardData.CardType.Talent)
 		{
 			
-			if (player[thePlayerIndex].playerAction == Player.PlayerAction.DrawTalentDiscard)
+			if (player[thePlayerIndex].playerAction == PlayerAction.DrawTalentDiscard)
 			{
 				inCard.cardData.hand = -1;
 				inCard.cardData.deckIdx = -1;
@@ -497,6 +521,8 @@ public class GameControl : MonoBehaviour
     
 	IEnumerator DealCards(int inDealer)
 	{
+		dealing = true;
+		
 		int[,] dealOrder = new int[4,4] {{1,2,3,0}, {2,3,0,1}, {3,0,1,2}, {0,1,2,3}};
 
 		
@@ -537,6 +563,17 @@ public class GameControl : MonoBehaviour
 				}
 			}
 		}
+		dealing = false;
+	}
+	
+	public PlayerAction GetCurPlayerAction()
+	{
+		return player[curPlayer].playerAction;
+	}
+	
+	public int GetCurPlayerNextHandIdx()
+	{
+		return player[curPlayer].nextHandIdx;
 	}
 
 }

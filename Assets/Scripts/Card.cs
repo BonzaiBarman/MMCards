@@ -42,38 +42,46 @@ public class Card : MonoBehaviour
 	    //Debug.Log("CardID: " + cardData.cardID + "Name: " + cardData.cardName);
 	    if (cardData.status == CardData.Status.Deck)
 	    {
-		    //Debug.Log(cardData.cardName + ", " + cardData.deckIdx);
-		    gControl.CardDraw(this);
-		    if (cardData.type == CardData.CardType.Action)
+		    if(gControl.curPlayer == gControl.thePlayerIndex && gControl.dealing == false)
 		    {
-			    StartCoroutine("DrawActionCardAnim");
-			    GetComponent<Rigidbody>().isKinematic = true;
-		    }	    
-		    if (cardData.type == CardData.CardType.Talent)
-		    {
-			    StartCoroutine("DrawTalentCardAnim", gControl.thePlayerIndex);
-			    GetComponent<Rigidbody>().isKinematic = true;
-		    }	    	
+			    //Debug.Log(cardData.cardName + ", " + cardData.deckIdx);
+			    gControl.CardDraw(this);
+			    if (cardData.type == CardData.CardType.Action)
+			    {
+				    StartCoroutine("DrawActionCardAnim");
+				    GetComponent<Rigidbody>().isKinematic = true;
+			    }	    
+			    if (cardData.type == CardData.CardType.Talent)
+			    {
+				    StartCoroutine("DrawTalentCardAnim", gControl.thePlayerIndex);
+				    GetComponent<Rigidbody>().isKinematic = true;
+			    }
+		    }
 	    }
 	    else if (cardData.status == CardData.Status.Hand)
 	    {
-		    //Debug.Log(cardData.cardName);
-		    gControl.CardDiscard(this);
-		    if (cardData.type == CardData.CardType.Action)
+		    if(gControl.curPlayer == gControl.thePlayerIndex && gControl.dealing == false)
 		    {
-			    GetComponent<Rigidbody>().isKinematic = false;
-			    StartCoroutine("DiscardActionCardAnim");
-			    //GetComponent<Rigidbody>().isKinematic = true;
-		    }	    
-		    if (cardData.type == CardData.CardType.Talent)
-		    {
-			    GetComponent<Rigidbody>().isKinematic = false;
-			    StartCoroutine("DiscardTalentCardAnim");
-			    //GetComponent<Rigidbody>().isKinematic = true;
-		    }	    	
-	    }
-
-    }
+		    	if((cardData.hand == gControl.thePlayerIndex && gControl.GetCurPlayerAction() == PlayerAction.DrawTalentDiscard) || gControl.GetCurPlayerAction() == PlayerAction.RaidingTalent || gControl.GetCurPlayerAction() == PlayerAction.TradingTalent)
+		    	{
+					//Debug.Log(cardData.cardName);
+			    	gControl.CardDiscard(this);
+			    	if (cardData.type == CardData.CardType.Action)
+			    	{
+				    	GetComponent<Rigidbody>().isKinematic = false;
+				    	StartCoroutine("DiscardActionCardAnim");
+				    	//GetComponent<Rigidbody>().isKinematic = true;
+			    	}	    
+			    	if (cardData.type == CardData.CardType.Talent)
+			    	{
+				    	GetComponent<Rigidbody>().isKinematic = false;
+				    	StartCoroutine("DiscardTalentCardAnim");
+				    	//GetComponent<Rigidbody>().isKinematic = true;
+			    	}		    		
+		    	}
+			}		    	
+		}
+	}
 	
 	IEnumerator DrawActionCardAnim()
 	{
@@ -155,10 +163,16 @@ public class Card : MonoBehaviour
 		transform.DORotate(new Vector3(0f, 0f, 0f), 0);		
 		GetComponent<Rigidbody>().AddRelativeTorque(Random.Range(-5,5), Random.Range(-20,20), Random.Range(-5,5), ForceMode.Impulse);
 		GetComponent<Rigidbody>().AddRelativeForce(0, Random.Range(-10,10), Random.Range(-30,30), ForceMode.Impulse);
-		transform.DOMove(new Vector3(4.7f, 0.1f, 0f), 1);
+		float yValue;
+		yValue = 0.1f + (cardData.discardIdx / 100f);
+		Debug.Log("yValue: " + cardData.discardIdx);
+		transform.DOMove(new Vector3(4.7f, yValue, 0f), 0.5f);
+		yield return new WaitForSeconds(0.6f);
+		GetComponent<Rigidbody>().isKinematic = true;
 		//transform.DORotate(new Vector3(0f, 0f, 0f), 1);
 
 		yield return new WaitForSeconds(1f);
+		
 		
 	}
 	
