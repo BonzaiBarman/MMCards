@@ -59,6 +59,7 @@ public class Player : MonoBehaviour
 	int lastSabotageProtection = -1;
 	int lastRaidProtection = -1;
 	
+	public GameObject makeMovieButton;
 	
 	GameControl gControl;
 	// Start is called before the first frame update
@@ -206,7 +207,13 @@ public class Player : MonoBehaviour
 	IEnumerator HumanTurn()
 	{
 		Debug.Log("Player Turn: " + playerName.text);
-
+		if(CanMakeMovie())
+		{
+			makeMovieButton.SetActive(true);
+		}
+		{
+			//enable make movie button
+		}
 		yield return new WaitUntil(() => playerActed == true);
 		switch (playerAction)
 		{
@@ -514,7 +521,15 @@ public class Player : MonoBehaviour
 		}
 	}
 	
-	
+	bool CanMakeMovie()
+	{
+		PopHandInfo();
+		if(actorCnt > 0 && directorCnt > 0 && musicCnt > 0 && screenplayCnt > 0)
+		{
+			return true;
+		}
+		return false;
+	}
 	
 	
 }
