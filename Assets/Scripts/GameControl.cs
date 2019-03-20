@@ -36,6 +36,7 @@ public class GameControl : MonoBehaviour
 	public bool dealing = false;
 	public int thePlayerIndex;
 	MovieTitles movieTitles;
+	public int TalentCardDeckHiIdx = 69;
 	
 	
 	Player[] player;
@@ -67,8 +68,10 @@ public class GameControl : MonoBehaviour
 		    {
 			    if (holdPlayer != curPlayer)
 			    {
+
+				    ReshuffleCheck();
 			    	holdPlayer = curPlayer;
-			    	Debug.Log(curPlayer);
+			    	//Debug.Log(curPlayer);
 			    	player[curPlayer].DoTurn();
 			    }
 			}	    	
@@ -80,6 +83,18 @@ public class GameControl : MonoBehaviour
 
 	}
 
+	void ReshuffleCheck()
+	{
+		if (curTalentCardsIdx > TalentCardDeckHiIdx)
+		{
+			StartCoroutine("ReshuffleTalentCards");
+		}
+		if (curActionCardsIdx >= ActionCardCount)
+		{
+			StartCoroutine("ReshuffleActionCards");
+		}
+	}
+	
 	IEnumerator InitGame()
 	{
 		
@@ -251,8 +266,9 @@ public class GameControl : MonoBehaviour
 		}
 	}
 
-	void ReshuffleTalentCards()
+	IEnumerator ReshuffleTalentCards()
 	{
+		yield return new WaitForSeconds(0.5f);
 		int cnt = 0;
 		foreach(Card crd in talentCards)
 		{
@@ -273,13 +289,13 @@ public class GameControl : MonoBehaviour
 			}
 		}
 		utils.ShuffleCards(newDeck);
-		cnt =0;
+		cnt = 0;
 		foreach (int item in newDeck)
 		{
-			talentCards[item].cardData.deckIdx = cnt;
+			GetTalentCardFromID(item).cardData.deckIdx = cnt;
 			cnt += 1;
 		}
-		//Sort talent cards by shuffle index
+		//Sort talent cards before drop by deck/shuffle index
 		talentCards = talentCards.OrderByDescending(go => go.cardData.deckIdx).ToArray();
 
 		//move cards to the height to drop from
@@ -296,16 +312,21 @@ public class GameControl : MonoBehaviour
 				//item.transform.DOMoveY(loc,0);
 			}
 		}
+		//Sort talent cards by reverse deck\shuffle index
+		talentCards = talentCards.OrderBy(go => go.cardData.deckIdx).ToArray();
+		TalentCardDeckHiIdx = 0;
 		//turn off Kinematic to activate gravity
 		foreach (Card item in talentCards)
 		{
 			if (item.cardData.status ==	CardData.Status.Deck)
 			{
 				item.GetComponent<Rigidbody>().isKinematic = false;
+				TalentCardDeckHiIdx += 1;
 			}
 		}
 		curTalentCardsIdx = 0;
 		curTalentDiscardIdx = 0;
+		yield return new WaitForSeconds(5f);
 	}
 	
 	IEnumerator ReshuffleActionCards()
@@ -387,12 +408,15 @@ public class GameControl : MonoBehaviour
 		
 		if (inCard.cardData.type == CardData.CardType.Talent)
 		{
-			//Debug.Log(inCard.cardData.deckIdx);
-			//Debug.Log(curTalentCardsIdx);
-			if (inCard.cardData.deckIdx == 69)
-			{
-				StartCoroutine("ReshuffleTalentCards");
-			}
+
+			
+			
+			//if (inCard.cardData.deckIdx == 69)
+			//{
+			//	StartCoroutine("ReshuffleTalentCards");
+			//}
+			Debug.Log(inCard.cardData.deckIdx + " : " + inCard.cardData.cardName);
+			
 			if (player[thePlayerIndex].nextHandIdx < 7)
 			{
 				//Debug.Log(inCard.cardData.deckIdx);
@@ -418,7 +442,7 @@ public class GameControl : MonoBehaviour
 				curTalentCardsIdx += 1;
 				player[thePlayerIndex].holdCardID = inCard.cardData.cardID;
 				player[thePlayerIndex].playerAction = PlayerAction.DrawTalentDiscard;
-				Debug.Log("Hand Full");
+				//Debug.Log("Hand Full");
 			}
 
 		}
@@ -426,10 +450,10 @@ public class GameControl : MonoBehaviour
 		{
 			Debug.Log(inCard.cardData.deckIdx);
 			Debug.Log(curActionCardsIdx);
-			if (inCard.cardData.deckIdx == 49)
-			{
-				StartCoroutine("ReshuffleActionCards");
-			}
+			//if (inCard.cardData.deckIdx == 49)
+			//{
+			//	StartCoroutine("ReshuffleActionCards");
+			//}
 			inCard.cardData.deckIdx = -1;
 			curActionCardsIdx += 1;
 			inCard.cardData.status = CardData.Status.Hand;
@@ -516,6 +540,7 @@ public class GameControl : MonoBehaviour
 	
 	public int GetNextTalentCardID()
 	{
+		Debug.Log("cur talent card idx: " + curTalentCardsIdx + " : deckidx" + talentCards[curTalentCardsIdx].cardData.deckIdx);
 		return talentCards[curTalentCardsIdx].cardData.cardID;
 	}
     

@@ -230,7 +230,7 @@ public class Player : MonoBehaviour
 	
 	IEnumerator HumanTurn()
 	{
-		Debug.Log("Player Turn: " + playerName.text);
+		//Debug.Log("Player Turn: " + playerName.text);
 		if(CanMakeMovie())
 		{
 			makeMovieButton.SetActive(true);
@@ -281,7 +281,7 @@ public class Player : MonoBehaviour
 
 	IEnumerator ComputerTurn()
 	{
-		Debug.Log("Player Turn: " + playerName.text);
+		//Debug.Log("Player Turn: " + playerName.text);
 		
 		while (!playerActed)
 		{
@@ -311,7 +311,8 @@ public class Player : MonoBehaviour
 				Card discardCard;
 				int cardToFillIdx;
 				drawCard = gControl.GetTalentCardFromID(gControl.GetNextTalentCardID());
-				Debug.Log(drawCard.cardData.cardName);
+				Debug.Log(drawCard.cardData.deckIdx + " : " + drawCard.cardData.cardName);
+				//Debug.Log(drawCard.cardData.cardName);
 
 
 				if (nextHandIdx >= 7)
@@ -327,7 +328,7 @@ public class Player : MonoBehaviour
 					//Needs tobe done
 					//***********
 					discardCard = gControl.GetTalentCardFromID(hand[cardToFillIdx]);
-					Debug.Log(discardCard.cardData.cardName);
+					//Debug.Log(discardCard.cardData.cardName);
 					if(playerType == PlayerType.Computer){discardCard.GetComponent<Rigidbody>().isKinematic = false;}
 					
 					
@@ -335,17 +336,17 @@ public class Player : MonoBehaviour
 					discardCard.cardData.deckIdx = -1;
 					discardCard.cardData.status = CardData.Status.Discard;
 					discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
-					Debug.Log("discard idx: " + discardCard.cardData.discardIdx + "  curdiscard: " + gControl.curTalentDiscardIdx);
+					//Debug.Log("discard idx: " + discardCard.cardData.discardIdx + "  curdiscard: " + gControl.curTalentDiscardIdx);
 					
 					//discardCard.DiscardTalentCard();
 					//gControl.curTalentDiscardIdx += 1;
 					
-					if (drawCard.cardData.deckIdx == 69)
-					{
-						yield return new WaitForSeconds(1f);
-						gControl.StartCoroutine("ReshuffleTalentCards");
-						yield return new WaitForSeconds(3f);
-					}
+					//if (drawCard.cardData.deckIdx == 69)
+					//{
+					//	yield return new WaitForSeconds(1f);
+					//	gControl.StartCoroutine("ReshuffleTalentCards");
+					//	yield return new WaitForSeconds(3f);
+					//}
 					
 					hand[cardToFillIdx] = drawCard.cardData.cardID;
 					drawCard.cardData.deckIdx = -1;
@@ -376,12 +377,12 @@ public class Player : MonoBehaviour
 					drawCard.DrawCardAnim(playerID, nextHandIdx);
 					cardToFillIdx = nextHandIdx;
 					
-					if (drawCard.cardData.deckIdx == 69)
-					{
-						yield return new WaitForSeconds(1f);
-						gControl.StartCoroutine("ReshuffleTalentCards");
-						yield return new WaitForSeconds(3f);
-					}
+					//if (drawCard.cardData.deckIdx == 69)
+					//{
+					//	yield return new WaitForSeconds(1f);
+					//	gControl.StartCoroutine("ReshuffleTalentCards");
+					//	yield return new WaitForSeconds(3f);
+					//}
 					hand[cardToFillIdx] = drawCard.cardData.cardID;
 					drawCard.cardData.deckIdx = -1;
 					drawCard.cardData.status = CardData.Status.Hand;
@@ -454,10 +455,10 @@ public class Player : MonoBehaviour
 		drawCard.DrawCardAnim(playerID, nextHandIdx);
 		hand[nextHandIdx] = drawCard.cardData.cardID;
 		
-		if (drawCard.cardData.deckIdx == 69)
-		{
-			gControl.StartCoroutine("ReshuffleTalentCards");
-		}
+		//if (drawCard.cardData.deckIdx == 69)
+		//{
+		//	gControl.StartCoroutine("ReshuffleTalentCards");
+		//}
 		
 		drawCard.cardData.deckIdx = -1;
 		drawCard.cardData.status = CardData.Status.Hand;
@@ -492,10 +493,10 @@ public class Player : MonoBehaviour
 		discardCard = gControl.GetTalentCardFromID(hand[cardToFillIdx]);
 		discardCard.GetComponent<Rigidbody>().isKinematic = false;
 					
-		if (drawCard.cardData.deckIdx == 69)
-		{
-			gControl.StartCoroutine("ReshuffleTalentCards");
-		}
+		//if (drawCard.cardData.deckIdx == 69)
+		//{
+		//	gControl.StartCoroutine("ReshuffleTalentCards");
+		//}
 					
 		discardCard.cardData.hand = -1;
 		discardCard.cardData.deckIdx = -1;
@@ -557,7 +558,7 @@ public class Player : MonoBehaviour
 				//Debug.Log("nexthandidx: " + nextHandIdx);
 				//nextHandIdx = 6;
 				CompactHand(discardedCardIdx);
-				Debug.Log("nexthandidx: " + nextHandIdx);
+				//Debug.Log("nexthandidx: " + nextHandIdx);
 				hand[nextHandIdx] = holdCardID;
 				gControl.GetTalentCardFromID(holdCardID).MoveCard(playerID, nextHandIdx);
 				gControl.GetTalentCardFromID(holdCardID).cardData.handIdx = nextHandIdx;

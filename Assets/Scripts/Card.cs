@@ -64,7 +64,7 @@ public class Card : MonoBehaviour
 		    {
 		    	if((cardData.hand == gControl.thePlayerIndex && gControl.GetCurPlayerAction() == PlayerAction.DrawTalentDiscard) || gControl.GetCurPlayerAction() == PlayerAction.RaidingTalent || gControl.GetCurPlayerAction() == PlayerAction.TradingTalent)
 		    	{
-					//Debug.Log(cardData.cardName);
+			    	
 			    	gControl.CardDiscard(this);
 			    	if (cardData.type == CardData.CardType.Action)
 			    	{
@@ -156,6 +156,7 @@ public class Card : MonoBehaviour
 		//GetComponent<Rigidbody>().isKinematic = true;
 		
 	}
+	
 	IEnumerator DiscardTalentCardAnim()
 	{
 		
@@ -165,7 +166,7 @@ public class Card : MonoBehaviour
 		GetComponent<Rigidbody>().AddRelativeForce(0, Random.Range(-10,10), Random.Range(-30,30), ForceMode.Impulse);
 		float yValue;
 		yValue = 0.1f + (cardData.discardIdx / 100f);
-		Debug.Log("yValue: " + cardData.discardIdx);
+		//Debug.Log("yValue: " + cardData.discardIdx);
 		transform.DOMove(new Vector3(4.7f, yValue, 0f), 0.5f);
 		yield return new WaitForSeconds(0.6f);
 		GetComponent<Rigidbody>().isKinematic = true;
