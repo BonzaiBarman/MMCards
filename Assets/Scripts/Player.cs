@@ -282,7 +282,7 @@ public class Player : MonoBehaviour
 	IEnumerator ComputerTurn()
 	{
 		//Debug.Log("Player Turn: " + playerName.text);
-		
+		yield return new WaitForSeconds(1f);
 		while (!playerActed)
 		{
 			//pause before turn
@@ -311,7 +311,7 @@ public class Player : MonoBehaviour
 				Card discardCard;
 				int cardToFillIdx;
 				drawCard = gControl.GetTalentCardFromID(gControl.GetNextTalentCardID());
-				Debug.Log(drawCard.cardData.deckIdx + " : " + drawCard.cardData.cardName);
+				//Debug.Log(drawCard.cardData.deckIdx + " : " + drawCard.cardData.cardName);
 				//Debug.Log(drawCard.cardData.cardName);
 
 

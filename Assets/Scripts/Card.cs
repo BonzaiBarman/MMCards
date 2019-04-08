@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using DG.Tweening;
 using UnityEngine.UI;
+using Unity.IO;
 
 public class Card : MonoBehaviour
 {
@@ -13,9 +14,9 @@ public class Card : MonoBehaviour
 	GameControl gControl;
 
 	Vector3[,] plyrHandLocs = new [,] {{new Vector3(-2.1f, 2f, -3.2f), new Vector3(-0.8f, 2f, -3.2f), new Vector3(0.5f, 2f, -3.2f), new Vector3(1.8f, 2f, -3.2f), new Vector3(3.1f, 2f, -3.2f), new Vector3(4.4f, 2f, -3.2f), new Vector3(5.7f, 2f, -3.2f)},
-	{new Vector3(-3f, 0.1f, 2.9f), new Vector3(-3f, 0.1f, 2.2f), new Vector3(-3f, 0.1f, 1.5f), new Vector3(-3f, 0.1f, 0.8f), new Vector3(-3f, 0.1f, 0.1f), new Vector3(-3f, 0.1f, -0.6f), new Vector3(-3f, 0.1f, -1.3f)},
-	{new Vector3(5.2f, 0.1f, 3.7f), new Vector3(4.5f, 0.1f, 3.7f), new Vector3(3.8f, 0.1f, 3.7f), new Vector3(3.1f, 0.1f, 3.7f), new Vector3(2.4f, 0.1f, 3.7f), new Vector3(1.7f, 0.1f, 3.7f), new Vector3(1f, 0.1f, 3.7f)},
-	{new Vector3(7.3f, 0.1f, -1.3f), new Vector3(7.3f, 0.1f, -0.6f), new Vector3(7.3f, 0.1f, 0.1f), new Vector3(7.3f, 0.1f, 0.8f), new Vector3(7.3f, 0.1f, 1.5f), new Vector3(7.3f, 0.1f, 2.2f), new Vector3(7.3f, 0.1f, 2.9f)}};
+	{new Vector3(-3f, 0.01f, 2.9f), new Vector3(-3f, 0.011f, 2.2f), new Vector3(-3f, 0.012f, 1.5f), new Vector3(-3f, 0.013f, 0.8f), new Vector3(-3f, 0.014f, 0.1f), new Vector3(-3f, 0.015f, -0.6f), new Vector3(-3f, 0.016f, -1.3f)},
+	{new Vector3(4.7f, 0.01f, 3.7f), new Vector3(4f, 0.011f, 3.7f), new Vector3(3.3f, 0.012f, 3.7f), new Vector3(2.6f, 0.013f, 3.7f), new Vector3(1.9f, 0.014f, 3.7f), new Vector3(1.2f, 0.015f, 3.7f), new Vector3(0.5f, 0.016f, 3.7f)},
+	{new Vector3(7.3f, 0.01f, -1.3f), new Vector3(7.3f, 0.011f, -0.6f), new Vector3(7.3f, 0.012f, 0.1f), new Vector3(7.3f, 0.013f, 0.8f), new Vector3(7.3f, 0.014f, 1.5f), new Vector3(7.3f, 0.015f, 2.2f), new Vector3(7.3f, 0.016f, 2.9f)}};
 	Vector3[] plyrDealLocs = new [] {new Vector3(1.8f, 2f, -3.2f), new Vector3(-3f, 0.1f, 0.8f), new Vector3(3.1f, 0.1f, 3.7f), new Vector3(7.3f, 0.1f, 0.8f)};
 	Vector3[] plyrHandRots = new [] {new Vector3(350f, 0f, 0f), new Vector3(0f, 90f, 0f), new Vector3(0f, 180f, 0f), new Vector3(0f, 270f, 0f)};
 	Vector3[] plyrDrawLocs = new [] {new Vector3(1.5f, 3f, -1.5f), new Vector3(-1.5f, 0.1f, 1.8f), new Vector3(3.1f, 0.1f, 2.2f), new Vector3(5.8f, 0.1f, 1.8f)};
@@ -36,7 +37,7 @@ public class Card : MonoBehaviour
 
 	}
 
-	void OnMouseDown()
+	public void OnMouseDown()
     {
 
 	    //Debug.Log("CardID: " + cardData.cardID + "Name: " + cardData.cardName);
@@ -160,20 +161,30 @@ public class Card : MonoBehaviour
 	IEnumerator DiscardTalentCardAnim()
 	{
 		
-		
-		transform.DORotate(new Vector3(0f, 0f, 0f), 0);		
+		transform.DORotate(new Vector3(0f, 0f, 0f), 0);
+		if(gControl.curPlayer == gControl.thePlayerIndex)
+		{
+			Vector3 origPos = transform.position;
+			transform.DOMove(new Vector3(origPos.x, origPos.y + 1f, origPos.z), 0.3f);	
+		}
+		else
+		{
+			Vector3 origPos = transform.position;
+			transform.DOMove(new Vector3(origPos.x, origPos.y + 3f, origPos.z), 0.3f);	
+		}
 		GetComponent<Rigidbody>().AddRelativeTorque(Random.Range(-5,5), Random.Range(-20,20), Random.Range(-5,5), ForceMode.Impulse);
 		GetComponent<Rigidbody>().AddRelativeForce(0, Random.Range(-10,10), Random.Range(-30,30), ForceMode.Impulse);
+		yield return new WaitForSeconds(0.2f);
 		float yValue;
 		yValue = 0.1f + (cardData.discardIdx / 100f);
 		//Debug.Log("yValue: " + cardData.discardIdx);
 		transform.DOMove(new Vector3(4.7f, yValue, 0f), 0.5f);
-		yield return new WaitForSeconds(0.6f);
+		yield return new WaitForSeconds(1f);
 		GetComponent<Rigidbody>().isKinematic = true;
 		//transform.DORotate(new Vector3(0f, 0f, 0f), 1);
 
-		yield return new WaitForSeconds(1f);
-		
+		yield return new WaitForSeconds(0.8f);
+		gControl.SortTalentDiscard();
 		
 	}
 	
@@ -208,6 +219,7 @@ public class Card : MonoBehaviour
 		//Debug.Log(inPlayer + " " + inHandIdx);
 		Vector3 v = plyrHandLocs[inPlayer, inHandIdx];
 		transform.DOMove(new Vector3(v.x, (float)(v.y + (inHandIdx * 0.01)), v.z), 0.1f);
+		RotateCard(inPlayer);
 	}
 	public void RotateCard(int inPlayer)
 	{
