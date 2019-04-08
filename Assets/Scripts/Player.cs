@@ -218,6 +218,10 @@ public class Player : MonoBehaviour
 	
 	public void DoTurn()
 	{
+		TextMeshPro tmesh = transform.GetChild(0).gameObject.GetComponent<TextMeshPro>();
+		DOTweenAnimation tanim = tmesh.GetComponent<DOTweenAnimation>();
+		tanim.DORestart();
+		tanim.DOPlay();
 		if (playerType == PlayerType.Human)
 		{
 			StartCoroutine("HumanTurn");
@@ -226,6 +230,7 @@ public class Player : MonoBehaviour
 		{
 			StartCoroutine("ComputerTurn");
 		}
+
 	}
 	
 	IEnumerator HumanTurn()
@@ -262,11 +267,13 @@ public class Player : MonoBehaviour
 			break;
 		case	PlayerAction.DrawTalent:
 			StartCoroutine("DrawTalent");
+			yield return new WaitForSeconds(2.5f);
 			break;
 		case	PlayerAction.DrawTalentDiscard:
 			playerActed = false;
 			StartCoroutine("DrawTalentDiscard");
 			yield return new WaitUntil(() => playerActed == true);
+			yield return new WaitForSeconds(2.5f);
 			break;
 		case PlayerAction.MakeMovie:
 			break;
@@ -369,7 +376,7 @@ public class Player : MonoBehaviour
 					discardCard.DiscardTalentCard();
 					gControl.curTalentDiscardIdx += 1;
 					//pause to wait for next player turn
-					yield return new WaitForSeconds(1f);
+					yield return new WaitForSeconds(2.5f);
 					playerActed = true;
 				}
 				else
@@ -397,7 +404,7 @@ public class Player : MonoBehaviour
 				
 					AlignHand();
 					//pause to wait for next player turn
-					yield return new WaitForSeconds(1f);
+					yield return new WaitForSeconds(2.5f);
 					playerActed = true;
 
 				}
@@ -447,90 +454,91 @@ public class Player : MonoBehaviour
 		if (gControl.curPlayer >= gControl.playerCount){gControl.curPlayer = 0;}
 	}
 	
-	IEnumerator CompDrawTalent()
-	{
+	//IEnumerator CompDrawTalent()
+	//{
 		
-		Card drawCard;
-		drawCard = gControl.GetTalentCardFromID(gControl.GetNextTalentCardID());
-		drawCard.DrawCardAnim(playerID, nextHandIdx);
-		hand[nextHandIdx] = drawCard.cardData.cardID;
+	//	Card drawCard;
+	//	drawCard = gControl.GetTalentCardFromID(gControl.GetNextTalentCardID());
+	//	drawCard.DrawCardAnim(playerID, nextHandIdx);
+	//	hand[nextHandIdx] = drawCard.cardData.cardID;
 		
-		//if (drawCard.cardData.deckIdx == 69)
-		//{
-		//	gControl.StartCoroutine("ReshuffleTalentCards");
-		//}
+	//	//if (drawCard.cardData.deckIdx == 69)
+	//	//{
+	//	//	gControl.StartCoroutine("ReshuffleTalentCards");
+	//	//}
 		
-		drawCard.cardData.deckIdx = -1;
-		drawCard.cardData.status = CardData.Status.Hand;
-		drawCard.cardData.hand = playerID;
-		drawCard.cardData.handIdx = nextHandIdx;
-		nextHandIdx += 1;
-		gControl.curTalentCardsIdx += 1;
+	//	drawCard.cardData.deckIdx = -1;
+	//	drawCard.cardData.status = CardData.Status.Hand;
+	//	drawCard.cardData.hand = playerID;
+	//	drawCard.cardData.handIdx = nextHandIdx;
+	//	nextHandIdx += 1;
+	//	gControl.curTalentCardsIdx += 1;
 				
-		//pause after card drawn but before align
-		yield return new WaitForSeconds(0.05f);
-		drawCard.GetComponent<Rigidbody>().isKinematic = true;
+	//	//pause after card drawn but before align
+	//	yield return new WaitForSeconds(0.05f);
+	//	drawCard.GetComponent<Rigidbody>().isKinematic = true;
 		
-		yield return new WaitForSeconds(1f);
-		playerActed = true;
+	//	yield return new WaitForSeconds(1f);
+	//	playerActed = true;
 		
-	}
+	//}
 	
-	IEnumerator CompDrawTalentDiscard()
-	{
-		Card drawCard;
-		Card discardCard;
-		int cardToFillIdx;
-		drawCard = gControl.GetTalentCardFromID(gControl.GetNextTalentCardID());
+	//IEnumerator CompDrawTalentDiscard()
+	//{
+	//	Card drawCard;
+	//	Card discardCard;
+	//	int cardToFillIdx;
+	//	drawCard = gControl.GetTalentCardFromID(gControl.GetNextTalentCardID());
 		
-		drawCard.GetComponent<Rigidbody>().isKinematic = false;
-		drawCard.cardData.handIdx = 99;
-		drawCard.DrawCardAnim(playerID, nextHandIdx);
-		cardToFillIdx = ComputerDetermineDiscard();
+	//	drawCard.GetComponent<Rigidbody>().isKinematic = false;
+	//	drawCard.cardData.handIdx = 99;
+	//	drawCard.DrawCardAnim(playerID, nextHandIdx);
+	//	cardToFillIdx = ComputerDetermineDiscard();
 		
-		nextHandIdx -= 1;
+	//	nextHandIdx -= 1;
 		
-		discardCard = gControl.GetTalentCardFromID(hand[cardToFillIdx]);
-		discardCard.GetComponent<Rigidbody>().isKinematic = false;
+	//	discardCard = gControl.GetTalentCardFromID(hand[cardToFillIdx]);
+	//	discardCard.GetComponent<Rigidbody>().isKinematic = false;
 					
-		//if (drawCard.cardData.deckIdx == 69)
-		//{
-		//	gControl.StartCoroutine("ReshuffleTalentCards");
-		//}
+	//	//if (drawCard.cardData.deckIdx == 69)
+	//	//{
+	//	//	gControl.StartCoroutine("ReshuffleTalentCards");
+	//	//}
 					
-		discardCard.cardData.hand = -1;
-		discardCard.cardData.deckIdx = -1;
-		discardCard.cardData.status = CardData.Status.Discard;
-		discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
-		Debug.Log("discard idx: " + discardCard.cardData.discardIdx + "  curdiscard: " + gControl.curTalentDiscardIdx);
+	//	discardCard.cardData.hand = -1;
+	//	discardCard.cardData.deckIdx = -1;
+	//	discardCard.cardData.status = CardData.Status.Discard;
+	//	discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
+	//	Debug.Log("discard idx: " + discardCard.cardData.discardIdx + "  curdiscard: " + gControl.curTalentDiscardIdx);
 
-		hand[cardToFillIdx] = drawCard.cardData.cardID; //gControl.GetNextTalentCardID();
-		drawCard.cardData.deckIdx = -1;
-		drawCard.cardData.status = CardData.Status.Hand;
-		drawCard.cardData.hand = playerID;
-		drawCard.cardData.handIdx = cardToFillIdx;
-		nextHandIdx += 1;
-		gControl.curTalentCardsIdx += 1;
+	//	hand[cardToFillIdx] = drawCard.cardData.cardID; //gControl.GetNextTalentCardID();
+	//	drawCard.cardData.deckIdx = -1;
+	//	drawCard.cardData.status = CardData.Status.Hand;
+	//	drawCard.cardData.hand = playerID;
+	//	drawCard.cardData.handIdx = cardToFillIdx;
+	//	nextHandIdx += 1;
+	//	gControl.curTalentCardsIdx += 1;
 				
-		//pause after card drawn but before align
-		yield return new WaitForSeconds(0.05f);
-		drawCard.GetComponent<Rigidbody>().isKinematic = true;
+	//	//pause after card drawn but before align
+	//	yield return new WaitForSeconds(0.05f);
+	//	drawCard.GetComponent<Rigidbody>().isKinematic = true;
 				
-		discardCard.DiscardTalentCard();
-		gControl.curTalentDiscardIdx += 1;
+	//	discardCard.DiscardTalentCard();
+	//	gControl.curTalentDiscardIdx += 1;
 		
-		AlignHand();
-		//pause to wait for next player turn
-		yield return new WaitForSeconds(1f);
-		playerActed = true;
+	//	AlignHand();
+	//	//pause to wait for next player turn
+	//	yield return new WaitForSeconds(1f);
+	//	playerActed = true;
 		
-	}
+	//}
 	
 	IEnumerator DrawTalent()
 	{
 
+		yield return null;
 		//playerActed = false;
-		yield return new WaitForSeconds(0.1f);
+		//yield return new WaitForSeconds(2.5f);
 		//playerActed = true;
 	}
 	
@@ -566,8 +574,9 @@ public class Player : MonoBehaviour
 				discardedCardIdx = 0;
 				holdCardID = 0;
 			}
-			playerActed = true;
-			yield return new WaitForSeconds(0.8f);			
+			//playerActed = true;
+			
+						
 		}
 	}
 	

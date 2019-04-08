@@ -72,15 +72,7 @@ public class GameControl : MonoBehaviour
 
 				    ReshuffleCheck();
 
-				    //if (curTalentCardsIdx > TalentCardDeckHiIdx)
-				    //{
-					//    StartCoroutine("ReshuffleTalentCards");
-				    //}
-				    //if (curActionCardsIdx >= ActionCardCount)
-				    //{
-					//    StartCoroutine("ReshuffleActionCards");
-				    //}
-				    if(shuffling == false)
+					if(shuffling == false)
 				    {
 					    holdPlayer = curPlayer;
 					    //Debug.Log(curPlayer);
