@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class MonKeyInitialization : MonoBehaviour
 {
-    public static readonly string MonKeyVersion = "1.3";
+    public static readonly string MonKeyVersion = "1.4";
 
     private static string defaultDLLInstallPath = "Assets/Plugins/" +
                                                "MonKey Commander/Editor/Bin/";

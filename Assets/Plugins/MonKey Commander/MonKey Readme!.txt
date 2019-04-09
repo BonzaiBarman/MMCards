@@ -1,3 +1,5 @@
+MonKey version: 1.4
+
 Hi, and thanks for downloading MonKey!
 
 To start using MonKey, simply press the HotKey (by default ` on a qwerty keyboard) to open the console!

@@ -9,7 +9,7 @@ using UnityEditor;
 
 public class GettingStartedPanel : EditorWindow
 {
-    private const string changeLog = "https://drive.google.com/open?id=1R5CN3rcFuWnhgZ8plEu46-tqxOFBong7";
+    private const string changeLog = "https://drive.google.com/open?id=1CtPaxlxHAQdTxl_qYjMUQ6prUHoTRLvb";
     private static readonly string WasShownID = "MC_GettingStartedShown"+ MonKeyInitialization.MonKeyVersion;
     private static bool forceShow = false;
 
