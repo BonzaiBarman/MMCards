@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using System.IO;
+using TMPro;
 
 public class GameControl : MonoBehaviour
 {
@@ -43,7 +44,8 @@ public class GameControl : MonoBehaviour
 	Player[] player;
 	public int playerCount;
 	
-	public GameObject makeMovieButton;
+	//public GameObject makeMovieButton;
+	public Canvas gHud;
 	
 	const int ActionCardCount = 50;
 	const int TalentCardCount = 70;
@@ -75,8 +77,10 @@ public class GameControl : MonoBehaviour
 					if(shuffling == false)
 				    {
 					    holdPlayer = curPlayer;
-					    //Debug.Log(curPlayer);
-					    player[curPlayer].DoTurn();				    	
+						
+						DoTickerStartTurnMessage();
+						
+						player[curPlayer].DoTurn();				    	
 				    }
 
 			    }
@@ -109,16 +113,18 @@ public class GameControl : MonoBehaviour
 	{
 		
 		//sets the player number on this machine
+		
 		thePlayerIndex = 0;
 		//get all the cards
 		daCards = FindObjectsOfType<Card>();
 		
+		InitHud();
 		InitActionCards();
 		InitTalentCards();
 		InitPlayers();
 		LoadMovieTitles();
 		
-		makeMovieButton.SetActive(false);
+		//makeMovieButton.SetActive(false);
 		
 		//wait for 2 seconds. cards should have fallen by then
 		yield return new WaitForSeconds(2f);
@@ -162,6 +168,12 @@ public class GameControl : MonoBehaviour
 	//	}
 	//}
 
+	void InitHud()
+	{
+		gHud.transform.GetChild(1).gameObject.SetActive(false);	
+		gHud.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "Dealling...";
+	}
+	
 	void InitActionCards()
 	{
 		//Get Action Cards
@@ -672,6 +684,34 @@ public class GameControl : MonoBehaviour
 				crd.transform.DOMove(new Vector3(loc.x, yValue, loc.z), 0);
 			}
 		}
+	}
+	
+	private void DoTickerStartTurnMessage()
+	{
+		TextMeshProUGUI tmesh = gHud.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>();
+		if(curPlayer == thePlayerIndex)
+		{
+			if(player[curPlayer].CanMakeMovie())
+			{
+				gHud.transform.GetChild(1).gameObject.SetActive(true);
+				tmesh.text = "Your turn, You can Make a Movie, Draw an Action card, or Draw a Talent card.";
+			}
+			else
+			{
+				tmesh.text = "Your turn, Draw an Action or Talent card.";	
+			}
+		}
+		else
+		{
+			tmesh.text = player[curPlayer].GetName() + "'s turn";	
+		}
+		
+	}
+	
+	public void MakeMovieClicked()
+	{
+		
+		player[thePlayerIndex].MakeMovie();
 	}
 
 }

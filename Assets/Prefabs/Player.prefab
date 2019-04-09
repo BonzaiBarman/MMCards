@@ -260,6 +260,8 @@ MonoBehaviour:
   redMaterial: {fileID: 2100000, guid: 8ca3ee549cbdde248ae6308983d59c1f, type: 2}
   greenMaterial: {fileID: 2100000, guid: b273c2b167ecfd74e8109870946d9928, type: 2}
   blueMaterial: {fileID: 2100000, guid: 0e74a67d2e4945842801cc1138b899a4, type: 2}
+  yellowMaterial: {fileID: 2100000, guid: 58b602d8d1a70994ca6dbf446bb0a352, type: 2}
+  violetMaterial: {fileID: 2100000, guid: a72abcdd58d315f42b270f3fa10914ad, type: 2}
   playerName: {fileID: 5541581011123086067}
   scoreText: {fileID: 7896242392138359210}
   score: 0
@@ -575,13 +577,13 @@ MonoBehaviour:
   isActive: 1
   isValid: 1
   target: {fileID: 5541581011123085967}
-  animationType: 11
+  animationType: 12
   targetType: 11
   forcedTargetType: 0
   autoPlay: 0
   useTargetAsV3: 0
   endValueFloat: 0
-  endValueV3: {x: 1, y: 1, z: 1}
+  endValueV3: {x: 1, y: 0, z: 0}
   endValueV2: {x: 0, y: 0}
   endValueColor: {r: 1, g: 1, b: 1, a: 1}
   endValueString: 
@@ -593,7 +595,7 @@ MonoBehaviour:
     height: 0
   endValueTransform: {fileID: 0}
   optionalBool0: 0
-  optionalFloat0: 1
+  optionalFloat0: 90
   optionalInt0: 10
   optionalRotationMode: 0
   optionalScrambleMode: 0

@@ -50,6 +50,9 @@ public class Player : MonoBehaviour
 	public Material redMaterial;
 	public Material greenMaterial;
 	public Material blueMaterial;
+	public Material yellowMaterial;
+	public Material violetMaterial;
+	Material origMaterial;
 	public TextMeshPro playerName;
 	public TextMeshPro scoreText;
 	public int score;
@@ -83,7 +86,7 @@ public class Player : MonoBehaviour
 	int lastSabotageProtection = -1;
 	int lastRaidProtection = -1;
 	
-	public GameObject makeMovieButton;
+	//public GameObject makeMovieButton;
 	
 	GameControl gControl;
 	// Start is called before the first frame update
@@ -158,6 +161,12 @@ public class Player : MonoBehaviour
 		//daText.DOText(inName, 2f, true, ScrambleMode.All);
 	}
     
+	public string GetName()
+	{
+		TextMeshPro gName = transform.GetChild(0).gameObject.GetComponent<TextMeshPro>();
+		return gName.text;
+		//daText.DOText(inName, 2f, true, ScrambleMode.All);
+	}
 	//public void RunAnimation(string inAnimName)
 	//{
 	//	if (inAnimName == "rotate")
@@ -212,16 +221,22 @@ public class Player : MonoBehaviour
 				daCard.RotateCard(playerID);
 				yield return new WaitForSeconds(Random.Range(0.1f, 0.5f));
 			}
-
 		}		
 	}
 	
 	public void DoTurn()
 	{
 		TextMeshPro tmesh = transform.GetChild(0).gameObject.GetComponent<TextMeshPro>();
-		DOTweenAnimation tanim = tmesh.GetComponent<DOTweenAnimation>();
-		tanim.DORestart();
-		tanim.DOPlay();
+		DOTweenAnimation[] tanim = tmesh.GetComponents<DOTweenAnimation>();
+		tanim[0].DORestart();
+		tanim[0].DOPlay();
+		
+		//tmesh.color = new Color32(0, 130, 0, 255);
+		origMaterial = transform.GetChild(1).gameObject.GetComponent<Renderer>().material;
+		transform.GetChild(1).gameObject.GetComponent<Renderer>().material = greenMaterial;
+		
+		//tanim[1].DORestart();
+		//tanim[1].DOPlay();
 		if (playerType == PlayerType.Human)
 		{
 			StartCoroutine("HumanTurn");
@@ -230,16 +245,11 @@ public class Player : MonoBehaviour
 		{
 			StartCoroutine("ComputerTurn");
 		}
-
 	}
 	
 	IEnumerator HumanTurn()
 	{
-		//Debug.Log("Player Turn: " + playerName.text);
-		if(CanMakeMovie())
-		{
-			makeMovieButton.SetActive(true);
-		}
+
 		//resetting player action before player takes an action
 		//Using DrawTalent as a default
 		playerAction =	PlayerAction.DrawTalent;
@@ -284,6 +294,8 @@ public class Player : MonoBehaviour
 		playerActed = false;
 		gControl.curPlayer += 1;
 		if (gControl.curPlayer >= gControl.playerCount){gControl.curPlayer = 0;}
+		//change player name color to black
+		transform.GetChild(1).gameObject.GetComponent<Renderer>().material = origMaterial;
 	}
 
 	IEnumerator ComputerTurn()
@@ -452,6 +464,9 @@ public class Player : MonoBehaviour
 		playerActed = false;
 		gControl.curPlayer += 1;
 		if (gControl.curPlayer >= gControl.playerCount){gControl.curPlayer = 0;}
+		//change player name color to black
+		//transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().color = Color.black;
+		transform.GetChild(1).gameObject.GetComponent<Renderer>().material = origMaterial;
 	}
 	
 	//IEnumerator CompDrawTalent()
@@ -738,7 +753,7 @@ public class Player : MonoBehaviour
 		}
 	}
 	
-	bool CanMakeMovie()
+	public bool CanMakeMovie()
 	{
 		PopHandInfo();
 		if(actorCnt > 0 && directorCnt > 0 && musicCnt > 0 && screenplayCnt > 0)
@@ -746,6 +761,11 @@ public class Player : MonoBehaviour
 			return true;
 		}
 		return false;
+	}
+	
+	public void MakeMovie()
+	{
+		Debug.Log("make movie clicked");
 	}
 	
 	
