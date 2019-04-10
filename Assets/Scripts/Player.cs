@@ -305,27 +305,25 @@ public class Player : MonoBehaviour
 		while (!playerActed)
 		{
 			//pause before turn
-			yield return new WaitForSeconds(0.5f);
+			yield return new WaitForSeconds(0.3f);
+			
 			
 			//Determine What Computer Player Does
-			int rnd = Random.Range(0,0); //2
-			switch (rnd)
+			//int rnd = Random.Range(0,0); //2
+			if(CanMakeMovie())
 			{
-			case 0:
+				playerAction =	PlayerAction.MakeMovie;
+			}
+			else
+			{
+				playerAction =	PlayerAction.DrawTalent;
+			}
+			
+			switch (playerAction)
+			{
+			case PlayerAction.DrawTalent:
 				//draw a talent card
-				
-				//if (nextHandIdx >= 7)
-				//{
-				//	StartCoroutine("CompDrawTalentDiscard");
-				//}
-				//else 
-				//{
-				//	StartCoroutine("CompDrawTalent");
-				//}
-				
-				
-				
-				
+
 				Card drawCard;
 				Card discardCard;
 				int cardToFillIdx;
@@ -421,41 +419,11 @@ public class Player : MonoBehaviour
 
 				}
 
-				//if (drawCard.cardData.deckIdx == 69)
-				//{
-				//	gControl.StartCoroutine("ReshuffleTalentCards");
-				//}
-				//hand[cardToFillIdx] = drawCard.cardData.cardID;
-				//drawCard.cardData.deckIdx = -1;
-				//drawCard.cardData.status = CardData.Status.Hand;
-				//drawCard.cardData.hand = playerID;
-				//drawCard.cardData.handIdx = cardToFillIdx;
-				//nextHandIdx += 1;
-				//gControl.curTalentCardsIdx += 1;
-				
-				////pause after card drawn but before align
-				//yield return new WaitForSeconds(0.05f);
-				//if(playerType == PlayerType.Computer){drawCard.GetComponent<Rigidbody>().isKinematic = true;}
-				
-				//AlignHand();
-				////pause to wait for next player turn
-				//yield return new WaitForSeconds(1f);
-				//playerActed = true;
-				
-				
-				
-				
-				
-				
-				
-				
-				
 				break;
-			case 1: 
+			case PlayerAction.MakeMovie: 
+				MakeMovie();
 				break;
-			case 2:
-				break;
-			}
+		}
 			
 			
 
@@ -765,7 +733,30 @@ public class Player : MonoBehaviour
 	
 	public void MakeMovie()
 	{
-		Debug.Log("make movie clicked");
+		if(playerType ==	PlayerType.Human)
+		{
+			Debug.Log("make movie clicked");			
+		}
+		else
+		{
+			//do the computer make a movie
+			int curActor = 0;
+			Movie newMovie = new Movie();
+			newMovie.screenplayID = hand[lastScreenplay];
+			newMovie.directorID = hand[hiDirector];
+			newMovie.musicID = hand[hiMusic];
+			foreach(int crd in hand)
+			{
+				if((gControl.GetTalentCardFromID(crd).cardData.subType == CardData.SubType.Actor) || (gControl.GetTalentCardFromID(crd).cardData.subType == CardData.SubType.Actress))
+				{
+					newMovie.actorID[curActor] = crd;
+					curActor += 1;
+				}
+			}
+			newMovie.title = gControl.GetNewMovieTitle(gControl.GetTalentCardFromID(lastScreenplay).cardData.cardName);
+
+		}
+
 	}
 	
 	

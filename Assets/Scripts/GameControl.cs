@@ -37,7 +37,7 @@ public class GameControl : MonoBehaviour
 	public bool dealing = false;
 	public bool shuffling = false;
 	public int thePlayerIndex;
-	MovieTitles movieTitles;
+	public MovieTitles movieTitles;
 	public int TalentCardDeckHiIdx = 69;
 	
 	
@@ -124,6 +124,7 @@ public class GameControl : MonoBehaviour
 		InitPlayers();
 		LoadMovieTitles();
 		
+		Debug.Log(movieTitles.comedy[3]);
 		//makeMovieButton.SetActive(false);
 		
 		//wait for 2 seconds. cards should have fallen by then
@@ -713,6 +714,33 @@ public class GameControl : MonoBehaviour
 		
 		//Need to do player control of making movie
 		player[thePlayerIndex].MakeMovie();
+	}
+	
+	public string GetNewMovieTitle(string inType)
+	{
+		string retString = "";
+		switch (inType)
+		{
+		case "Comedy":
+			retString = movieTitles.comedy[Random.Range(0, movieTitles.comedy.Length - 1)];
+			break;
+		case "Drama":
+			retString = movieTitles.drama[Random.Range(0, movieTitles.drama.Length - 1)];
+			break;		
+		case "Horror":
+			retString = movieTitles.horror[Random.Range(0, movieTitles.horror.Length - 1)];
+			break;		
+		case "Musical":
+			retString = movieTitles.musical[Random.Range(0, movieTitles.musical.Length - 1)];
+			break;		
+		case "Western":
+			retString = movieTitles.western[Random.Range(0, movieTitles.western.Length - 1)];
+			break;
+		case "Action":
+			retString = movieTitles.action[Random.Range(0, movieTitles.action.Length - 1)];
+			break;
+		}
+		return retString;
 	}
 
 }
