@@ -711,6 +711,7 @@ public class GameControl : MonoBehaviour
 	public void MakeMovieClicked()
 	{
 		
+		//Need to do player control of making movie
 		player[thePlayerIndex].MakeMovie();
 	}
 

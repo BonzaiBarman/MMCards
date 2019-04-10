@@ -7,14 +7,14 @@ using DG.Tweening;
 public class NavCanvas : MonoBehaviour
 {
     
-	[SerializeField] Canvas canvas1;
-	[SerializeField] Canvas canvas2;
+	[SerializeField] Canvas cHud;
+	[SerializeField] Canvas cInfo;
 	// Start is called before the first frame update
     void Start()
     {
-	    canvas1.enabled = true;
-	    canvas2.enabled = false;
-	    canvas2.transform.DOScale(new Vector3(0,0,0),0);
+	    cHud.enabled = true;
+	    cInfo.enabled = false;
+	    cInfo.transform.DOScale(new Vector3(0,0,0),0);
     }
 
     // Update is called once per frame
@@ -44,17 +44,17 @@ public class NavCanvas : MonoBehaviour
 		{
 			case "Close1_Open2":
 
-				canvas1.enabled = false;
-				canvas1.transform.DOScale(new Vector3(0,0,0),0);
-				canvas2.enabled = true;
-				canvas2.transform.DOScale(new Vector3(1,1, 1), 1.5f);
+				cHud.enabled = false;
+				cHud.transform.DOScale(new Vector3(0,0,0),0);
+				cInfo.enabled = true;
+				cInfo.transform.DOScale(new Vector3(1,1, 1), 1.5f);
 
 				break;
 			case "Open1_Close2":
-				canvas2.enabled = false;
-				canvas2.transform.DOScale(new Vector3(0,0,0),0);
-				canvas1.enabled = true;
-				canvas1.transform.DOScale(new Vector3(1,1, 1), 1.5f);
+				cInfo.enabled = false;
+				cInfo.transform.DOScale(new Vector3(0,0,0),0);
+				cHud.enabled = true;
+				cHud.transform.DOScale(new Vector3(1,1, 1), 1.5f);
 				break;
 		}
 	}
