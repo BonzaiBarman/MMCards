@@ -44,6 +44,8 @@ public class Player : MonoBehaviour
 	//	MakeMovie
 	//}
 	
+	public Movie newMovie;
+	public Movie[] movies;
 	public int playerID;
 	public PlayerType playerType;
 	public Material goldMaterial;
@@ -99,6 +101,7 @@ public class Player : MonoBehaviour
 	    score = 0;
 	    scoreText.text = "Score: " + score;
 	    //ChangeBackgroundMaterial("green");
+	    movies = new Movie[3];
 
     }
 
@@ -422,6 +425,8 @@ public class Player : MonoBehaviour
 				break;
 			case PlayerAction.MakeMovie: 
 				MakeMovie();
+				yield return new WaitForSeconds(2.5f);
+				playerActed = true;
 				break;
 		}
 			
@@ -733,6 +738,7 @@ public class Player : MonoBehaviour
 	
 	public void MakeMovie()
 	{
+
 		if(playerType ==	PlayerType.Human)
 		{
 			Debug.Log("make movie clicked");			
@@ -741,25 +747,31 @@ public class Player : MonoBehaviour
 		{
 			//do the computer make a movie
 			int curActor = 0;
-			Movie newMovie = new Movie();
-			newMovie.screenplayID = hand[lastScreenplay];
-			newMovie.directorID = hand[hiDirector];
-			newMovie.musicID = hand[hiMusic];
+
+			PopHandInfo();			
+
+			movies[0] = Instantiate(newMovie, new Vector3(0,1,0), Quaternion.identity);
+		
+			movies[0].InitMovie();
+			movies[0].screenplayID = hand[lastScreenplay];
+			movies[0].directorID = hand[hiDirector];
+			movies[0].musicID = hand[hiMusic];
 			foreach(int crd in hand)
 			{
 				if((gControl.GetTalentCardFromID(crd).cardData.subType == CardData.SubType.Actor) || (gControl.GetTalentCardFromID(crd).cardData.subType == CardData.SubType.Actress))
 				{
-					newMovie.actorID[curActor] = crd;
+					movies[0].actorID[curActor] = crd;
 					curActor += 1;
 				}
 			}
-			newMovie.title = gControl.GetNewMovieTitle(gControl.GetTalentCardFromID(lastScreenplay).cardData.cardName);
-
+			Debug.Log("sp: " + hand[lastScreenplay]);
+			Debug.Log("mname: " + gControl.GetTalentCardFromID(hand[lastScreenplay]).cardData.cardName);
+			movies[0].SetTitle(gControl.GetNewMovieTitle(gControl.GetTalentCardFromID(hand[lastScreenplay]).cardData.cardName));
+			score += movies[0].value();
+			scoreText.text = "Score: " + score;			
 		}
-
 	}
-	
-	
+
 }
 
 
