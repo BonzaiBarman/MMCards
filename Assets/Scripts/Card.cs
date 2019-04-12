@@ -212,7 +212,14 @@ public class Card : MonoBehaviour
 		StartCoroutine("DiscardTalentCardAnim");
 	}
 	
-	
+	public void DiscardMovieTalentCard()
+	{
+		transform.DOMoveY(3f, 0.1f);
+		float yValue;
+		yValue = 0.1f + (cardData.discardIdx / 100f);
+		transform.DOMove(new Vector3(4.7f, yValue, 0f), 0.5f);
+
+	}
 	
 	public void MoveCard(int inPlayer, int inHandIdx)
 	{
@@ -221,6 +228,7 @@ public class Card : MonoBehaviour
 		transform.DOMove(new Vector3(v.x, (float)(v.y + (inHandIdx * 0.01)), v.z), 0.1f);
 		RotateCard(inPlayer);
 	}
+	
 	public void RotateCard(int inPlayer)
 	{
 		Vector3 v = transform.rotation.eulerAngles;

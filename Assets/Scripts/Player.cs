@@ -763,22 +763,23 @@ public class Player : MonoBehaviour
 			
 			movies[nextMovieIDX].InitMovie();
 			movies[nextMovieIDX].screenplayID = hand[lastScreenplay];
-			hand[lastScreenplay] = -1;
-			DiscardCard(hand[lastScreenplay]);
+			//hand[lastScreenplay] = -1;
+			//DiscardCard(hand[lastScreenplay]);
 			movies[nextMovieIDX].directorID = hand[hiDirector];
-			hand[hiDirector] = -1;
-			DiscardCard(hand[hiDirector]);
+			//hand[hiDirector] = -1;
+			//DiscardCard(hand[hiDirector]);
 			movies[nextMovieIDX].musicID = hand[hiMusic];
-			hand[hiMusic] = -1;
-			DiscardCard(hand[hiMusic]);
+			//hand[hiMusic] = -1;
+			//DiscardCard(hand[hiMusic]);
 			int idx = 0;
 			foreach(int crd in hand)
 			{
 				if((gControl.GetTalentCardFromID(crd).cardData.subType == CardData.SubType.Actor) || (gControl.GetTalentCardFromID(crd).cardData.subType == CardData.SubType.Actress))
 				{
+					Debug.Log(nextMovieIDX + " " + curActor);
 					movies[nextMovieIDX].actorID[curActor] = crd;
 					hand[idx] = -1;
-					DiscardCard(hand[idx]);
+					//DiscardCard(hand[idx]);
 					curActor += 1;
 				}
 				idx += 1;
@@ -787,21 +788,77 @@ public class Player : MonoBehaviour
 			
 			score += movies[nextMovieIDX].value();
 			scoreText.text = "Score: " + score;
+			DiscardMovieCards();
 			nextMovieIDX += 1;
-			CompactHand(1);
+			
 		}
 	}
 	
-	void DiscardCard(int inCardID)
+	void DiscardMovieCards()
 	{
+		
+		
 		Card discardCard;
-		discardCard = gControl.GetTalentCardFromID(inCardID);
+		
+		//gControl = FindObjectOfType<GameControl>();
+		
+		//discard screenplay
+		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID);
+		
 		discardCard.cardData.hand = -1;
 		discardCard.cardData.deckIdx = -1;
 		discardCard.cardData.status = CardData.Status.Discard;
 		discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
-		discardCard.DiscardTalentCard();
 		gControl.curTalentDiscardIdx += 1;
+		discardCard.DiscardTalentCard();
+		
+		hand[lastScreenplay] = -1;
+		
+		//discard director
+		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].directorID);
+		
+		discardCard.cardData.hand = -1;
+		discardCard.cardData.deckIdx = -1;
+		discardCard.cardData.status = CardData.Status.Discard;
+		discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
+		gControl.curTalentDiscardIdx += 1;
+		discardCard.DiscardTalentCard();
+		
+		hand[hiDirector] = -1;
+		
+		//discard music
+		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].musicID);
+		
+		discardCard.cardData.hand = -1;
+		discardCard.cardData.deckIdx = -1;
+		discardCard.cardData.status = CardData.Status.Discard;
+		discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
+		gControl.curTalentDiscardIdx += 1;
+		discardCard.DiscardTalentCard();
+		
+		hand[hiMusic] = -1;
+		
+		//discard actors
+		int idx = 0;
+		foreach(int crd in movies[nextMovieIDX].actorID)
+		{
+			if(movies[nextMovieIDX].actorID[idx] != -1)
+			{
+				discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].actorID[idx]);
+		
+				discardCard.cardData.hand = -1;
+				discardCard.cardData.deckIdx = -1;
+				discardCard.cardData.status = CardData.Status.Discard;
+				discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
+				gControl.curTalentDiscardIdx += 1;
+				discardCard.DiscardTalentCard();			
+			}
+			idx += 1;
+		}
+
+
+
+		
 	}
 
 }
