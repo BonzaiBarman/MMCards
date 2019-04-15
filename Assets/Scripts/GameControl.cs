@@ -45,7 +45,9 @@ public class GameControl : MonoBehaviour
 	public int playerCount;
 	
 	//public GameObject makeMovieButton;
-	public Canvas gHud;
+	public Canvas gGameHud;
+	public Canvas gMovieHud;
+	public GameObject gMovieBackground;
 	
 	const int ActionCardCount = 50;
 	const int TalentCardCount = 70;
@@ -171,8 +173,11 @@ public class GameControl : MonoBehaviour
 
 	void InitHud()
 	{
-		gHud.transform.GetChild(1).gameObject.SetActive(false);	
-		gHud.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "Dealling...";
+		//turn movie stuff off
+		gGameHud.transform.GetChild(1).gameObject.SetActive(false);
+		gMovieHud.enabled = false;
+		//init ticker with dealing...
+		gGameHud.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "Dealling...";
 	}
 	
 	void InitActionCards()
@@ -695,12 +700,12 @@ public class GameControl : MonoBehaviour
 	
 	private void DoTickerStartTurnMessage()
 	{
-		TextMeshProUGUI tmesh = gHud.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>();
+		TextMeshProUGUI tmesh = gGameHud.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>();
 		if(curPlayer == thePlayerIndex)
 		{
 			if(player[curPlayer].CanMakeMovie())
 			{
-				gHud.transform.GetChild(1).gameObject.SetActive(true);
+				gGameHud.transform.GetChild(1).gameObject.SetActive(true);
 				tmesh.text = "Your turn, You can Make a Movie, Draw an Action card, or Draw a Talent card.";
 			}
 			else
@@ -747,6 +752,11 @@ public class GameControl : MonoBehaviour
 			break;
 		}
 		return retString;
+	}
+	
+	public void MovieOKButton()
+	{
+		player[curPlayer].playerActed = true;
 	}
 
 }

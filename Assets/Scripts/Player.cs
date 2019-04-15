@@ -29,6 +29,8 @@ public class Player : MonoBehaviour
 	{new Vector3(-6.65f, 0.08f, 1.4f), new Vector3(-6.65f, 0.08f, 1.1f), new Vector3(-6.65f, 0.08f, 0.8f)},
 	{new Vector3(-6.65f, 0.08f, 3.95f), new Vector3(-6.65f, 0.08f, 3.65f), new Vector3(-6.65f, 0.08f, 3.35f)}};
 	
+	Vector3[] movieLocs = {new Vector3(-2.1f, 2f, -0.2f), new Vector3(-0.8f, 2f, -0.2f), new Vector3(0.5f, 2f, -0.2f), new Vector3(1.8f, 2f, -0.2f), new Vector3(3.1f, 2f, -0.2f), new Vector3(4.4f, 2f, -0.2f), new Vector3(5.7f, 2f, -0.2f)};
+	
 	public enum PlayerType
 	{
 		Human,
@@ -433,8 +435,8 @@ public class Player : MonoBehaviour
 				break;
 			case PlayerAction.MakeMovie: 
 				MakeMovie();
-				yield return new WaitForSeconds(2.5f);
-				playerActed = true;
+				yield return new WaitUntil(() => playerActed == true);
+				//playerActed = true;
 				break;
 		}
 			
@@ -757,20 +759,17 @@ public class Player : MonoBehaviour
 			int curActor = 0;
 
 			PopHandInfo();			
-
+			
+			//create movie instance
 			movies[nextMovieIDX] = Instantiate(newMovie, plyrMovieLocs[playerID, nextMovieIDX], Quaternion.identity);
 			movies[nextMovieIDX].transform.DORotate(new Vector3(90,0,0), 1);
 			
+			//determine movie cards
+			//will need alot more logic here in the future
 			movies[nextMovieIDX].InitMovie();
 			movies[nextMovieIDX].screenplayID = hand[lastScreenplay];
-			//hand[lastScreenplay] = -1;
-			//DiscardCard(hand[lastScreenplay]);
-			movies[nextMovieIDX].directorID = hand[hiDirector];
-			//hand[hiDirector] = -1;
-			//DiscardCard(hand[hiDirector]);
+			movies[nextMovieIDX].directorID = hand[hiDirector];		
 			movies[nextMovieIDX].musicID = hand[hiMusic];
-			//hand[hiMusic] = -1;
-			//DiscardCard(hand[hiMusic]);
 			int idx = 0;
 			foreach(int crd in hand)
 			{
@@ -779,7 +778,6 @@ public class Player : MonoBehaviour
 					Debug.Log(nextMovieIDX + " " + curActor);
 					movies[nextMovieIDX].actorID[curActor] = crd;
 					hand[idx] = -1;
-					//DiscardCard(hand[idx]);
 					curActor += 1;
 				}
 				idx += 1;
@@ -788,13 +786,13 @@ public class Player : MonoBehaviour
 			
 			score += movies[nextMovieIDX].value();
 			scoreText.text = "Score: " + score;
-			DiscardMovieCards();
+			MoveMovieCards();
 			nextMovieIDX += 1;
 			
 		}
 	}
 	
-	void DiscardMovieCards()
+	void MoveMovieCards()
 	{
 		
 		
@@ -806,40 +804,38 @@ public class Player : MonoBehaviour
 		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID);
 		
 		discardCard.cardData.hand = -1;
-		discardCard.cardData.deckIdx = -1;
-		discardCard.cardData.status = CardData.Status.Discard;
-		discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
-		gControl.curTalentDiscardIdx += 1;
-		discardCard.DiscardTalentCard();
-		
+		discardCard.cardData.status = CardData.Status.Movie;
+		discardCard.cardData.movie = playerID;
+		discardCard.cardData.movieIdx = nextMovieIDX;
+		discardCard.transform.DOMove(movieLocs[0], 0.5f);
+		discardCard.transform.DORotate(new Vector3(0,0,0), 0.5f);
 		hand[lastScreenplay] = -1;
 		
 		//discard director
 		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].directorID);
 		
 		discardCard.cardData.hand = -1;
-		discardCard.cardData.deckIdx = -1;
-		discardCard.cardData.status = CardData.Status.Discard;
-		discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
-		gControl.curTalentDiscardIdx += 1;
-		discardCard.DiscardTalentCard();
-		
+		discardCard.cardData.status = CardData.Status.Movie;
+		discardCard.cardData.movie = playerID;
+		discardCard.cardData.movieIdx = nextMovieIDX;
+		discardCard.transform.DOMove(movieLocs[1], 0.5f);
+		discardCard.transform.DORotate(new Vector3(0,0,0), 0.5f);
 		hand[hiDirector] = -1;
 		
 		//discard music
 		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].musicID);
 		
 		discardCard.cardData.hand = -1;
-		discardCard.cardData.deckIdx = -1;
-		discardCard.cardData.status = CardData.Status.Discard;
-		discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
-		gControl.curTalentDiscardIdx += 1;
-		discardCard.DiscardTalentCard();
-		
+		discardCard.cardData.status = CardData.Status.Movie;
+		discardCard.cardData.movie = playerID;
+		discardCard.cardData.movieIdx = nextMovieIDX;
+		discardCard.transform.DOMove(movieLocs[2], 0.5f);
+		discardCard.transform.DORotate(new Vector3(0,0,0), 0.5f);
 		hand[hiMusic] = -1;
 		
 		//discard actors
 		int idx = 0;
+		//int idxActor = 0;
 		foreach(int crd in movies[nextMovieIDX].actorID)
 		{
 			if(movies[nextMovieIDX].actorID[idx] != -1)
@@ -847,18 +843,53 @@ public class Player : MonoBehaviour
 				discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].actorID[idx]);
 		
 				discardCard.cardData.hand = -1;
-				discardCard.cardData.deckIdx = -1;
-				discardCard.cardData.status = CardData.Status.Discard;
-				discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
-				gControl.curTalentDiscardIdx += 1;
-				discardCard.DiscardTalentCard();			
+				discardCard.cardData.status = CardData.Status.Movie;
+				discardCard.cardData.movie = playerID;
+				discardCard.cardData.movieIdx = nextMovieIDX;
+				discardCard.transform.DOMove(movieLocs[idx + 3], 0.5f);
+				discardCard.transform.DORotate(new Vector3(0,0,0), 0.5f);
+				switch(idx)
+				{
+				case 1:
+					gControl.gMovieHud.transform.GetChild(8).gameObject.SetActive(true);
+					gControl.gMovieHud.transform.GetChild(9).gameObject.SetActive(true);
+					break;
+				case 2:
+					gControl.gMovieHud.transform.GetChild(10).gameObject.SetActive(true);
+					gControl.gMovieHud.transform.GetChild(11).gameObject.SetActive(true);
+					break;
+				case 3:
+					gControl.gMovieHud.transform.GetChild(12).gameObject.SetActive(true);
+					gControl.gMovieHud.transform.GetChild(13).gameObject.SetActive(true);
+					break;
+				}
+			}
+			else
+			{
+				switch(idx)
+				{
+				case 1:
+					gControl.gMovieHud.transform.GetChild(8).gameObject.SetActive(false);
+					gControl.gMovieHud.transform.GetChild(9).gameObject.SetActive(false);
+					break;
+				case 2:
+					gControl.gMovieHud.transform.GetChild(10).gameObject.SetActive(false);
+					gControl.gMovieHud.transform.GetChild(11).gameObject.SetActive(false);
+					break;
+				case 3:
+					gControl.gMovieHud.transform.GetChild(12).gameObject.SetActive(false);
+					gControl.gMovieHud.transform.GetChild(13).gameObject.SetActive(false);
+					break;
+				}
 			}
 			idx += 1;
 		}
 
-
-
-		
+		//gControl.gMovieHud.gameObject.SetActive(true);
+		gControl.gMovieHud.enabled = true;
+		gControl.gGameHud.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = GetName() + " makes a movie '" + movies[nextMovieIDX].title + "'";
+		gControl.gMovieHud.transform.GetChild(15).GetComponent<TextMeshProUGUI>().text = movies[nextMovieIDX].title;
+		gControl.gMovieBackground.gameObject.SetActive(true);
 	}
 
 }
