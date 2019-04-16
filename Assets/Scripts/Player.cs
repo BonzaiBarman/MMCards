@@ -25,13 +25,13 @@ public class Player : MonoBehaviour
 {
 
 	Vector3[,] plyrMovieLocs = new [,] {{new Vector3(-6.65f, 0.08f, -3.55f), new Vector3(-6.65f, 0.08f, -3.85f), new Vector3(-6.65f, 0.08f, -4.15f)},
-	{new Vector3(-6.65f, 0.08f, -1f), new Vector3(-6.65f, 0.08f, -1.3f), new Vector3(-6.65f, 0.08f, -1.6f)},
+	{new Vector3(-6.65f, 0.08f, -1.1f), new Vector3(-6.65f, 0.08f, -1.4f), new Vector3(-6.65f, 0.08f, -1.7f)},
 	{new Vector3(-6.65f, 0.08f, 1.4f), new Vector3(-6.65f, 0.08f, 1.1f), new Vector3(-6.65f, 0.08f, 0.8f)},
 	{new Vector3(-6.65f, 0.08f, 3.95f), new Vector3(-6.65f, 0.08f, 3.65f), new Vector3(-6.65f, 0.08f, 3.35f)}};
 	
 	Vector3[] movieLocs = {new Vector3(-2.1f, 2f, -0.2f), new Vector3(-0.8f, 2f, -0.2f), new Vector3(0.5f, 2f, -0.2f), new Vector3(1.8f, 2f, -0.2f), new Vector3(3.1f, 2f, -0.2f), new Vector3(4.4f, 2f, -0.2f), new Vector3(5.7f, 2f, -0.2f)};
 	
-	Vector3[] movieStackLocs = {new Vector3(-3.6f, 0.01f, -3.2f), new Vector3(-3f, 0.01f, 2.0f), new Vector3(6.2f, 0.01f, 3.7f), new Vector3(7.3f, 0.01f, -2.2f)};
+	Vector3[] movieStackLocs = {new Vector3(-3.2f, 0.01f, -3.8f), new Vector3(-3.05f, 0.01f, 3.85f), new Vector3(7.45f, 0.01f, 3.85f), new Vector3(7.45f, 0.01f, -3.85f)};
 	Vector3[] movieStackRots = new [] {new Vector3(350f, 0f, 0f), new Vector3(0f, 90f, 0f), new Vector3(0f, 180f, 0f), new Vector3(0f, 270f, 0f)};
 
 	public enum PlayerType
@@ -440,7 +440,7 @@ public class Player : MonoBehaviour
 				movies[nextMovieIDX] = Instantiate(newMovie, plyrMovieLocs[playerID, nextMovieIDX], Quaternion.identity);
                 int xr = 3;
                 MakeMovie();
-                xr = 3;
+				xr = 4;
 				yield return new WaitUntil(() => playerActed == true);
 				playerActed = false;
 				
@@ -959,7 +959,13 @@ public class Player : MonoBehaviour
 			}
 			idx += 1;
 		}
+		FixHandAfterMovie();
 		playerActed = true;
+	}
+	
+	void FixHandAfterMovie()
+	{
+		
 	}
 
 }
