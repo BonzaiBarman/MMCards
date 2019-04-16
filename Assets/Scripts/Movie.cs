@@ -17,18 +17,18 @@ public class Movie : MonoBehaviour
 		Action
 	}
     
-	public int screenplayID;
-	public int directorID;
-	public int musicID;
-	public int[] actorID = new int[4];
-	public string title;
+	public int screenplayID = -1;
+	public int directorID = -1;
+	public int musicID = -1;
+	public int[] actorID = new[] {-1, -1, -1, -1};
+    public string title = "";
 	int spIndex = -1;
 	
 	// Start is called before the first frame update
     void Start()
     {
     	gControl = FindObjectOfType<GameControl>();
-    	InitMovie();    
+    	//InitMovie();    
     }
 
     // Update is called once per frame

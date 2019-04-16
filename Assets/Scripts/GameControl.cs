@@ -126,7 +126,6 @@ public class GameControl : MonoBehaviour
 		InitPlayers();
 		LoadMovieTitles();
 		
-		Debug.Log(movieTitles.comedy[3]);
 		//makeMovieButton.SetActive(false);
 		
 		//wait for 2 seconds. cards should have fallen by then
@@ -756,6 +755,8 @@ public class GameControl : MonoBehaviour
 	
 	public void MovieOKButton()
 	{
+		gMovieBackground.gameObject.SetActive(false);
+		gMovieHud.enabled = false;
 		player[curPlayer].playerActed = true;
 	}
 

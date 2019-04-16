@@ -31,6 +31,9 @@ public class Player : MonoBehaviour
 	
 	Vector3[] movieLocs = {new Vector3(-2.1f, 2f, -0.2f), new Vector3(-0.8f, 2f, -0.2f), new Vector3(0.5f, 2f, -0.2f), new Vector3(1.8f, 2f, -0.2f), new Vector3(3.1f, 2f, -0.2f), new Vector3(4.4f, 2f, -0.2f), new Vector3(5.7f, 2f, -0.2f)};
 	
+	Vector3[] movieStackLocs = {new Vector3(-3.6f, 0.01f, -3.2f), new Vector3(-3f, 0.01f, 2.0f), new Vector3(6.2f, 0.01f, 3.7f), new Vector3(7.3f, 0.01f, -2.2f)};
+	Vector3[] movieStackRots = new [] {new Vector3(350f, 0f, 0f), new Vector3(0f, 90f, 0f), new Vector3(0f, 180f, 0f), new Vector3(0f, 270f, 0f)};
+
 	public enum PlayerType
 	{
 		Human,
@@ -433,9 +436,17 @@ public class Player : MonoBehaviour
 				}
 
 				break;
-			case PlayerAction.MakeMovie: 
-				MakeMovie();
+			case PlayerAction.MakeMovie:
+				movies[nextMovieIDX] = Instantiate(newMovie, plyrMovieLocs[playerID, nextMovieIDX], Quaternion.identity);
+                int xr = 3;
+                MakeMovie();
+                xr = 3;
 				yield return new WaitUntil(() => playerActed == true);
+				playerActed = false;
+				
+				StackMovieCards();
+				yield return new WaitUntil(() => playerActed == true);
+				nextMovieIDX += 1;
 				//playerActed = true;
 				break;
 		}
@@ -761,7 +772,7 @@ public class Player : MonoBehaviour
 			PopHandInfo();			
 			
 			//create movie instance
-			movies[nextMovieIDX] = Instantiate(newMovie, plyrMovieLocs[playerID, nextMovieIDX], Quaternion.identity);
+			//movies[nextMovieIDX] = Instantiate(newMovie, plyrMovieLocs[playerID, nextMovieIDX], Quaternion.identity);
 			movies[nextMovieIDX].transform.DORotate(new Vector3(90,0,0), 1);
 			
 			//determine movie cards
@@ -787,50 +798,47 @@ public class Player : MonoBehaviour
 			score += movies[nextMovieIDX].value();
 			scoreText.text = "Score: " + score;
 			MoveMovieCards();
-			nextMovieIDX += 1;
 			
 		}
 	}
 	
 	void MoveMovieCards()
-	{
-		
-		
-		Card discardCard;
+	{		
+		Card moveCard;
 		
 		//gControl = FindObjectOfType<GameControl>();
 		
 		//discard screenplay
-		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID);
+		moveCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID);
 		
-		discardCard.cardData.hand = -1;
-		discardCard.cardData.status = CardData.Status.Movie;
-		discardCard.cardData.movie = playerID;
-		discardCard.cardData.movieIdx = nextMovieIDX;
-		discardCard.transform.DOMove(movieLocs[0], 0.5f);
-		discardCard.transform.DORotate(new Vector3(0,0,0), 0.5f);
+		moveCard.cardData.hand = -1;
+		moveCard.cardData.status = CardData.Status.Movie;
+		moveCard.cardData.movie = playerID;
+		moveCard.cardData.movieIdx = nextMovieIDX;
+		moveCard.transform.DOMove(movieLocs[0], 0.5f);
+		moveCard.transform.DORotate(new Vector3(0,0,0), 0.5f);
 		hand[lastScreenplay] = -1;
 		
 		//discard director
-		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].directorID);
+		moveCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].directorID);
 		
-		discardCard.cardData.hand = -1;
-		discardCard.cardData.status = CardData.Status.Movie;
-		discardCard.cardData.movie = playerID;
-		discardCard.cardData.movieIdx = nextMovieIDX;
-		discardCard.transform.DOMove(movieLocs[1], 0.5f);
-		discardCard.transform.DORotate(new Vector3(0,0,0), 0.5f);
+		moveCard.cardData.hand = -1;
+		moveCard.cardData.status = CardData.Status.Movie;
+		moveCard.cardData.movie = playerID;
+		moveCard.cardData.movieIdx = nextMovieIDX;
+		moveCard.transform.DOMove(movieLocs[1], 0.5f);
+		moveCard.transform.DORotate(new Vector3(0,0,0), 0.5f);
 		hand[hiDirector] = -1;
 		
 		//discard music
-		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].musicID);
+		moveCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].musicID);
 		
-		discardCard.cardData.hand = -1;
-		discardCard.cardData.status = CardData.Status.Movie;
-		discardCard.cardData.movie = playerID;
-		discardCard.cardData.movieIdx = nextMovieIDX;
-		discardCard.transform.DOMove(movieLocs[2], 0.5f);
-		discardCard.transform.DORotate(new Vector3(0,0,0), 0.5f);
+		moveCard.cardData.hand = -1;
+		moveCard.cardData.status = CardData.Status.Movie;
+		moveCard.cardData.movie = playerID;
+		moveCard.cardData.movieIdx = nextMovieIDX;
+		moveCard.transform.DOMove(movieLocs[2], 0.5f);
+		moveCard.transform.DORotate(new Vector3(0,0,0), 0.5f);
 		hand[hiMusic] = -1;
 		
 		//discard actors
@@ -840,14 +848,14 @@ public class Player : MonoBehaviour
 		{
 			if(movies[nextMovieIDX].actorID[idx] != -1)
 			{
-				discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].actorID[idx]);
+				moveCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].actorID[idx]);
 		
-				discardCard.cardData.hand = -1;
-				discardCard.cardData.status = CardData.Status.Movie;
-				discardCard.cardData.movie = playerID;
-				discardCard.cardData.movieIdx = nextMovieIDX;
-				discardCard.transform.DOMove(movieLocs[idx + 3], 0.5f);
-				discardCard.transform.DORotate(new Vector3(0,0,0), 0.5f);
+				moveCard.cardData.hand = -1;
+				moveCard.cardData.status = CardData.Status.Movie;
+				moveCard.cardData.movie = playerID;
+				moveCard.cardData.movieIdx = nextMovieIDX;
+				moveCard.transform.DOMove(movieLocs[idx + 3], 0.5f);
+				moveCard.transform.DORotate(new Vector3(0,0,0), 0.5f);
 				switch(idx)
 				{
 				case 1:
@@ -888,8 +896,70 @@ public class Player : MonoBehaviour
 		//gControl.gMovieHud.gameObject.SetActive(true);
 		gControl.gMovieHud.enabled = true;
 		gControl.gGameHud.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = GetName() + " makes a movie '" + movies[nextMovieIDX].title + "'";
-		gControl.gMovieHud.transform.GetChild(15).GetComponent<TextMeshProUGUI>().text = movies[nextMovieIDX].title;
+		gControl.gMovieHud.transform.GetChild(15).GetComponent<TextMeshProUGUI>().text = movies[nextMovieIDX].title + " (" + movies[nextMovieIDX].value() + ")";
 		gControl.gMovieBackground.gameObject.SetActive(true);
+	}
+
+	void StackMovieCards()
+	{		
+		Card discardCard;
+		
+		//discard screenplay
+		Debug.Log("player: " + playerID + " nextMovieIDX: " + nextMovieIDX + " sp: " +  movies[nextMovieIDX].screenplayID + " spCardName: " + gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID).cardData.cardName);
+		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID);
+		discardCard.cardData.hand = -1;
+		discardCard.cardData.status = CardData.Status.Discard;
+		discardCard.cardData.discard =	CardData.CardType.Talent;
+		discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
+		discardCard.transform.DOMove(movieStackLocs[playerID], 0.5f);
+		discardCard.transform.DORotate(movieStackRots[playerID], 0.5f);
+		gControl.curTalentDiscardIdx += 1;
+		
+		
+		//discard director
+		Debug.Log("nextMovieIDX: " + nextMovieIDX + " dir: " +  movies[nextMovieIDX].directorID + " dirCardName: " + gControl.GetTalentCardFromID(movies[nextMovieIDX].directorID).cardData.cardName);
+		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].directorID);
+		
+		discardCard.cardData.hand = -1;
+		discardCard.cardData.status = CardData.Status.Discard;
+		discardCard.cardData.discard = CardData.CardType.Talent;
+		discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
+		discardCard.transform.DOMove(movieStackLocs[playerID], 0.5f);
+		discardCard.transform.DORotate(movieStackRots[playerID], 0.5f);
+		gControl.curTalentDiscardIdx += 1;
+		
+		//discard music
+		Debug.Log("mus: " +gControl.GetTalentCardFromID(movies[nextMovieIDX].musicID).cardData.cardName);
+		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].musicID);
+		
+		discardCard.cardData.hand = -1;
+		discardCard.cardData.status = CardData.Status.Discard;
+		discardCard.cardData.discard = CardData.CardType.Talent;
+		discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
+		discardCard.transform.DOMove(movieStackLocs[playerID], 0.5f);
+		discardCard.transform.DORotate(movieStackRots[playerID], 0.5f);
+		gControl.curTalentDiscardIdx += 1;
+		
+		//discard actors
+		int idx = 0;
+		//int idxActor = 0;
+		foreach(int crd in movies[nextMovieIDX].actorID)
+		{
+			if(movies[nextMovieIDX].actorID[idx] != -1)
+			{
+				discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].actorID[idx]);
+		
+				discardCard.cardData.hand = -1;
+				discardCard.cardData.status = CardData.Status.Discard;
+				discardCard.cardData.discard = CardData.CardType.Talent;
+				discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
+				discardCard.transform.DOMove(movieStackLocs[playerID], 0.5f);
+				discardCard.transform.DORotate(movieStackRots[playerID], 0.5f);
+				gControl.curTalentDiscardIdx += 1;
+			}
+			idx += 1;
+		}
+		playerActed = true;
 	}
 
 }
