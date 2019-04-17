@@ -491,7 +491,7 @@ public class GameControl : MonoBehaviour
 			//	StartCoroutine("ReshuffleTalentCards");
 			//}
 			//Debug.Log(inCard.cardData.deckIdx + " : " + inCard.cardData.cardName);
-			Debug.Log("cur talent card idx: " + curTalentCardsIdx + " : deckidx " + inCard.cardData.deckIdx + " : cardid " + inCard.cardData.cardID + " : name " + inCard.cardData.cardName);
+			//Debug.Log("cur talent card idx: " + curTalentCardsIdx + " : deckidx " + inCard.cardData.deckIdx + " : cardid " + inCard.cardData.cardID + " : name " + inCard.cardData.cardName);
 
 			if (player[thePlayerIndex].nextHandIdx < 7)
 			{
@@ -616,8 +616,8 @@ public class GameControl : MonoBehaviour
 	
 	public int GetNextTalentCardID()
 	{
-		Debug.Log("cur talent card idx: " + curTalentCardsIdx);
-		Debug.Log("cur talent card idx: " + curTalentCardsIdx + " : deckidx " + talentCards[curTalentCardsIdx].cardData.deckIdx + " : cardid " + talentCards[curTalentCardsIdx].cardData.cardID + " : name " + talentCards[curTalentCardsIdx].cardData.cardName);
+		//Debug.Log("cur talent card idx: " + curTalentCardsIdx);
+		//Debug.Log("cur talent card idx: " + curTalentCardsIdx + " : deckidx " + talentCards[curTalentCardsIdx].cardData.deckIdx + " : cardid " + talentCards[curTalentCardsIdx].cardData.cardID + " : name " + talentCards[curTalentCardsIdx].cardData.cardName);
 		return talentCards[curTalentCardsIdx].cardData.cardID;
 	}
     

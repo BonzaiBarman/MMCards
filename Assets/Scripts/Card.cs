@@ -112,15 +112,17 @@ public class Card : MonoBehaviour
 		}
 		else
 		{
-			//temp
-			transform.DORotate(new Vector3(0f, 0f, 0f), 0f);
+			//temp while opp cards are face up
+			Vector3 v = transform.position;
+			transform.DOMove(new Vector3(v.x, v.y + 1, v.z), 0.2f);
+			transform.DORotate(new Vector3(0f, 0f, 0f), 0.5f);
 			//--
 			
 			transform.DOMove(plyrDrawLocs[inPlayerIdx], 0.5f);
 			GetComponent<Rigidbody>().AddRelativeForce(0, Random.Range(-10,10), Random.Range(-100,100), ForceMode.Impulse);
 			GetComponent<Rigidbody>().AddRelativeTorque(Random.Range(-10,10), Random.Range(-100,100), Random.Range(-10,10), ForceMode.Impulse);
 		}
-			yield return new WaitForSeconds(0.5f);
+		yield return new WaitForSeconds(0.5f);
 	}
 	
 	IEnumerator DealTalentCardAnim(int inPlayerIdx = 0)
@@ -231,7 +233,15 @@ public class Card : MonoBehaviour
 	
 	public void RotateCard(int inPlayer)
 	{
-		Vector3 v = transform.rotation.eulerAngles;
-		transform.DORotate(new Vector3(v.x, plyrHandRots[inPlayer].y, v.z), 0.1f);
+		if(inPlayer == gControl.thePlayerIndex)
+		{
+			Vector3 v = transform.rotation.eulerAngles;
+			transform.DORotate(new Vector3(v.x, plyrHandRots[inPlayer].y, v.z), 0.1f);
+		}
+		else
+		{
+			transform.DORotate(new Vector3(0, plyrHandRots[inPlayer].y, 0), 0.1f);			
+		}
+
 	}
 }

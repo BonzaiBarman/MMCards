@@ -786,7 +786,7 @@ public class Player : MonoBehaviour
 			{
 				if((gControl.GetTalentCardFromID(crd).cardData.subType == CardData.SubType.Actor) || (gControl.GetTalentCardFromID(crd).cardData.subType == CardData.SubType.Actress))
 				{
-					Debug.Log(nextMovieIDX + " " + curActor);
+					//Debug.Log(nextMovieIDX + " " + curActor);
 					movies[nextMovieIDX].actorID[curActor] = crd;
 					hand[idx] = -1;
 					curActor += 1;
@@ -905,7 +905,7 @@ public class Player : MonoBehaviour
 		Card discardCard;
 		
 		//discard screenplay
-		Debug.Log("player: " + playerID + " nextMovieIDX: " + nextMovieIDX + " sp: " +  movies[nextMovieIDX].screenplayID + " spCardName: " + gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID).cardData.cardName);
+		//Debug.Log("player: " + playerID + " nextMovieIDX: " + nextMovieIDX + " sp: " +  movies[nextMovieIDX].screenplayID + " spCardName: " + gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID).cardData.cardName);
 		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID);
 		discardCard.cardData.hand = -1;
 		//discardCard.cardData.status = CardData.Status.Movie	;
@@ -917,7 +917,7 @@ public class Player : MonoBehaviour
 		
 		
 		//discard director
-		Debug.Log("nextMovieIDX: " + nextMovieIDX + " dir: " +  movies[nextMovieIDX].directorID + " dirCardName: " + gControl.GetTalentCardFromID(movies[nextMovieIDX].directorID).cardData.cardName);
+		//Debug.Log("nextMovieIDX: " + nextMovieIDX + " dir: " +  movies[nextMovieIDX].directorID + " dirCardName: " + gControl.GetTalentCardFromID(movies[nextMovieIDX].directorID).cardData.cardName);
 		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].directorID);
 		
 		discardCard.cardData.hand = -1;
@@ -929,7 +929,7 @@ public class Player : MonoBehaviour
 		gControl.curTalentDiscardIdx += 1;
 		
 		//discard music
-		Debug.Log("mus: " +gControl.GetTalentCardFromID(movies[nextMovieIDX].musicID).cardData.cardName);
+		//Debug.Log("mus: " +gControl.GetTalentCardFromID(movies[nextMovieIDX].musicID).cardData.cardName);
 		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].musicID);
 		
 		discardCard.cardData.hand = -1;
