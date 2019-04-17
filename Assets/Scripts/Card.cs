@@ -14,9 +14,9 @@ public class Card : MonoBehaviour
 	GameControl gControl;
 
 	Vector3[,] plyrHandLocs = new [,] {{new Vector3(-2.1f, 2f, -3.2f), new Vector3(-0.8f, 2f, -3.2f), new Vector3(0.5f, 2f, -3.2f), new Vector3(1.8f, 2f, -3.2f), new Vector3(3.1f, 2f, -3.2f), new Vector3(4.4f, 2f, -3.2f), new Vector3(5.7f, 2f, -3.2f)},
-	{new Vector3(-3f, 0.01f, 2.9f), new Vector3(-3f, 0.011f, 2.2f), new Vector3(-3f, 0.012f, 1.5f), new Vector3(-3f, 0.013f, 0.8f), new Vector3(-3f, 0.014f, 0.1f), new Vector3(-3f, 0.015f, -0.6f), new Vector3(-3f, 0.016f, -1.3f)},
+	{new Vector3(-3f, 0.01f, 2.4f), new Vector3(-3f, 0.011f, 1.7f), new Vector3(-3f, 0.012f, 1f), new Vector3(-3f, 0.013f, 0.3f), new Vector3(-3f, 0.014f, -0.4f), new Vector3(-3f, 0.015f, -1.1f), new Vector3(-3f, 0.016f, -1.8f)},
 	{new Vector3(4.7f, 0.01f, 3.7f), new Vector3(4f, 0.011f, 3.7f), new Vector3(3.3f, 0.012f, 3.7f), new Vector3(2.6f, 0.013f, 3.7f), new Vector3(1.9f, 0.014f, 3.7f), new Vector3(1.2f, 0.015f, 3.7f), new Vector3(0.5f, 0.016f, 3.7f)},
-	{new Vector3(7.3f, 0.01f, -1.3f), new Vector3(7.3f, 0.011f, -0.6f), new Vector3(7.3f, 0.012f, 0.1f), new Vector3(7.3f, 0.013f, 0.8f), new Vector3(7.3f, 0.014f, 1.5f), new Vector3(7.3f, 0.015f, 2.2f), new Vector3(7.3f, 0.016f, 2.9f)}};
+	{new Vector3(7.3f, 0.01f, -1.8f), new Vector3(7.3f, 0.011f, -1.1f), new Vector3(7.3f, 0.012f, -0.4f), new Vector3(7.3f, 0.013f, 0.3f), new Vector3(7.3f, 0.014f, 1f), new Vector3(7.3f, 0.015f, 1.7f), new Vector3(7.3f, 0.016f, 2.4f)}};
 	Vector3[] plyrDealLocs = new [] {new Vector3(1.8f, 2f, -3.2f), new Vector3(-3f, 0.1f, 0.8f), new Vector3(3.1f, 0.1f, 3.7f), new Vector3(7.3f, 0.1f, 0.8f)};
 	Vector3[] plyrHandRots = new [] {new Vector3(350f, 0f, 0f), new Vector3(0f, 90f, 0f), new Vector3(0f, 180f, 0f), new Vector3(0f, 270f, 0f)};
 	Vector3[] plyrDrawLocs = new [] {new Vector3(1.5f, 3f, -1.5f), new Vector3(-1.5f, 0.1f, 1.8f), new Vector3(3.1f, 0.1f, 2.2f), new Vector3(5.8f, 0.1f, 1.8f)};

@@ -908,8 +908,8 @@ public class Player : MonoBehaviour
 		Debug.Log("player: " + playerID + " nextMovieIDX: " + nextMovieIDX + " sp: " +  movies[nextMovieIDX].screenplayID + " spCardName: " + gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID).cardData.cardName);
 		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID);
 		discardCard.cardData.hand = -1;
-		discardCard.cardData.status = CardData.Status.Discard;
-		discardCard.cardData.discard =	CardData.CardType.Talent;
+		//discardCard.cardData.status = CardData.Status.Movie	;
+		//discardCard.cardData.discard = CardData.CardType.Talent;
 		discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
 		discardCard.transform.DOMove(movieStackLocs[playerID], 0.5f);
 		discardCard.transform.DORotate(movieStackRots[playerID], 0.5f);
@@ -921,8 +921,8 @@ public class Player : MonoBehaviour
 		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].directorID);
 		
 		discardCard.cardData.hand = -1;
-		discardCard.cardData.status = CardData.Status.Discard;
-		discardCard.cardData.discard = CardData.CardType.Talent;
+		//discardCard.cardData.status = CardData.Status.Movie;
+		//discardCard.cardData.discard = CardData.CardType.Talent;
 		discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
 		discardCard.transform.DOMove(movieStackLocs[playerID], 0.5f);
 		discardCard.transform.DORotate(movieStackRots[playerID], 0.5f);
@@ -933,8 +933,8 @@ public class Player : MonoBehaviour
 		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].musicID);
 		
 		discardCard.cardData.hand = -1;
-		discardCard.cardData.status = CardData.Status.Discard;
-		discardCard.cardData.discard = CardData.CardType.Talent;
+		//discardCard.cardData.status = CardData.Status.Movie;
+		//discardCard.cardData.discard = CardData.CardType.Talent;
 		discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
 		discardCard.transform.DOMove(movieStackLocs[playerID], 0.5f);
 		discardCard.transform.DORotate(movieStackRots[playerID], 0.5f);
@@ -950,8 +950,8 @@ public class Player : MonoBehaviour
 				discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].actorID[idx]);
 		
 				discardCard.cardData.hand = -1;
-				discardCard.cardData.status = CardData.Status.Discard;
-				discardCard.cardData.discard = CardData.CardType.Talent;
+				//discardCard.cardData.status = CardData.Status.Movie;
+				//discardCard.cardData.discard = CardData.CardType.Talent;
 				discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
 				discardCard.transform.DOMove(movieStackLocs[playerID], 0.5f);
 				discardCard.transform.DORotate(movieStackRots[playerID], 0.5f);
@@ -965,7 +965,34 @@ public class Player : MonoBehaviour
 	
 	void FixHandAfterMovie()
 	{
-		
+		int cnt = 0;
+		int[] hold = new int[7] {-1,-1,-1,-1,-1,-1,-1};
+		for(int idx = 0; idx < hand.Length; idx++)
+		{
+			if(hand[idx] != -1)
+			{
+				hold[cnt] = hand[idx];
+				cnt += 1;
+			}
+		}
+		if( cnt == 0)
+		{
+			nextHandIdx = 0;
+		}
+		else
+		{
+			hand = hold;
+
+			for(int idx = 0; idx < hand.Length; idx++)
+			{
+				if(hand[idx] != -1)
+				{
+					gControl.GetTalentCardFromID(hand[idx]).MoveCard(playerID, idx);
+				}
+			}
+			nextHandIdx = cnt;					
+		}
+
 	}
 
 }
