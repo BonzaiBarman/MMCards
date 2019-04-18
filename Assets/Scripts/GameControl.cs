@@ -709,7 +709,8 @@ public class GameControl : MonoBehaviour
 			}
 			else
 			{
-				tmesh.text = "Your turn, Draw an Action or Talent card.";	
+				gGameHud.transform.GetChild(1).gameObject.SetActive(false);
+				tmesh.text = "Your turn, Draw an Action or Talent card.";
 			}
 		}
 		else
@@ -723,7 +724,10 @@ public class GameControl : MonoBehaviour
 	{
 		
 		//Need to do player control of making movie
-		player[thePlayerIndex].MakeMovie();
+		//player[thePlayerIndex].MakeMovie();
+		gGameHud.transform.GetChild(1).gameObject.SetActive(false);
+		player[thePlayerIndex].playerAction =	PlayerAction.MakeMovie;
+		player[thePlayerIndex].playerActed = true;
 	}
 	
 	public string GetNewMovieTitle(string inType)

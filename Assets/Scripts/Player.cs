@@ -32,7 +32,7 @@ public class Player : MonoBehaviour
 	Vector3[] movieLocs = {new Vector3(-2.1f, 2f, -0.2f), new Vector3(-0.8f, 2f, -0.2f), new Vector3(0.5f, 2f, -0.2f), new Vector3(1.8f, 2f, -0.2f), new Vector3(3.1f, 2f, -0.2f), new Vector3(4.4f, 2f, -0.2f), new Vector3(5.7f, 2f, -0.2f)};
 	
 	Vector3[] movieStackLocs = {new Vector3(-3.2f, 0.01f, -3.8f), new Vector3(-3.05f, 0.01f, 3.85f), new Vector3(7.45f, 0.01f, 3.85f), new Vector3(7.45f, 0.01f, -3.85f)};
-	Vector3[] movieStackRots = new [] {new Vector3(350f, 0f, 0f), new Vector3(0f, 90f, 0f), new Vector3(0f, 180f, 0f), new Vector3(0f, 270f, 0f)};
+	Vector3[] movieStackRots = new [] {new Vector3(0f, 0f, 180f), new Vector3(0f, 90f, 180f), new Vector3(0f, 180f, 180f), new Vector3(0f, 270f, 180f)};
 
 	public enum PlayerType
 	{
@@ -302,6 +302,19 @@ public class Player : MonoBehaviour
 			yield return new WaitForSeconds(2.5f);
 			break;
 		case PlayerAction.MakeMovie:
+			playerActed = false;
+			movies[nextMovieIDX] = Instantiate(newMovie, plyrMovieLocs[playerID, nextMovieIDX], Quaternion.identity);
+			int xr = 3;
+			MakeMovie();
+			xr = 4;
+			
+			yield return new WaitUntil(() => playerActed == true);
+			playerActed = false;
+				
+			StackMovieCards();
+			yield return new WaitUntil(() => playerActed == true);
+			nextMovieIDX += 1;
+			//playerActed = true;
 			break;
 		}
 		
@@ -759,17 +772,39 @@ public class Player : MonoBehaviour
 	
 	public void MakeMovie()
 	{
-
+		PopHandInfo();
 		if(playerType == PlayerType.Human)
 		{
-			Debug.Log("make movie clicked");			
+			Debug.Log("make movie clicked");	
+			movies[nextMovieIDX].transform.DORotate(new Vector3(90,0,0), 1);
+			movies[nextMovieIDX].InitMovie();
+
+			movies[nextMovieIDX].InitMovie();
+			movies[nextMovieIDX].screenplayID = hand[lastScreenplay];
+			movies[nextMovieIDX].directorID = hand[hiDirector];		
+			movies[nextMovieIDX].musicID = hand[hiMusic];
+			movies[nextMovieIDX].actorID[0] = hand[hiActor];
+			
+			movies[nextMovieIDX].SetTitle(gControl.GetNewMovieTitle(gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID).cardData.cardName));
+			
+			score += movies[nextMovieIDX].value();
+			scoreText.text = "Score: " + score;
+			MoveMovieCards();
 		}
 		else
 		{
 			//do the computer make a movie
 			int curActor = 0;
 
-			PopHandInfo();			
+			
+			//set all hand cards to status to movie
+			for(int i = 0; i < hand.Length; i++)
+			{
+				if(hand	[i] < 60) //60 is last movie eligible talent card
+				{
+					gControl.GetTalentCardFromID(hand[i]).cardData.status = CardData.Status.Movie;					
+				}
+			}
 			
 			//create movie instance
 			//movies[nextMovieIDX] = Instantiate(newMovie, plyrMovieLocs[playerID, nextMovieIDX], Quaternion.identity);
