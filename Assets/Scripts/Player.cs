@@ -357,8 +357,8 @@ public class Player : MonoBehaviour
 				Card discardCard;
 				int cardToFillIdx;
 				drawCard = gControl.GetTalentCardFromID(gControl.GetNextTalentCardID());
-				//Debug.Log(drawCard.cardData.deckIdx + " : " + drawCard.cardData.cardName);
-				//Debug.Log(drawCard.cardData.cardName);
+				Debug.Log(drawCard.cardData.deckIdx + " : " + drawCard.cardData.cardName);
+				Debug.Log("nhi: " + nextHandIdx + " : " + drawCard.cardData.cardName);
 
 
 				if (nextHandIdx >= 7)
@@ -775,7 +775,17 @@ public class Player : MonoBehaviour
 		PopHandInfo();
 		if(playerType == PlayerType.Human)
 		{
-			Debug.Log("make movie clicked");	
+			Debug.Log("make movie clicked");
+			
+			//set all hand cards to status to movie
+			for(int i = 0; i < hand.Length; i++)
+			{
+				if(hand	[i] < 60) //60 is last movie eligible talent card
+				{
+					gControl.GetTalentCardFromID(hand[i]).cardData.status = CardData.Status.Movie;					
+				}
+			}
+			
 			movies[nextMovieIDX].transform.DORotate(new Vector3(90,0,0), 1);
 			movies[nextMovieIDX].InitMovie();
 
@@ -795,16 +805,6 @@ public class Player : MonoBehaviour
 		{
 			//do the computer make a movie
 			int curActor = 0;
-
-			
-			//set all hand cards to status to movie
-			for(int i = 0; i < hand.Length; i++)
-			{
-				if(hand	[i] < 60) //60 is last movie eligible talent card
-				{
-					gControl.GetTalentCardFromID(hand[i]).cardData.status = CardData.Status.Movie;					
-				}
-			}
 			
 			//create movie instance
 			//movies[nextMovieIDX] = Instantiate(newMovie, plyrMovieLocs[playerID, nextMovieIDX], Quaternion.identity);
@@ -1010,14 +1010,14 @@ public class Player : MonoBehaviour
 				cnt += 1;
 			}
 		}
+		
+		hand = hold;
 		if( cnt == 0)
 		{
 			nextHandIdx = 0;
 		}
 		else
 		{
-			hand = hold;
-
 			for(int idx = 0; idx < hand.Length; idx++)
 			{
 				if(hand[idx] != -1)

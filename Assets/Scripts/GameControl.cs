@@ -490,7 +490,7 @@ public class GameControl : MonoBehaviour
 			//{
 			//	StartCoroutine("ReshuffleTalentCards");
 			//}
-			//Debug.Log(inCard.cardData.deckIdx + " : " + inCard.cardData.cardName);
+			Debug.Log(inCard.cardData.deckIdx + " : " + inCard.cardData.cardName);
 			//Debug.Log("cur talent card idx: " + curTalentCardsIdx + " : deckidx " + inCard.cardData.deckIdx + " : cardid " + inCard.cardData.cardID + " : name " + inCard.cardData.cardName);
 
 			if (player[thePlayerIndex].nextHandIdx < 7)
@@ -690,7 +690,7 @@ public class GameControl : MonoBehaviour
 				if(loc.z < -0.2f || loc.z > 0.2f){loc.z = 0f;}
 				crd.transform.DOMove(new Vector3(4.7f, yValue, 0f), 0f);
 				Vector3 rot = crd.transform.rotation.eulerAngles;
-				Debug.Log(rot.x + " " + rot.y + " " + rot.z);
+				//Debug.Log(rot.x + " " + rot.y + " " + rot.z);
 				//crd.transform.DORotate(new Vector3(rot.x, rot.y, rot.z), 0f);
 				crd.transform.DORotate(new Vector3(0, rot.y, 0), 0f);
 			}
