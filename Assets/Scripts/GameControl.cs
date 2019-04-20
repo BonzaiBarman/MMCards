@@ -41,7 +41,7 @@ public class GameControl : MonoBehaviour
 	public int TalentCardDeckHiIdx = 69;
 	
 	
-	Player[] player;
+	public Player[] player;
 	public int playerCount;
 	
 	//public GameObject makeMovieButton;
@@ -490,7 +490,7 @@ public class GameControl : MonoBehaviour
 			//{
 			//	StartCoroutine("ReshuffleTalentCards");
 			//}
-			Debug.Log(inCard.cardData.deckIdx + " : " + inCard.cardData.cardName);
+			//Debug.Log(inCard.cardData.deckIdx + " : " + inCard.cardData.cardName);
 			//Debug.Log("cur talent card idx: " + curTalentCardsIdx + " : deckidx " + inCard.cardData.deckIdx + " : cardid " + inCard.cardData.cardID + " : name " + inCard.cardData.cardName);
 
 			if (player[thePlayerIndex].nextHandIdx < 7)
@@ -726,7 +726,7 @@ public class GameControl : MonoBehaviour
 		//Need to do player control of making movie
 		//player[thePlayerIndex].MakeMovie();
 		gGameHud.transform.GetChild(1).gameObject.SetActive(false);
-		player[thePlayerIndex].playerAction =	PlayerAction.MakeMovie;
+		player[thePlayerIndex].playerAction = PlayerAction.MakeMovie;
 		player[thePlayerIndex].playerActed = true;
 	}
 	
@@ -763,5 +763,14 @@ public class GameControl : MonoBehaviour
 		gMovieHud.enabled = false;
 		player[curPlayer].playerActed = true;
 	}
-
+	
+	public void SetTickerText(string inText)
+	{
+		gGameHud.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = inText;
+	}
+	
+	public void MovieCardSelected(Card inCard)
+	{
+		player[curPlayer].MovieCardClicked(inCard);
+	}
 }

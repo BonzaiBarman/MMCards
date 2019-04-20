@@ -61,26 +61,32 @@ public class Card : MonoBehaviour
 	    }
 	    else if (cardData.status == CardData.Status.Hand)
 	    {
-		    if(gControl.curPlayer == gControl.thePlayerIndex && gControl.dealing == false)
+		    if(gControl.curPlayer == gControl.thePlayerIndex && gControl.GetCurPlayerAction() == PlayerAction.MakeMovie)
 		    {
-		    	if((cardData.hand == gControl.thePlayerIndex && gControl.GetCurPlayerAction() == PlayerAction.DrawTalentDiscard) || gControl.GetCurPlayerAction() == PlayerAction.RaidingTalent || gControl.GetCurPlayerAction() == PlayerAction.TradingTalent)
-		    	{
-			    	
-			    	gControl.CardDiscard(this);
-			    	if (cardData.type == CardData.CardType.Action)
-			    	{
-				    	GetComponent<Rigidbody>().isKinematic = false;
-				    	StartCoroutine("DiscardActionCardAnim");
-				    	//GetComponent<Rigidbody>().isKinematic = true;
-			    	}	    
-			    	if (cardData.type == CardData.CardType.Talent)
-			    	{
-				    	GetComponent<Rigidbody>().isKinematic = false;
-				    	StartCoroutine("DiscardTalentCardAnim");
-				    	//GetComponent<Rigidbody>().isKinematic = true;
-			    	}		    		
-		    	}
-			}		    	
+		    	gControl.MovieCardSelected(this);
+		    }
+		    else
+		    {
+			    if(gControl.curPlayer == gControl.thePlayerIndex && gControl.dealing == false)
+			    {
+			    	if((cardData.hand == gControl.thePlayerIndex && gControl.GetCurPlayerAction() == PlayerAction.DrawTalentDiscard) || gControl.GetCurPlayerAction() == PlayerAction.RaidingTalent || gControl.GetCurPlayerAction() == PlayerAction.TradingTalent)
+			    	{				    	
+				    	gControl.CardDiscard(this);
+				    	if (cardData.type == CardData.CardType.Action)
+				    	{
+					    	GetComponent<Rigidbody>().isKinematic = false;
+					    	StartCoroutine("DiscardActionCardAnim");
+					    	//GetComponent<Rigidbody>().isKinematic = true;
+				    	}	    
+				    	if (cardData.type == CardData.CardType.Talent)
+				    	{
+					    	GetComponent<Rigidbody>().isKinematic = false;
+					    	StartCoroutine("DiscardTalentCardAnim");
+					    	//GetComponent<Rigidbody>().isKinematic = true;
+				    	}		    		
+			    	}
+			    }
+		    }
 		}
 	}
 	
