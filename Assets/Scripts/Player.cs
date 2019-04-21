@@ -167,7 +167,7 @@ public class Player : MonoBehaviour
 			}
 			cnt += 1;
 		}
-		Debug.Log("problem in GetHandFromCardID");
+		Debug.Log("problem in GetHandIndexFromCardID");
 		return cnt;
 	}
 	public void SetName(string inName)
@@ -328,6 +328,8 @@ public class Player : MonoBehaviour
 		if (gControl.curPlayer >= gControl.playerCount){gControl.curPlayer = 0;}
 		//change player name color to black
 		transform.GetChild(1).gameObject.GetComponent<Renderer>().material = origMaterial;
+		//turn off make movie button
+		gControl.gGameHud.transform.GetChild(1).gameObject.SetActive(false);
 	}
 
 	IEnumerator ComputerTurn()
@@ -1032,7 +1034,7 @@ public class Player : MonoBehaviour
 		Card movCard = inCard;
 		bool exchange = false;
 		int movieLoc = 0;
-		int hIdx = GetHandIndexFromCardID(inCard.cardData.cardID);
+		
 		
 		if(inCard.cardData.status == CardData.Status.Movie)
 		{
@@ -1083,6 +1085,21 @@ public class Player : MonoBehaviour
 						{
 							movCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].actorID[idx + 1]);
 							movCard.transform.DOMove(movieLocs[idx + 3], 0.2f);
+							//if(idx + 4 == 4)
+							//{
+							//	gControl.gMovieHud.transform.GetChild(8).gameObject.SetActive(false);
+							//	gControl.gMovieHud.transform.GetChild(9).gameObject.SetActive(false);
+							//}
+							//else if(idx + 4 == 5)
+							//{
+							//	gControl.gMovieHud.transform.GetChild(10).gameObject.SetActive(false);
+							//	gControl.gMovieHud.transform.GetChild(11).gameObject.SetActive(false);
+							//}
+							//else if(idx + 4 == 6)
+							//{
+							//	gControl.gMovieHud.transform.GetChild(12).gameObject.SetActive(false);
+							//	gControl.gMovieHud.transform.GetChild(13).gameObject.SetActive(false);
+							//}
 						}
 					}
 				}
@@ -1095,6 +1112,8 @@ public class Player : MonoBehaviour
 		}
 		else
 		{
+			int hIdx = GetHandIndexFromCardID(inCard.cardData.cardID);
+			
 			inCard.cardData.hand = -1;
 			inCard.cardData.status = CardData.Status.Movie;
 			inCard.cardData.movie = playerID;
@@ -1158,11 +1177,46 @@ public class Player : MonoBehaviour
 			{
 				inCard.transform.DOMove(movieLocs[movieLoc], 0.5f);		
 				inCard.transform.DORotate(new Vector3(0,0,0), 0.5f);
+				//if(movieLoc == 4)
+				//{
+				//	gControl.gMovieHud.transform.GetChild(8).gameObject.SetActive(true);
+				//	gControl.gMovieHud.transform.GetChild(9).gameObject.SetActive(true);
+				//}
+				//else if(movieLoc == 5)
+				//{
+				//	gControl.gMovieHud.transform.GetChild(10).gameObject.SetActive(true);
+				//	gControl.gMovieHud.transform.GetChild(11).gameObject.SetActive(true);
+				//}
+				//else if(movieLoc == 6)
+				//{
+				//	gControl.gMovieHud.transform.GetChild(12).gameObject.SetActive(true);
+				//	gControl.gMovieHud.transform.GetChild(13).gameObject.SetActive(true);
+				//}
+				
 			}
 		}
 		//update movie score in canvas
 		gControl.gMovieHud.transform.GetChild(15).GetComponent<TextMeshProUGUI>().text = movies[nextMovieIDX].title + " (" + movies[nextMovieIDX].value() + ")";
-		
+		FixMovieHudLabels();
+	}
+	
+	void FixMovieHudLabels()
+	{
+		int inIdx = 8;
+		for(int idx = 1; idx < movies[nextMovieIDX].actorID.Length; idx++)
+		{
+			if(movies[nextMovieIDX].actorID[idx] == -1)
+			{
+				gControl.gMovieHud.transform.GetChild(inIdx).gameObject.SetActive(false);
+				gControl.gMovieHud.transform.GetChild(inIdx + 1).gameObject.SetActive(false);
+			}
+			else
+			{
+				gControl.gMovieHud.transform.GetChild(inIdx).gameObject.SetActive(true);
+				gControl.gMovieHud.transform.GetChild(inIdx + 1).gameObject.SetActive(true);
+			}
+			inIdx += 2;
+		}
 	}
 	
 	int GetNextMovieActorIndex()
