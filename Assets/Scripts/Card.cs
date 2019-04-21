@@ -87,8 +87,13 @@ public class Card : MonoBehaviour
 			    	}
 			    }
 		    }
+
 		}
-	}
+	    else if (cardData.status == CardData.Status.Movie)
+	    {
+		    gControl.MovieCardSelected(this);
+	    }
+    }
 	
 	IEnumerator DrawActionCardAnim()
 	{

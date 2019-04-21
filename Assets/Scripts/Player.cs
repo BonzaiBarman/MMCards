@@ -268,7 +268,7 @@ public class Player : MonoBehaviour
 
 		//resetting player action before player takes an action
 		//Using DrawTalent as a default
-		playerAction =	PlayerAction.DrawTalent;
+		//playerAction =	PlayerAction.DrawTalent;
 		
 		yield return new WaitUntil(() => playerActed == true);
 		switch (playerAction)
@@ -315,6 +315,9 @@ public class Player : MonoBehaviour
 			yield return new WaitUntil(() => playerActed == true);
 			nextMovieIDX += 1;
 			//playerActed = true;
+			break;
+		default:
+			Debug.Log("player action error: " + playerAction);
 			break;
 		}
 		
@@ -438,7 +441,7 @@ public class Player : MonoBehaviour
 					gControl.curTalentCardsIdx += 1;
 				
 					//pause after card drawn but before align
-					yield return new WaitForSeconds(0.05f);
+					yield return new WaitForSeconds(0.5f);
 					if(playerType == PlayerType.Computer){drawCard.GetComponent<Rigidbody>().isKinematic = true;}
 				
 					AlignHand();
@@ -1025,40 +1028,166 @@ public class Player : MonoBehaviour
 	
 	public void MovieCardClicked(Card inCard)
 	{
-		switch(inCard.cardData.subType)
+		//set settings of clicked card to movie
+		Card movCard = inCard;
+		bool exchange = false;
+		int movieLoc = 0;
+		int hIdx = GetHandIndexFromCardID(inCard.cardData.cardID);
+		
+		if(inCard.cardData.status == CardData.Status.Movie)
 		{
-		case CardData.SubType.Screenplay:
-			int hIdx = GetHandIndexFromCardID(inCard.cardData.cardID);
+			if(inCard.cardData.subType == CardData.SubType.Actor || inCard.cardData.subType == CardData.SubType.Actress)
+			{
+				if(GetMovieActorCount() > 1)
+				{
+					int mIdx = -1;
+					int hndIdx = -1;
+
+					inCard.cardData.hand = playerID;
+					inCard.cardData.status = CardData.Status.Hand;
+					inCard.cardData.movie = -1;
+					inCard.cardData.movieIdx = -1;
+					for(int idx = 0; idx < hand.Length; idx++)
+					{
+						if(hand[idx] == -1)
+						{
+							hndIdx = idx;
+							break;
+						}
+					}
+				
+					for(int act = 0; act <  movies[nextMovieIDX].actorID.Length; act++)
+					{
+						if(movies[nextMovieIDX].actorID[act] == inCard.cardData.cardID)
+						{
+							mIdx = act;						
+							break;
+						}
+					}
+					movies[nextMovieIDX].actorID[mIdx] = -1;
+					hand[hndIdx] = inCard.cardData.cardID;
+					inCard.MoveCard(playerID, hndIdx);
+					int hole = -1;
+					for(int idx = 0; idx < movies[nextMovieIDX].actorID.Length; idx++)
+					{
+						if(movies[nextMovieIDX].actorID[idx] == -1)
+						{
+							hole = idx;
+							break;
+						}
+					}
+					for(int idx = hole; idx < movies[nextMovieIDX].actorID.Length - 1; idx++)
+					{
+						movies[nextMovieIDX].actorID[idx] = movies[nextMovieIDX].actorID[idx + 1];
+						if(movies[nextMovieIDX].actorID[idx + 1] != -1)
+						{
+							movCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].actorID[idx + 1]);
+							movCard.transform.DOMove(movieLocs[idx + 3], 0.2f);
+						}
+					}
+				}
+				else
+				{
+					gControl.SetTickerText("Can't remove only actor in a movie.");
+				}
+
+			}
+		}
+		else
+		{
 			inCard.cardData.hand = -1;
 			inCard.cardData.status = CardData.Status.Movie;
 			inCard.cardData.movie = playerID;
 			inCard.cardData.movieIdx = nextMovieIDX;
-			Card movCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID);
-			movies[nextMovieIDX].screenplayID = inCard.cardData.cardID;
 			
-			movCard.cardData.hand = playerID;
-			movCard.cardData.status = CardData.Status.Hand;
-			movCard.cardData.movie = -1;
-			movCard.cardData.movieIdx = -1;
+			switch(inCard.cardData.subType)
+			{
+			case CardData.SubType.Screenplay:
+	
+				movCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID);
+				movies[nextMovieIDX].screenplayID = inCard.cardData.cardID;
+				movieLoc = 0;
+				exchange = true;
+							
+				break;
+			case CardData.SubType.Director:
 			
-			hand[hIdx] = movCard.cardData.cardID;
+				movCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].directorID);
+				movies[nextMovieIDX].directorID = inCard.cardData.cardID;
+				movieLoc = 1;
+				exchange = true;
+				
+				break;
+			case CardData.SubType.Music:
 			
-			inCard.transform.DOMove(movieLocs[0], 0.5f);		
-			inCard.transform.DORotate(new Vector3(0,0,0), 0.5f);
-			movCard.MoveCard(playerID, hIdx);			
+				movCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].musicID);
+				movies[nextMovieIDX].musicID = inCard.cardData.cardID;
+				movieLoc = 2;
+				exchange = true;
+				
+				break;
+			case CardData.SubType.Actor: case CardData.SubType.Actress:
+				int naIDX = GetNextMovieActorIndex();
+				movies[nextMovieIDX].actorID[naIDX] = inCard.cardData.cardID;
+				movieLoc = naIDX + 3;
+				hand[hIdx] = -1;
+				exchange = false;
+				break;
+			case CardData.SubType.RaidProtection:
+				return;
+			case CardData.SubType.SabotageProtection:
+				return;
+			default:
+				return;
+			}
 			
-			break;
-		case CardData.SubType.Director:
-			break;
-		case CardData.SubType.Music:
-			break;
-		case CardData.SubType.Actor: case CardData.SubType.Actress:
-			break;
-		case CardData.SubType.RaidProtection:
-			return;
-		case CardData.SubType.SabotageProtection:
-			return;
+			if(exchange) 
+			{
+				movCard.cardData.hand = playerID;
+				movCard.cardData.status = CardData.Status.Hand;
+				movCard.cardData.movie = -1;
+				movCard.cardData.movieIdx = -1;
+				
+				hand[hIdx] = movCard.cardData.cardID;
+				
+				inCard.transform.DOMove(movieLocs[movieLoc], 0.5f);		
+				inCard.transform.DORotate(new Vector3(0,0,0), 0.5f);
+				movCard.MoveCard(playerID, hIdx);				
+			}
+			else
+			{
+				inCard.transform.DOMove(movieLocs[movieLoc], 0.5f);		
+				inCard.transform.DORotate(new Vector3(0,0,0), 0.5f);
+			}
 		}
+		//update movie score in canvas
+		gControl.gMovieHud.transform.GetChild(15).GetComponent<TextMeshProUGUI>().text = movies[nextMovieIDX].title + " (" + movies[nextMovieIDX].value() + ")";
+		
+	}
+	
+	int GetNextMovieActorIndex()
+	{
+		for(int act = 0; act <  movies[nextMovieIDX].actorID.Length; act++)
+		{
+			if(movies[nextMovieIDX].actorID[act] == -1)
+			{
+				return act;
+			}
+		}
+		return -1;
+	}
+	
+	int GetMovieActorCount()
+	{
+		int cnt = 0;
+		for(int act = 0; act <  movies[nextMovieIDX].actorID.Length; act++)
+		{
+			if(movies[nextMovieIDX].actorID[act] != -1)
+			{
+				cnt++;
+			}
+		}
+		return cnt;
 	}
 
 }
