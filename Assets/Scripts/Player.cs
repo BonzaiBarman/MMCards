@@ -304,9 +304,9 @@ public class Player : MonoBehaviour
 		case PlayerAction.MakeMovie:
 			playerActed = false;
 			movies[nextMovieIDX] = Instantiate(newMovie, plyrMovieLocs[playerID, nextMovieIDX], Quaternion.identity);
-			int xr = 3;
+			//int xr = 3;
 			MakeMovie();
-			xr = 4;
+			//xr = 4;
 			gControl.SetTickerText("Select Cards to add to the movie.");
 			yield return new WaitUntil(() => playerActed == true);
 			playerActed = false;
@@ -456,9 +456,9 @@ public class Player : MonoBehaviour
 				break;
 			case PlayerAction.MakeMovie:
 				movies[nextMovieIDX] = Instantiate(newMovie, plyrMovieLocs[playerID, nextMovieIDX], Quaternion.identity);
-                int xr = 3;
+				//int xr = 3;
                 MakeMovie();
-				xr = 4;
+				//xr = 4;
 				yield return new WaitUntil(() => playerActed == true);
 				playerActed = false;
 				
@@ -1102,6 +1102,8 @@ public class Player : MonoBehaviour
 							//}
 						}
 					}
+					//clear last actor slot
+					movies[nextMovieIDX].actorID[3] = -1;
 				}
 				else
 				{
