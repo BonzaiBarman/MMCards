@@ -13,18 +13,18 @@ MonoBehaviour:
   m_Name: Talent24
   m_EditorClassIdentifier: 
   cardID: 24
-  cardName: Alfredo Hitchlock
+  cardName: Koope Demille
   type: 1
   subType: 8
-  status: 0
+  status: 2
   frontSprite: {fileID: 21300000, guid: a9274a79a21fd6c4ca8e74d615e24718, type: 3}
   backSprite: {fileID: 21300000, guid: c271539c358a113499b45605b31c72c5, type: 3}
-  value: 0c0000000000000000000000000000000000000000000000
+  value: 0a0000000a0000000a0000000a0000000a0000000a000000
   hand: -1
-  handIdx: -1
-  deck: 1
-  deckIdx: 24
-  discard: 1
-  discardIdx: -1
-  movie: -1
-  movieIdx: -1
+  handIdx: 3
+  deck: 0
+  deckIdx: -1
+  discard: 0
+  discardIdx: 20
+  movie: 1
+  movieIdx: 0

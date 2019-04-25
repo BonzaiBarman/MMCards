@@ -13,18 +13,18 @@ MonoBehaviour:
   m_Name: Talent25
   m_EditorClassIdentifier: 
   cardID: 25
-  cardName: Koope Demille
+  cardName: Spike Yee
   type: 1
   subType: 8
-  status: 0
+  status: 2
   frontSprite: {fileID: 21300000, guid: a9274a79a21fd6c4ca8e74d615e24718, type: 3}
   backSprite: {fileID: 21300000, guid: c271539c358a113499b45605b31c72c5, type: 3}
-  value: 0b0000000000000000000000000000000000000000000000
+  value: 05000000060000000700000008000000090000000a000000
   hand: -1
-  handIdx: -1
-  deck: 1
-  deckIdx: 25
-  discard: 1
-  discardIdx: -1
-  movie: -1
-  movieIdx: -1
+  handIdx: 3
+  deck: 0
+  deckIdx: -1
+  discard: 0
+  discardIdx: 36
+  movie: 0
+  movieIdx: 0

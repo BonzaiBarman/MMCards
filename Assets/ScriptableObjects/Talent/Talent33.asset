@@ -13,18 +13,18 @@ MonoBehaviour:
   m_Name: Talent33
   m_EditorClassIdentifier: 
   cardID: 33
-  cardName: Spike Yee
+  cardName: Jessica Tang
   type: 1
   subType: 8
-  status: 0
+  status: 3
   frontSprite: {fileID: 21300000, guid: a9274a79a21fd6c4ca8e74d615e24718, type: 3}
   backSprite: {fileID: 21300000, guid: c271539c358a113499b45605b31c72c5, type: 3}
-  value: 030000000000000000000000000000000000000000000000
+  value: 040000000400000002000000020000000100000001000000
   hand: -1
-  handIdx: -1
-  deck: 1
-  deckIdx: 33
-  discard: 1
-  discardIdx: -1
+  handIdx: 5
+  deck: 0
+  deckIdx: -1
+  discard: 0
+  discardIdx: 14
   movie: -1
   movieIdx: -1

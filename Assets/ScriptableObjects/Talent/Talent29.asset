@@ -13,18 +13,18 @@ MonoBehaviour:
   m_Name: Talent29
   m_EditorClassIdentifier: 
   cardID: 29
-  cardName: Dallas Houston
+  cardName: Eunice Prim
   type: 1
   subType: 8
-  status: 0
+  status: 2
   frontSprite: {fileID: 21300000, guid: a9274a79a21fd6c4ca8e74d615e24718, type: 3}
   backSprite: {fileID: 21300000, guid: c271539c358a113499b45605b31c72c5, type: 3}
-  value: 070000000000000000000000000000000000000000000000
+  value: 090000000a00000005000000060000000700000008000000
   hand: -1
-  handIdx: -1
-  deck: 1
-  deckIdx: 29
-  discard: 1
-  discardIdx: -1
-  movie: -1
-  movieIdx: -1
+  handIdx: 2
+  deck: 0
+  deckIdx: -1
+  discard: 0
+  discardIdx: 10
+  movie: 3
+  movieIdx: 0
