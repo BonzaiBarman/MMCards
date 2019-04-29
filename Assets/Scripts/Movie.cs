@@ -57,8 +57,8 @@ public class Movie : MonoBehaviour
 		//gControl = FindObjectOfType<GameControl>();
 		int daValue = 0;
 		spIndex = GetScreenplayIndex();
-		daValue += gControl.GetTalentCardFromID(directorID).cardData.value[0];
-		daValue += gControl.GetTalentCardFromID(musicID).cardData.value[0];
+		daValue += gControl.GetTalentCardFromID(directorID).cardData.value[spIndex];
+		daValue += gControl.GetTalentCardFromID(musicID).cardData.value[spIndex];
 		for(int i = 0; i < actorID.Length; i++)
 		{
 			if(actorID[i] != -1){daValue += gControl.GetTalentCardFromID(actorID[i]).cardData.value[spIndex];}
