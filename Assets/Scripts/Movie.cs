@@ -6,29 +6,18 @@ using TMPro;
 public class Movie : MonoBehaviour
 {
 	GameControl gControl;
-	
-	public enum ScreenplayIndex
-	{
-		Comedy,
-		Drama,
-		Horror,
-		Musical,
-		Western,
-		Action
-	}
     
 	public int screenplayID = -1;
 	public int directorID = -1;
 	public int musicID = -1;
 	public int[] actorID = new[] {-1, -1, -1, -1};
     public string title = "";
-	int spIndex = -1;
+
 	
 	// Start is called before the first frame update
     void Start()
     {
     	gControl = FindObjectOfType<GameControl>();
-    	//InitMovie();    
     }
 
     // Update is called once per frame
@@ -39,7 +28,6 @@ public class Movie : MonoBehaviour
     
 	public void InitMovie()
 	{
-		
 		screenplayID = -1;
 		directorID = -1;
 		musicID = -1;
@@ -53,10 +41,8 @@ public class Movie : MonoBehaviour
 	
 	public int value()
 	{
-		
-		//gControl = FindObjectOfType<GameControl>();
 		int daValue = 0;
-		spIndex = GetScreenplayIndex();
+		int spIndex = gControl.GetTalentCardFromID(screenplayID).cardData.value[0];
 		daValue += gControl.GetTalentCardFromID(directorID).cardData.value[spIndex];
 		daValue += gControl.GetTalentCardFromID(musicID).cardData.value[spIndex];
 		for(int i = 0; i < actorID.Length; i++)
@@ -64,34 +50,6 @@ public class Movie : MonoBehaviour
 			if(actorID[i] != -1){daValue += gControl.GetTalentCardFromID(actorID[i]).cardData.value[spIndex];}
 		}
 		return daValue;
-	}
-	
-	private int GetScreenplayIndex()
-	{
-		//gControl = FindObjectOfType<GameControl>();
-		int retIdx = -1;
-		switch(gControl.GetTalentCardFromID(screenplayID).cardData.cardName)
-		{
-		case "Comedy":
-			retIdx = 0;
-			break;
-		case "Drama":
-			retIdx = 1;
-			break;
-		case "Horror":
-			retIdx = 2;
-			break;
-		case "Musical":
-			retIdx = 3;
-			break;
-		case "Western":
-			retIdx = 4;
-			break;
-		case "Action":
-			retIdx = 5;
-			break;
-		}
-		return retIdx;
 	}
 	
 	public void SetTitle(string inTitle)

@@ -4,8 +4,35 @@ using UnityEngine;
 //using System.Linq;
 //using DG.Tweening;
 
+public enum PlayerAction
+{
+    DrawTalent,
+    DrawTalentDiscard,
+    DrawActionCollect,
+    DrawActionRaid,
+    DrawActionSabotage,
+    DrawActionTrade,
+    DrawActionChaos,
+    DrawActionRunOver,
+    TradingTalent,
+    RaidingTalent,
+    SabotagingMovie,
+    MakeMovie
+}
+
+public enum Screenplays
+{
+    Comedy,
+    Drama,
+    Horror,
+    Musical,
+    Western,
+    Action
+}
+
 public class Utilities
 {
+
 	public void ShuffleCards(Card[] inCards)
 	{
 		var cnt = inCards.Length;

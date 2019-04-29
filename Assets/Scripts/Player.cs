@@ -5,22 +5,6 @@ using DG.Tweening;
 using TMPro;
 using System.Linq;
 
-public enum PlayerAction
-{
-	DrawTalent,
-	DrawTalentDiscard,
-	DrawActionCollect,
-	DrawActionRaid,
-	DrawActionSabotage,
-	DrawActionTrade,
-	DrawActionChaos,
-	DrawActionRunOver,
-	TradingTalent,
-	RaidingTalent,
-	SabotagingMovie,
-	MakeMovie
-}
-
 public class Player : MonoBehaviour
 {
 
@@ -39,22 +23,7 @@ public class Player : MonoBehaviour
 		Human,
 		Computer,
 	}
-	//public enum PlayerAction
-	//{
-	//	DrawTalent,
-	//	DrawTalentDiscard,
-	//	DrawActionCollect,
-	//	DrawActionRaid,
-	//	DrawActionSabotage,
-	//	DrawActionTrade,
-	//	DrawActionChaos,
-	//	DrawActionRunOver,
-	//	TradingTalent,
-	//	RaidingTalent,
-	//	SabotagingMovie,
-	//	MakeMovie
-	//}
-	
+
 	public Movie newMovie;
 	public Movie[] movies;
 	public int playerID;
@@ -100,22 +69,16 @@ public class Player : MonoBehaviour
 	int lastScreenplay = -1;
 	int lastSabotageProtection = -1;
 	int lastRaidProtection = -1;
-	
-	//public GameObject makeMovieButton;
-	
+
 	GameControl gControl;
+
 	// Start is called before the first frame update
     void Start()
     {
-
-    	//Debug.Log(hand.Length);
 	    gControl = FindObjectOfType<GameControl>();
-	    //playerName.text = "Waldorf";
 	    score = 0;
 	    scoreText.text = "Score: " + score;
-	    //ChangeBackgroundMaterial("green");
 	    movies = new Movie[3];
-
     }
 
     // Update is called once per frame
@@ -153,7 +116,6 @@ public class Player : MonoBehaviour
 		{
 			hand[i] = -1;
 		}
-		
 	}
 	
 	public int GetHandIndexFromCardID(int inCardID)
@@ -174,14 +136,12 @@ public class Player : MonoBehaviour
 	{
 		TextMeshPro gName = transform.GetChild(0).gameObject.GetComponent<TextMeshPro>();
 		gName.text = inName;
-		//daText.DOText(inName, 2f, true, ScrambleMode.All);
 	}
     
 	public string GetName()
 	{
 		TextMeshPro gName = transform.GetChild(0).gameObject.GetComponent<TextMeshPro>();
 		return gName.text;
-		//daText.DOText(inName, 2f, true, ScrambleMode.All);
 	}
 	//public void RunAnimation(string inAnimName)
 	//{
@@ -216,8 +176,6 @@ public class Player : MonoBehaviour
 		{
 			back.GetComponent<Renderer>().material = goldMaterial;
 		}
-		//iTween.MoveTo(gameObject, iTween.Hash("y", 0.05, "x", transform.position.x - 0.15));
-		//transform.DOMoveY(0.03f, 0.8f, false);
 	}
 	
 	public void AlignHand()
@@ -246,13 +204,11 @@ public class Player : MonoBehaviour
 		DOTweenAnimation[] tanim = tmesh.GetComponents<DOTweenAnimation>();
 		tanim[0].DORestart();
 		tanim[0].DOPlay();
-		
-		//tmesh.color = new Color32(0, 130, 0, 255);
+
 		origMaterial = transform.GetChild(1).gameObject.GetComponent<Renderer>().material;
 		transform.GetChild(1).gameObject.GetComponent<Renderer>().material = greenMaterial;
-		
-		//tanim[1].DORestart();
-		//tanim[1].DOPlay();
+	
+
 		if (playerType == PlayerType.Human)
 		{
 			StartCoroutine("HumanTurn");
@@ -266,10 +222,6 @@ public class Player : MonoBehaviour
 	IEnumerator HumanTurn()
 	{
 
-		//resetting player action before player takes an action
-		//Using DrawTalent as a default
-		//playerAction =	PlayerAction.DrawTalent;
-		
 		yield return new WaitUntil(() => playerActed == true);
 		switch (playerAction)
 		{
@@ -303,10 +255,10 @@ public class Player : MonoBehaviour
 			break;
 		case PlayerAction.MakeMovie:
 			playerActed = false;
-			movies[nextMovieIDX] = Instantiate(newMovie, plyrMovieLocs[playerID, nextMovieIDX], Quaternion.identity);
-			//int xr = 3;
+			//movies[nextMovieIDX] = Instantiate(newMovie, plyrMovieLocs[playerID, nextMovieIDX], Quaternion.identity);
+
 			MakeMovie();
-			//xr = 4;
+
 			gControl.SetTickerText("Select Cards to add to the movie.");
 			yield return new WaitUntil(() => playerActed == true);
 			playerActed = false;
@@ -320,9 +272,7 @@ public class Player : MonoBehaviour
 			Debug.Log("player action error: " + playerAction);
 			break;
 		}
-		
-		//yield return new WaitUntil(() => playerActed == true);
-		
+
 		playerActed = false;
 		gControl.curPlayer += 1;
 		if (gControl.curPlayer >= gControl.playerCount){gControl.curPlayer = 0;}
@@ -334,16 +284,16 @@ public class Player : MonoBehaviour
 
 	IEnumerator ComputerTurn()
 	{
-		//Debug.Log("Player Turn: " + playerName.text);
 		yield return new WaitForSeconds(1f);
 		while (!playerActed)
 		{
 			//pause before turn
 			yield return new WaitForSeconds(0.3f);
 			
-			
+			//*
 			//Determine What Computer Player Does
-			//int rnd = Random.Range(0,0); //2
+			//*
+			
 			if(CanMakeMovie())
 			{
 				playerAction =	PlayerAction.MakeMovie;
@@ -362,9 +312,6 @@ public class Player : MonoBehaviour
 				Card discardCard;
 				int cardToFillIdx;
 				drawCard = gControl.GetTalentCardFromID(gControl.GetNextTalentCardID());
-				//Debug.Log(drawCard.cardData.deckIdx + " : " + drawCard.cardData.cardName);
-				//Debug.Log(drawCard.cardData.cardName);
-
 
 				if (nextHandIdx >= 7)
 				{
@@ -372,14 +319,11 @@ public class Player : MonoBehaviour
 					drawCard.cardData.handIdx = 99;
 					drawCard.DrawCardAnim(playerID, nextHandIdx);
 					cardToFillIdx = ComputerDetermineDiscard();
-					//Debug.Log(cardToFillIdx);
-					//Debug.Log(gControl.GetTalentCardFromID(hand[cardToFillIdx]).cardData.cardName);
 					nextHandIdx -= 1;
 					//throw away card
 					//Needs tobe done
 					//***********
 					discardCard = gControl.GetTalentCardFromID(hand[cardToFillIdx]);
-					//Debug.Log(discardCard.cardData.cardName);
 					if(playerType == PlayerType.Computer){discardCard.GetComponent<Rigidbody>().isKinematic = false;}
 					
 					
@@ -387,17 +331,6 @@ public class Player : MonoBehaviour
 					discardCard.cardData.deckIdx = -1;
 					discardCard.cardData.status = CardData.Status.Discard;
 					discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
-					//Debug.Log("discard idx: " + discardCard.cardData.discardIdx + "  curdiscard: " + gControl.curTalentDiscardIdx);
-					
-					//discardCard.DiscardTalentCard();
-					//gControl.curTalentDiscardIdx += 1;
-					
-					//if (drawCard.cardData.deckIdx == 69)
-					//{
-					//	yield return new WaitForSeconds(1f);
-					//	gControl.StartCoroutine("ReshuffleTalentCards");
-					//	yield return new WaitForSeconds(3f);
-					//}
 					
 					hand[cardToFillIdx] = drawCard.cardData.cardID;
 					drawCard.cardData.deckIdx = -1;
@@ -427,13 +360,7 @@ public class Player : MonoBehaviour
 				{
 					drawCard.DrawCardAnim(playerID, nextHandIdx);
 					cardToFillIdx = nextHandIdx;
-					
-					//if (drawCard.cardData.deckIdx == 69)
-					//{
-					//	yield return new WaitForSeconds(1f);
-					//	gControl.StartCoroutine("ReshuffleTalentCards");
-					//	yield return new WaitForSeconds(3f);
-					//}
+
 					hand[cardToFillIdx] = drawCard.cardData.cardID;
 					drawCard.cardData.deckIdx = -1;
 					drawCard.cardData.status = CardData.Status.Hand;
@@ -455,118 +382,31 @@ public class Player : MonoBehaviour
 
 				break;
 			case PlayerAction.MakeMovie:
-				movies[nextMovieIDX] = Instantiate(newMovie, plyrMovieLocs[playerID, nextMovieIDX], Quaternion.identity);
-				//int xr = 3;
+				//movies[nextMovieIDX] = Instantiate(newMovie, plyrMovieLocs[playerID, nextMovieIDX], Quaternion.identity);
+
                 MakeMovie();
-				//xr = 4;
+
 				yield return new WaitUntil(() => playerActed == true);
 				playerActed = false;
 				
 				StackMovieCards();
 				yield return new WaitUntil(() => playerActed == true);
 				nextMovieIDX += 1;
-				//playerActed = true;
+
 				break;
 		}
-			
-			
-
 
 		}
 		playerActed = false;
 		gControl.curPlayer += 1;
 		if (gControl.curPlayer >= gControl.playerCount){gControl.curPlayer = 0;}
-		//change player name color to black
-		//transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().color = Color.black;
 		transform.GetChild(1).gameObject.GetComponent<Renderer>().material = origMaterial;
 	}
-	
-	//IEnumerator CompDrawTalent()
-	//{
-		
-	//	Card drawCard;
-	//	drawCard = gControl.GetTalentCardFromID(gControl.GetNextTalentCardID());
-	//	drawCard.DrawCardAnim(playerID, nextHandIdx);
-	//	hand[nextHandIdx] = drawCard.cardData.cardID;
-		
-	//	//if (drawCard.cardData.deckIdx == 69)
-	//	//{
-	//	//	gControl.StartCoroutine("ReshuffleTalentCards");
-	//	//}
-		
-	//	drawCard.cardData.deckIdx = -1;
-	//	drawCard.cardData.status = CardData.Status.Hand;
-	//	drawCard.cardData.hand = playerID;
-	//	drawCard.cardData.handIdx = nextHandIdx;
-	//	nextHandIdx += 1;
-	//	gControl.curTalentCardsIdx += 1;
-				
-	//	//pause after card drawn but before align
-	//	yield return new WaitForSeconds(0.05f);
-	//	drawCard.GetComponent<Rigidbody>().isKinematic = true;
-		
-	//	yield return new WaitForSeconds(1f);
-	//	playerActed = true;
-		
-	//}
-	
-	//IEnumerator CompDrawTalentDiscard()
-	//{
-	//	Card drawCard;
-	//	Card discardCard;
-	//	int cardToFillIdx;
-	//	drawCard = gControl.GetTalentCardFromID(gControl.GetNextTalentCardID());
-		
-	//	drawCard.GetComponent<Rigidbody>().isKinematic = false;
-	//	drawCard.cardData.handIdx = 99;
-	//	drawCard.DrawCardAnim(playerID, nextHandIdx);
-	//	cardToFillIdx = ComputerDetermineDiscard();
-		
-	//	nextHandIdx -= 1;
-		
-	//	discardCard = gControl.GetTalentCardFromID(hand[cardToFillIdx]);
-	//	discardCard.GetComponent<Rigidbody>().isKinematic = false;
-					
-	//	//if (drawCard.cardData.deckIdx == 69)
-	//	//{
-	//	//	gControl.StartCoroutine("ReshuffleTalentCards");
-	//	//}
-					
-	//	discardCard.cardData.hand = -1;
-	//	discardCard.cardData.deckIdx = -1;
-	//	discardCard.cardData.status = CardData.Status.Discard;
-	//	discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
-	//	Debug.Log("discard idx: " + discardCard.cardData.discardIdx + "  curdiscard: " + gControl.curTalentDiscardIdx);
 
-	//	hand[cardToFillIdx] = drawCard.cardData.cardID; //gControl.GetNextTalentCardID();
-	//	drawCard.cardData.deckIdx = -1;
-	//	drawCard.cardData.status = CardData.Status.Hand;
-	//	drawCard.cardData.hand = playerID;
-	//	drawCard.cardData.handIdx = cardToFillIdx;
-	//	nextHandIdx += 1;
-	//	gControl.curTalentCardsIdx += 1;
-				
-	//	//pause after card drawn but before align
-	//	yield return new WaitForSeconds(0.05f);
-	//	drawCard.GetComponent<Rigidbody>().isKinematic = true;
-				
-	//	discardCard.DiscardTalentCard();
-	//	gControl.curTalentDiscardIdx += 1;
-		
-	//	AlignHand();
-	//	//pause to wait for next player turn
-	//	yield return new WaitForSeconds(1f);
-	//	playerActed = true;
-		
-	//}
-	
 	IEnumerator DrawTalent()
 	{
-
 		yield return null;
-		//playerActed = false;
 		//yield return new WaitForSeconds(2.5f);
-		//playerActed = true;
 	}
 	
 	IEnumerator DrawTalentDiscard()
@@ -588,12 +428,8 @@ public class Player : MonoBehaviour
 			}
 			else
 			{
-				//Debug.Log(discardedCardIdx);
-				//so be it
-				//Debug.Log("nexthandidx: " + nextHandIdx);
-				//nextHandIdx = 6;
 				CompactHand(discardedCardIdx);
-				//Debug.Log("nexthandidx: " + nextHandIdx);
+
 				hand[nextHandIdx] = holdCardID;
 				gControl.GetTalentCardFromID(holdCardID).MoveCard(playerID, nextHandIdx);
 				gControl.GetTalentCardFromID(holdCardID).cardData.handIdx = nextHandIdx;
@@ -601,8 +437,6 @@ public class Player : MonoBehaviour
 				discardedCardIdx = 0;
 				holdCardID = 0;
 			}
-			//playerActed = true;
-			
 						
 		}
 	}
@@ -611,7 +445,6 @@ public class Player : MonoBehaviour
 	{
 		int handIdxToReturn = -1;
 		PopHandInfo();
-		//Debug.Log("actor:" + actorCnt + " director:" + directorCnt + " music:" + musicCnt + " scrn:" + screenplayCnt + " raid:" + raidProtectionCnt + " sabotage:" + sabotageProtectionCnt);
 
 		if (raidProtectionCnt > 1)
 		{
@@ -685,15 +518,13 @@ public class Player : MonoBehaviour
 		lastRaidProtection = -1;
 			
 		Card tmpCard;
-		//Debug.Log(hand[0] + ", " + hand[1] + ", " + hand[2] + ", " + hand[3] + ", " + hand[4] + ", " + hand[5] + ", " + hand[6]);
-		//Debug.Log("hand length: " + hand.Length);
+
 		for (int i = 0; i < hand.Length; i++)
 		{
 			if (hand[i] != -1)
 			{
-				
 				tmpCard = gControl.GetTalentCardFromID(hand[i]);
-				//Debug.Log(tmpCard.cardData.cardName);
+
 				switch (tmpCard.cardData.subType)
 				{
 				case CardData.SubType.Actor: 
@@ -777,38 +608,41 @@ public class Player : MonoBehaviour
 	
 	public void MakeMovie()
 	{
+		movies[nextMovieIDX] = Instantiate(newMovie, plyrMovieLocs[playerID, nextMovieIDX], Quaternion.identity);
 		PopHandInfo();
+		movies[nextMovieIDX].transform.DORotate(new Vector3(90,0,0), 1);
+		movies[nextMovieIDX].InitMovie();
+		
 		if(playerType == PlayerType.Human)
 		{
-			Debug.Log("make movie clicked");	
-			movies[nextMovieIDX].transform.DORotate(new Vector3(90,0,0), 1);
-			movies[nextMovieIDX].InitMovie();
-
-			movies[nextMovieIDX].InitMovie();
+			//player make movie
+			//movies[nextMovieIDX].transform.DORotate(new Vector3(90,0,0), 1);
+			//movies[nextMovieIDX].InitMovie();
+			
 			movies[nextMovieIDX].screenplayID = hand[lastScreenplay];
 			movies[nextMovieIDX].directorID = hand[hiDirector];		
 			movies[nextMovieIDX].musicID = hand[hiMusic];
 			movies[nextMovieIDX].actorID[0] = hand[hiActor];
             hand[hiActor] = -1;
 
-            movies[nextMovieIDX].SetTitle(gControl.GetNewMovieTitle(gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID).cardData.cardName));
-			
-			score += movies[nextMovieIDX].value();
-			scoreText.text = "Score: " + score;
-			MoveMovieCards();
+			//movies[nextMovieIDX].SetTitle(gControl.GetNewMovieTitle(gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID).cardData.cardName));
+			//score += movies[nextMovieIDX].value();
+			//scoreText.text = "Score: " + score;
+			//MoveMovieCards();
 		}
 		else
 		{
-			//do the computer make a movie
+			//Computer make a movie
 			int curActor = 0;
 			
 			//create movie instance
+			
 			//movies[nextMovieIDX] = Instantiate(newMovie, plyrMovieLocs[playerID, nextMovieIDX], Quaternion.identity);
-			movies[nextMovieIDX].transform.DORotate(new Vector3(90,0,0), 1);
+			//movies[nextMovieIDX].transform.DORotate(new Vector3(90,0,0), 1);
+			//movies[nextMovieIDX].InitMovie();
 			
 			//determine movie cards
 			//will need alot more logic here in the future
-			movies[nextMovieIDX].InitMovie();
 			movies[nextMovieIDX].screenplayID = hand[lastScreenplay];
 			movies[nextMovieIDX].directorID = hand[hiDirector];		
 			movies[nextMovieIDX].musicID = hand[hiMusic];
@@ -824,22 +658,25 @@ public class Player : MonoBehaviour
 				}
 				idx += 1;
 			}
-			movies[nextMovieIDX].SetTitle(gControl.GetNewMovieTitle(gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID).cardData.cardName));
-			
-			score += movies[nextMovieIDX].value();
-			scoreText.text = "Score: " + score;
-			MoveMovieCards();
+			//movies[nextMovieIDX].SetTitle(gControl.GetNewMovieTitle(gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID).cardData.cardName));
+			//score += movies[nextMovieIDX].value();
+			//scoreText.text = "Score: " + score;
+			//MoveMovieCards();
 			
 		}
+
+		movies[nextMovieIDX].SetTitle(gControl.GetNewMovieTitle(gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID).cardData.cardName));
+		score += movies[nextMovieIDX].value();
+		scoreText.text = "Score: " + score;
+		MoveMovieCards();
+		
 	}
 	
 	void MoveMovieCards()
 	{		
 		Card moveCard;
-		
-		//gControl = FindObjectOfType<GameControl>();
-		
-		//discard screenplay
+
+		//set the movies screenplay card data and move to movie hud
 		moveCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID);
 		
 		moveCard.cardData.hand = -1;
@@ -850,7 +687,7 @@ public class Player : MonoBehaviour
 		moveCard.transform.DORotate(new Vector3(0,0,0), 0.5f);
 		hand[lastScreenplay] = -1;
 		
-		//discard director
+		//director
 		moveCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].directorID);
 		
 		moveCard.cardData.hand = -1;
@@ -861,7 +698,7 @@ public class Player : MonoBehaviour
 		moveCard.transform.DORotate(new Vector3(0,0,0), 0.5f);
 		hand[hiDirector] = -1;
 		
-		//discard music
+		//music
 		moveCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].musicID);
 		
 		moveCard.cardData.hand = -1;
@@ -872,9 +709,9 @@ public class Player : MonoBehaviour
 		moveCard.transform.DORotate(new Vector3(0,0,0), 0.5f);
 		hand[hiMusic] = -1;
 		
-		//discard actors
+		//actors
 		int idx = 0;
-		//int idxActor = 0;
+
 		foreach(int crd in movies[nextMovieIDX].actorID)
 		{
 			if(movies[nextMovieIDX].actorID[idx] != -1)
@@ -924,7 +761,6 @@ public class Player : MonoBehaviour
 			idx += 1;
 		}
 
-		//gControl.gMovieHud.gameObject.SetActive(true);
 		gControl.gMovieHud.enabled = true;
 		gControl.gGameHud.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = GetName() + " makes a movie '" + movies[nextMovieIDX].title + "'";
 		gControl.gMovieHud.transform.GetChild(15).GetComponent<TextMeshProUGUI>().text = movies[nextMovieIDX].title + " (" + movies[nextMovieIDX].value() + ")";
@@ -936,11 +772,8 @@ public class Player : MonoBehaviour
 		Card discardCard;
 		
 		//discard screenplay
-		//Debug.Log("player: " + playerID + " nextMovieIDX: " + nextMovieIDX + " sp: " +  movies[nextMovieIDX].screenplayID + " spCardName: " + gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID).cardData.cardName);
 		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID);
 		discardCard.cardData.hand = -1;
-		//discardCard.cardData.status = CardData.Status.Movie	;
-		//discardCard.cardData.discard = CardData.CardType.Talent;
 		discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
 		discardCard.transform.DOMove(movieStackLocs[playerID], 0.5f);
 		discardCard.transform.DORotate(movieStackRots[playerID], 0.5f);
@@ -948,24 +781,18 @@ public class Player : MonoBehaviour
 		
 		
 		//discard director
-		//Debug.Log("nextMovieIDX: " + nextMovieIDX + " dir: " +  movies[nextMovieIDX].directorID + " dirCardName: " + gControl.GetTalentCardFromID(movies[nextMovieIDX].directorID).cardData.cardName);
 		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].directorID);
 		
 		discardCard.cardData.hand = -1;
-		//discardCard.cardData.status = CardData.Status.Movie;
-		//discardCard.cardData.discard = CardData.CardType.Talent;
 		discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
 		discardCard.transform.DOMove(movieStackLocs[playerID], 0.5f);
 		discardCard.transform.DORotate(movieStackRots[playerID], 0.5f);
 		gControl.curTalentDiscardIdx += 1;
 		
 		//discard music
-		//Debug.Log("mus: " +gControl.GetTalentCardFromID(movies[nextMovieIDX].musicID).cardData.cardName);
 		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].musicID);
 		
 		discardCard.cardData.hand = -1;
-		//discardCard.cardData.status = CardData.Status.Movie;
-		//discardCard.cardData.discard = CardData.CardType.Talent;
 		discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
 		discardCard.transform.DOMove(movieStackLocs[playerID], 0.5f);
 		discardCard.transform.DORotate(movieStackRots[playerID], 0.5f);
@@ -973,7 +800,6 @@ public class Player : MonoBehaviour
 		
 		//discard actors
 		int idx = 0;
-		//int idxActor = 0;
 		foreach(int crd in movies[nextMovieIDX].actorID)
 		{
 			if(movies[nextMovieIDX].actorID[idx] != -1)
@@ -981,8 +807,6 @@ public class Player : MonoBehaviour
 				discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].actorID[idx]);
 		
 				discardCard.cardData.hand = -1;
-				//discardCard.cardData.status = CardData.Status.Movie;
-				//discardCard.cardData.discard = CardData.CardType.Talent;
 				discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
 				discardCard.transform.DOMove(movieStackLocs[playerID], 0.5f);
 				discardCard.transform.DORotate(movieStackRots[playerID], 0.5f);
@@ -1085,21 +909,6 @@ public class Player : MonoBehaviour
 						{
 							movCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].actorID[idx + 1]);
 							movCard.transform.DOMove(movieLocs[idx + 3], 0.2f);
-							//if(idx + 4 == 4)
-							//{
-							//	gControl.gMovieHud.transform.GetChild(8).gameObject.SetActive(false);
-							//	gControl.gMovieHud.transform.GetChild(9).gameObject.SetActive(false);
-							//}
-							//else if(idx + 4 == 5)
-							//{
-							//	gControl.gMovieHud.transform.GetChild(10).gameObject.SetActive(false);
-							//	gControl.gMovieHud.transform.GetChild(11).gameObject.SetActive(false);
-							//}
-							//else if(idx + 4 == 6)
-							//{
-							//	gControl.gMovieHud.transform.GetChild(12).gameObject.SetActive(false);
-							//	gControl.gMovieHud.transform.GetChild(13).gameObject.SetActive(false);
-							//}
 						}
 					}
 					//clear last actor slot
@@ -1109,7 +918,6 @@ public class Player : MonoBehaviour
 				{
 					gControl.SetTickerText("Can't remove only actor in a movie.");
 				}
-
 			}
 		}
 		else
@@ -1179,22 +987,6 @@ public class Player : MonoBehaviour
 			{
 				inCard.transform.DOMove(movieLocs[movieLoc], 0.5f);		
 				inCard.transform.DORotate(new Vector3(0,0,0), 0.5f);
-				//if(movieLoc == 4)
-				//{
-				//	gControl.gMovieHud.transform.GetChild(8).gameObject.SetActive(true);
-				//	gControl.gMovieHud.transform.GetChild(9).gameObject.SetActive(true);
-				//}
-				//else if(movieLoc == 5)
-				//{
-				//	gControl.gMovieHud.transform.GetChild(10).gameObject.SetActive(true);
-				//	gControl.gMovieHud.transform.GetChild(11).gameObject.SetActive(true);
-				//}
-				//else if(movieLoc == 6)
-				//{
-				//	gControl.gMovieHud.transform.GetChild(12).gameObject.SetActive(true);
-				//	gControl.gMovieHud.transform.GetChild(13).gameObject.SetActive(true);
-				//}
-				
 			}
 		}
 		//update movie score in canvas

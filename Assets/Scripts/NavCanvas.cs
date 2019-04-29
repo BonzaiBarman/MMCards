@@ -12,9 +12,7 @@ public class NavCanvas : MonoBehaviour
 	// Start is called before the first frame update
     void Start()
     {
-	    //cGameHud.enabled = true;
-	    //cMovieHud.enabled = false;
-	    //cInfo.transform.DOScale(new Vector3(0,0,0),0);
+
     }
 
     // Update is called once per frame

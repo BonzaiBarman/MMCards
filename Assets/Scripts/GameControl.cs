@@ -9,18 +9,7 @@ using TMPro;
 
 public class GameControl : MonoBehaviour
 {
-    
-	public enum Screenplays
-	{
-		Comedy,
-		Drama,
-		Horror,
-		Musical,
-		Western,
-		Action
-	}
-	
-	Name daname;
+
 	Utilities utils = new Utilities();
 	Card[] daCards;
 	Card[] actionCards;
@@ -40,7 +29,6 @@ public class GameControl : MonoBehaviour
 	public MovieTitles movieTitles;
 	public int TalentCardDeckHiIdx = 69;
 	
-	
 	public Player[] player;
 	public int playerCount;
 	
@@ -55,11 +43,7 @@ public class GameControl : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
     {
-	    //daname = FindObjectOfType<Name>();
-	    //float r = daname.transform.position.x;
-	    //daname.ChangeName("Walter");
-	    //daname.RunAnimation("rotate");
-	    
+
 	    StartCoroutine("InitGame");
 	}
 
