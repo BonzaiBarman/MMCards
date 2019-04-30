@@ -152,31 +152,31 @@ public class Player : MonoBehaviour
 	//	}
 	//}
 	
-	public void ChangeBackgroundMaterial(string inMaterial)
-	{
-		GameObject back = transform.GetChild(1).gameObject;
-		if (inMaterial == "gold")
-		{
-			back.GetComponent<Renderer>().material = goldMaterial;
-			//back.SetActive(false);
-		}
-		else if (inMaterial == "red")
-		{
-			back.GetComponent<Renderer>().material = redMaterial;
-		}
-		else if (inMaterial == "green")
-		{
-			back.GetComponent<Renderer>().material = greenMaterial;
-		}
-		else if (inMaterial == "blue")
-		{
-			back.GetComponent<Renderer>().material = blueMaterial;
-		}
-		else
-		{
-			back.GetComponent<Renderer>().material = goldMaterial;
-		}
-	}
+	//public void ChangeBackgroundMaterial(string inMaterial)
+	//{
+	//	GameObject back = transform.GetChild(1).gameObject;
+	//	if (inMaterial == "gold")
+	//	{
+	//		back.GetComponent<Renderer>().material = goldMaterial;
+	//		//back.SetActive(false);
+	//	}
+	//	else if (inMaterial == "red")
+	//	{
+	//		back.GetComponent<Renderer>().material = redMaterial;
+	//	}
+	//	else if (inMaterial == "green")
+	//	{
+	//		back.GetComponent<Renderer>().material = greenMaterial;
+	//	}
+	//	else if (inMaterial == "blue")
+	//	{
+	//		back.GetComponent<Renderer>().material = blueMaterial;
+	//	}
+	//	else
+	//	{
+	//		back.GetComponent<Renderer>().material = goldMaterial;
+	//	}
+	//}
 	
 	public void AlignHand()
 	{
