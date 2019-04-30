@@ -198,7 +198,7 @@ public class Player : MonoBehaviour
 		}		
 	}
 	
-	public void DoTurn()
+	public IEnumerator DoTurn()
 	{
 		TextMeshPro tmesh = transform.GetChild(0).gameObject.GetComponent<TextMeshPro>();
 		DOTweenAnimation[] tanim = tmesh.GetComponents<DOTweenAnimation>();
@@ -211,12 +211,14 @@ public class Player : MonoBehaviour
 
 		if (playerType == PlayerType.Human)
 		{
-			StartCoroutine("HumanTurn");
+			yield return StartCoroutine("HumanTurn");
 		}
 		else if (playerType == PlayerType.Computer)
 		{
-			StartCoroutine("ComputerTurn");
+			yield return StartCoroutine("ComputerTurn");
 		}
+		yield return null;
+		
 	}
 	
 	IEnumerator HumanTurn()
@@ -254,17 +256,21 @@ public class Player : MonoBehaviour
 			yield return new WaitForSeconds(2.5f);
 			break;
 		case PlayerAction.MakeMovie:
+			Debug.Log("Humanturn: start of player movie action");
 			playerActed = false;
 			//movies[nextMovieIDX] = Instantiate(newMovie, plyrMovieLocs[playerID, nextMovieIDX], Quaternion.identity);
-
+			Debug.Log("Humanturn: before make movie");
 			MakeMovie();
-
+			Debug.Log("Humanturn: after make movie");
 			gControl.SetTickerText("Select Cards to add to the movie.");
+			
 			yield return new WaitUntil(() => playerActed == true);
+			Debug.Log("Humanturn: after ok pressed make movie before stack");
 			playerActed = false;
 				
 			StackMovieCards();
 			yield return new WaitUntil(() => playerActed == true);
+			Debug.Log("Humanturn: after stack");
 			nextMovieIDX += 1;
 			//playerActed = true;
 			break;
@@ -651,7 +657,6 @@ public class Player : MonoBehaviour
 			{
 				if((gControl.GetTalentCardFromID(crd).cardData.subType == CardData.SubType.Actor) || (gControl.GetTalentCardFromID(crd).cardData.subType == CardData.SubType.Actress))
 				{
-					//Debug.Log(nextMovieIDX + " " + curActor);
 					movies[nextMovieIDX].actorID[curActor] = crd;
 					hand[idx] = -1;
 					curActor += 1;

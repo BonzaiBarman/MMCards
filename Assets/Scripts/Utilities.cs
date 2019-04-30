@@ -30,6 +30,8 @@ public enum Screenplays
     Action
 }
 
+
+
 public class Utilities
 {
 
@@ -62,7 +64,6 @@ public class Utilities
 	
 	//public void DoReShuffleCards(Card[] inCards)
 	//{
-	//	Debug.Log(inCards.Length);
 	//	StartCoroutine("ReShuffleCards", inCards);
 	//}
 	
