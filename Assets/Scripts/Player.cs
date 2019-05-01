@@ -71,6 +71,8 @@ public class Player : MonoBehaviour
 	int lastRaidProtection = -1;
 
 	GameControl gControl;
+	
+	const int CardDrawnHandIDX = 99;
 
 	// Start is called before the first frame update
     void Start()
@@ -247,30 +249,29 @@ public class Player : MonoBehaviour
 			break;
 		case	PlayerAction.DrawTalent:
 			StartCoroutine("DrawTalent");
-			yield return new WaitForSeconds(2.5f);
 			break;
 		case	PlayerAction.DrawTalentDiscard:
 			playerActed = false;
 			StartCoroutine("DrawTalentDiscard");
 			yield return new WaitUntil(() => playerActed == true);
-			yield return new WaitForSeconds(2.5f);
 			break;
 		case PlayerAction.MakeMovie:
-			Debug.Log("Humanturn: start of player movie action");
 			playerActed = false;
 			//movies[nextMovieIDX] = Instantiate(newMovie, plyrMovieLocs[playerID, nextMovieIDX], Quaternion.identity);
-			Debug.Log("Humanturn: before make movie");
+			Debug.Log("before make movie");
 			MakeMovie();
-			Debug.Log("Humanturn: after make movie");
+			Debug.Log("after make movie");
 			gControl.SetTickerText("Select Cards to add to the movie.");
 			
 			yield return new WaitUntil(() => playerActed == true);
-			Debug.Log("Humanturn: after ok pressed make movie before stack");
+			Debug.Log("after ok");
+			movies[nextMovieIDX].SetTitle(movies[nextMovieIDX].title);
+			score = score + movies[nextMovieIDX].value();	
+			scoreText.text = "Score: " + score;
 			playerActed = false;
 				
 			StackMovieCards();
 			yield return new WaitUntil(() => playerActed == true);
-			Debug.Log("Humanturn: after stack");
 			nextMovieIDX += 1;
 			//playerActed = true;
 			break;
@@ -278,7 +279,8 @@ public class Player : MonoBehaviour
 			Debug.Log("player action error: " + playerAction);
 			break;
 		}
-
+		
+		yield return new WaitForSeconds(1.5f);
 		playerActed = false;
 		gControl.curPlayer += 1;
 		if (gControl.curPlayer >= gControl.playerCount){gControl.curPlayer = 0;}
@@ -290,7 +292,7 @@ public class Player : MonoBehaviour
 
 	IEnumerator ComputerTurn()
 	{
-		yield return new WaitForSeconds(1f);
+		yield return new WaitForSeconds(0.5f);
 		while (!playerActed)
 		{
 			//pause before turn
@@ -323,7 +325,10 @@ public class Player : MonoBehaviour
 				{
 					if(playerType == PlayerType.Computer){drawCard.GetComponent<Rigidbody>().isKinematic = false;}
 					drawCard.cardData.handIdx = 99;
-					drawCard.DrawCardAnim(playerID, nextHandIdx);
+					
+					//drawCard.DrawTalentCard(playerID, nextHandIdx);
+					yield return StartCoroutine(drawCard.DrawTalentCardAnim(playerID));
+					
 					cardToFillIdx = ComputerDetermineDiscard();
 					nextHandIdx -= 1;
 					//throw away card
@@ -347,24 +352,29 @@ public class Player : MonoBehaviour
 					gControl.curTalentCardsIdx += 1;
 				
 					//pause after card drawn but before align
-					yield return new WaitForSeconds(0.05f);
+					//yield return new WaitForSeconds(0.05f);
 					if(playerType == PlayerType.Computer){drawCard.GetComponent<Rigidbody>().isKinematic = true;}
 				
-					yield return new WaitForSeconds(1f);
+					//yield return new WaitForSeconds(1f);
 				
-					AlignHand();
+					//AlignHand();
+					yield return StartCoroutine("ProcessAlignHand");
 					
-					yield return new WaitForSeconds(1.5f);
+					//yield return new WaitForSeconds(1.5f);
 					
-					discardCard.DiscardTalentCard();
+					//discardCard.DiscardTalentCard();
+					yield return StartCoroutine(discardCard.DiscardTalentCardAnim());
+					
 					gControl.curTalentDiscardIdx += 1;
 					//pause to wait for next player turn
-					yield return new WaitForSeconds(2.5f);
 					playerActed = true;
 				}
 				else
 				{
-					drawCard.DrawCardAnim(playerID, nextHandIdx);
+					
+					//drawCard.DrawTalentCard(playerID, nextHandIdx);
+					yield return StartCoroutine(drawCard.DrawTalentCardAnim(playerID));
+					
 					cardToFillIdx = nextHandIdx;
 
 					hand[cardToFillIdx] = drawCard.cardData.cardID;
@@ -376,12 +386,13 @@ public class Player : MonoBehaviour
 					gControl.curTalentCardsIdx += 1;
 				
 					//pause after card drawn but before align
-					yield return new WaitForSeconds(0.5f);
+					//yield return new WaitForSeconds(0.5f);
 					if(playerType == PlayerType.Computer){drawCard.GetComponent<Rigidbody>().isKinematic = true;}
 				
-					AlignHand();
+					//AlignHand();
+					yield return StartCoroutine("ProcessAlignHand");
+					
 					//pause to wait for next player turn
-					yield return new WaitForSeconds(2.5f);
 					playerActed = true;
 
 				}
@@ -403,6 +414,7 @@ public class Player : MonoBehaviour
 		}
 
 		}
+		yield return new WaitForSeconds(0.5f);
 		playerActed = false;
 		gControl.curPlayer += 1;
 		if (gControl.curPlayer >= gControl.playerCount){gControl.curPlayer = 0;}
@@ -423,7 +435,7 @@ public class Player : MonoBehaviour
 		
 			yield return new WaitUntil(() => playerActed == true);
 
-			if (discardedCardIdx == 99)
+			if (discardedCardIdx == CardDrawnHandIDX)
 			{
 				//so be it
 				
@@ -631,10 +643,10 @@ public class Player : MonoBehaviour
 			movies[nextMovieIDX].actorID[0] = hand[hiActor];
             hand[hiActor] = -1;
 
-			//movies[nextMovieIDX].SetTitle(gControl.GetNewMovieTitle(gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID).cardData.cardName));
-			//score += movies[nextMovieIDX].value();
+			movies[nextMovieIDX].SetTitle(gControl.GetNewMovieTitle(gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID).cardData.cardName));
 			//scoreText.text = "Score: " + score;
-			//MoveMovieCards();
+			//score += movies[nextMovieIDX].value();
+			MoveMovieCards();
 		}
 		else
 		{
@@ -663,18 +675,12 @@ public class Player : MonoBehaviour
 				}
 				idx += 1;
 			}
-			//movies[nextMovieIDX].SetTitle(gControl.GetNewMovieTitle(gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID).cardData.cardName));
-			//score += movies[nextMovieIDX].value();
-			//scoreText.text = "Score: " + score;
-			//MoveMovieCards();
+			movies[nextMovieIDX].SetTitle(gControl.GetNewMovieTitle(gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID).cardData.cardName));
+			score += movies[nextMovieIDX].value();
+			scoreText.text = "Score: " + score;
+			MoveMovieCards();
 			
 		}
-
-		movies[nextMovieIDX].SetTitle(gControl.GetNewMovieTitle(gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID).cardData.cardName));
-		score += movies[nextMovieIDX].value();
-		scoreText.text = "Score: " + score;
-		MoveMovieCards();
-		
 	}
 	
 	void MoveMovieCards()
@@ -997,6 +1003,9 @@ public class Player : MonoBehaviour
 		//update movie score in canvas
 		gControl.gMovieHud.transform.GetChild(15).GetComponent<TextMeshProUGUI>().text = movies[nextMovieIDX].title + " (" + movies[nextMovieIDX].value() + ")";
 		FixMovieHudLabels();
+		//update player movie info uder name
+		//movies[nextMovieIDX].SetTitle(gControl.GetNewMovieTitle(gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID).cardData.cardName));
+		//score += movies[nextMovieIDX].value();
 	}
 	
 	void FixMovieHudLabels()

@@ -43,7 +43,11 @@ public class GameControl : MonoBehaviour
 	//Canvas/Hud/Misc Variables 
 	public Canvas gGameHud;
 	public Canvas gMovieHud;
+	public Canvas gMenuHud;
+	public Canvas gStartGameHud;
+	public Canvas gEndGameHud;
 	public GameObject gMovieBackground;
+	
 	const int MovieButtonIdx = 1;
 	
 	public MovieTitles movieTitles;	
@@ -53,7 +57,9 @@ public class GameControl : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
     {
-	    StartCoroutine("InitGame");
+	    InitHud();
+	    //StartCoroutine("InitGame");
+	    //DOTween.SetTweensCapacity(500,50);
 	}
 
     // Update is called once per frame
@@ -100,9 +106,10 @@ public class GameControl : MonoBehaviour
 		}
 	}
 	
-	IEnumerator InitGame()
+	public IEnumerator InitGame()
 	{
 		
+		SetTickerText("Initializing Game...");
 		//sets the player number on this machine
 		thePlayerIndex = 0;
 
@@ -110,11 +117,12 @@ public class GameControl : MonoBehaviour
 		daCards = FindObjectsOfType<Card>();
 		
 		//Initialize Main Varaibles
-		InitHud();
+		//InitHud();
 		InitActionCards();
 		InitTalentCards();
 		InitPlayers();
 		LoadMovieTitles();
+		
 
 		//wait for 2 seconds. cards should have fallen by then
 		yield return new WaitForSeconds(2f);
@@ -128,26 +136,27 @@ public class GameControl : MonoBehaviour
 		//move cards in both decks physically to match order in deck
 		actionCards = actionCards.OrderBy(go => go.cardData.deckIdx).ToArray();
 		float nvalue = 0.02f;
+		Vector3 v = actionCards[0].transform.position;
 		for (int i = 49; i >= 0; i--)
 		{
-			actionCards[i].transform.DOMoveY(nvalue,0);
+			actionCards[i].transform.position = new Vector3(v.x, nvalue, v.z);
 			nvalue += .005f;
 		}
 		talentCards = talentCards.OrderBy(go => go.cardData.deckIdx).ToArray();
 		nvalue = 0.02f;
+		v = talentCards[0].transform.position;
 		for (int i = 69; i >= 0; i--)
 		{
-			talentCards[i].transform.DOMoveY(nvalue,0);
+			talentCards[i].transform.position = new Vector3(v.x, nvalue, v.z);
 			nvalue += .005f;
 		}
 		
 		//Deal Cards
-		StartCoroutine("DealCards", dealer);
+		yield return StartCoroutine("DealCards", dealer);
 		//Start Game
-		yield return new WaitForSeconds(10f);
+		//yield return new WaitForSeconds(10f);
 		gameStarted = true;
 		StartCoroutine("MainGameLoop");
-		
 	}
 
 	IEnumerator MainGameLoop()
@@ -158,7 +167,6 @@ public class GameControl : MonoBehaviour
 			{
 				if (holdPlayer != curPlayer)
 				{
-
 					ReshuffleCheck();
 					if(shuffling == false)
 					{
@@ -182,15 +190,31 @@ public class GameControl : MonoBehaviour
 
 	void InitHud()
 	{
-		//turn movie stuff off
-		gGameHud.transform.GetChild(1).gameObject.SetActive(false);
+		gStartGameHud.enabled = true;
 		gMovieHud.enabled = false;
-		//init ticker with dealing...
-		gGameHud.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "Dealling...";
+		gGameHud.enabled = false;
+		gMenuHud.enabled = false;
+		gEndGameHud.enabled = false;
+	}
+	
+	public void StartGame()
+	{
+		gStartGameHud.gameObject.SetActive(false); //enabled = false;
+		gGameHud.enabled = true;
+		StartCoroutine("InitGame");
 	}
 	
 	void InitActionCards()
 	{
+		//move cards to starting location
+		foreach (Card item in daCards)
+		{
+			if(item.cardData.type == CardData.CardType.Action)
+			{
+				item.transform.position = new Vector3(-0.9f,2f,0);
+				//item.transform.DORotate(new Vector3(180f,180f,0), 0);				
+			}
+		}	
 		//Get Action Cards
 		int count = 0;
 		actionCards = new Card[ActionCardCount];
@@ -216,10 +240,11 @@ public class GameControl : MonoBehaviour
 		actionCards = actionCards.OrderBy(go => go.cardData.deckIdx).ToArray();
 		//move cards to the height to drop from
 		float loc = 2f;
+		Vector3 v = actionCards[0].transform.position;
 		for (int i = 49; i >= 0; i--)
 		{
 			loc = loc + 0.1f;
-			actionCards[i].transform.DOMoveY(loc,0);
+			actionCards[i].transform.position = new Vector3(v.x, loc, v.z);
 		}
 		//turn off Kinematic to activate gravity
 		foreach (Card item in actionCards)
@@ -231,6 +256,15 @@ public class GameControl : MonoBehaviour
 	
 	void InitTalentCards()
 	{
+		//move cards to starting location
+		foreach (Card item in daCards)
+		{
+			if(item.cardData.type == CardData.CardType.Talent)
+			{
+				item.transform.position = new Vector3(3f,2f,0);
+				//item.transform.DORotate(new Vector3(180f,180f,0), 0);
+			}
+		}	
 		//Get Talent Cards
 		int count = 0;
 		talentCards = new Card[TalentCardCount];
@@ -259,10 +293,11 @@ public class GameControl : MonoBehaviour
 		talentCards = talentCards.OrderBy(go => go.cardData.deckIdx).ToArray();
 		//move cards to the height to drop from
 		float loc = 2f;
+		Vector3 v = talentCards[0].transform.position;
 		for (int i = 69; i >= 0; i--)
 		{
 			loc = loc + 0.1f;
-			talentCards[i].transform.DOMoveY(loc,0);
+			talentCards[i].transform.position = new Vector3(v.x, loc, v.z);
 		}
 		//turn off Kinematic to activate gravity
 		//talentCards = talentCards.OrderByDescending(go => go.cardData.deckIdx).ToArray();
@@ -341,15 +376,16 @@ public class GameControl : MonoBehaviour
 	
 			//move cards to the height to drop from
 			float loc = 2f;
+			
 			foreach (Card item in talentCards)
 			{
 				if (item.cardData.status ==	CardData.Status.Deck)
 				{
 					item.GetComponent<Rigidbody>().isKinematic = true;
 					loc = loc + 0.1f;
-					item.transform.DOMove(new Vector3(3f,loc,0f), 0f);
+					//item.transform.DOMove(new Vector3(3f,loc,0f), 0f);
+					item.transform.position = new Vector3(3f,loc,0f);
 					item.transform.DORotate(new Vector3(180f,180f,0f), 0f);
-					//item.transform.DOMoveY(loc,0);
 				}
 			}
 			
@@ -443,9 +479,9 @@ public class GameControl : MonoBehaviour
 			{
 				item.GetComponent<Rigidbody>().isKinematic = true;
 				loc = loc + 0.1f;
-				item.transform.DOMove(new Vector3(-0.9f,loc,0f), 0f);
+				//item.transform.DOMove(new Vector3(-0.9f,loc,0f), 0f);
+				item.transform.position = new Vector3(-0.9f,loc,0f);
 				item.transform.DORotate(new Vector3(180f,180f,0f), 0f);
-				//item.transform.DOMoveY(loc,0f);
 			}
 		}
 		//turn off Kinematic to activate gravity
@@ -469,7 +505,8 @@ public class GameControl : MonoBehaviour
 		{
 			if (item.cardData.status ==	CardData.Status.Deck)
 			{
-				item.transform.DOMove(new Vector3(-0.9f, nvalue, 0f),0f);
+				//item.transform.DOMove(new Vector3(-0.9f, nvalue, 0f),0f);
+				item.transform.position = new Vector3(-0.9f, nvalue, 0f);
 				nvalue += .005f;				
 			}
 		}
@@ -613,7 +650,7 @@ public class GameControl : MonoBehaviour
 	IEnumerator DealCards(int inDealer)
 	{
 		dealing = true;
-		
+		SetTickerText("Dealing...");
 		int[,] dealOrder = new int[4,4] {{1,2,3,0}, {2,3,0,1}, {3,0,1,2}, {0,1,2,3}};
 
 		
@@ -652,6 +689,8 @@ public class GameControl : MonoBehaviour
 			}
 		}
 		dealing = false;
+		curPlayer = dealer + 1;
+		if(curPlayer >= player.Length){curPlayer = 0;}
 	}
 	
 	public PlayerAction GetCurPlayerAction()
@@ -674,7 +713,8 @@ public class GameControl : MonoBehaviour
 				float yValue = 0.1f + (crd.cardData.discardIdx / 100f);
 				if(loc.x < 4.5f || loc.x > 4.9f){loc.x = 4.7f;}
 				if(loc.z < -0.2f || loc.z > 0.2f){loc.z = 0f;}
-				crd.transform.DOMove(new Vector3(4.7f, yValue, 0f), 0f);
+				//crd.transform.DOMove(new Vector3(4.7f, yValue, 0f), 0f);
+				crd.transform.position = new Vector3(4.7f, yValue, 0f);
 				Vector3 rot = crd.transform.rotation.eulerAngles;
 				//crd.transform.DORotate(new Vector3(rot.x, rot.y, rot.z), 0f);
 				crd.transform.DORotate(new Vector3(0, rot.y, 0), 0f);
@@ -709,11 +749,9 @@ public class GameControl : MonoBehaviour
 	{
 		//Need to do player control of making movie
 		//player[thePlayerIndex].MakeMovie();
-		Debug.Log("Start of movie button clicked");
 		player[thePlayerIndex].playerAction = PlayerAction.MakeMovie;
 		player[thePlayerIndex].playerActed = true;
 		gGameHud.transform.GetChild(MovieButtonIdx).gameObject.SetActive(false);
-		Debug.Log("End of movie button clicked");
 	}
 	
 	public string GetNewMovieTitle(string inType)

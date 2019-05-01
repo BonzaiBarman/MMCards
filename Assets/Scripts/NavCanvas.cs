@@ -29,7 +29,6 @@ public class NavCanvas : MonoBehaviour
 	//		if (item.cardData.type == CardData.CardType.Action)
 	//		{
 	//			//count = count + 0.03f;
-	//			//item.transform.DOMoveY(count,0);
 	//			item.GetComponent<Rigidbody>().isKinematic = true;
 	//		}
 	//	}
