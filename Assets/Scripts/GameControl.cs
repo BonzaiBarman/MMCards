@@ -41,11 +41,7 @@ public class GameControl : MonoBehaviour
 	//------------
 
 	//Canvas/Hud/Misc Variables 
-	public Canvas gGameHud;
-	public Canvas gMovieHud;
-	public Canvas gMenuHud;
-	public Canvas gStartGameHud;
-	public Canvas gEndGameHud;
+	public NavCanvas gNavCanvas;
 	public GameObject gMovieBackground;
 	
 	const int MovieButtonIdx = 1;
@@ -57,6 +53,7 @@ public class GameControl : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
     {
+	    gNavCanvas = FindObjectOfType<NavCanvas>();
 	    InitHud();
 	    //StartCoroutine("InitGame");
 	    //DOTween.SetTweensCapacity(500,50);
@@ -109,7 +106,7 @@ public class GameControl : MonoBehaviour
 	public IEnumerator InitGame()
 	{
 		
-		SetTickerText("Initializing Game...");
+		gNavCanvas.SetTicker("Initializing Game...");
 		//sets the player number on this machine
 		thePlayerIndex = 0;
 
@@ -190,18 +187,17 @@ public class GameControl : MonoBehaviour
 
 	void InitHud()
 	{
-		gStartGameHud.enabled = true;
-		gMovieHud.enabled = false;
-		gGameHud.enabled = false;
-		gMenuHud.enabled = false;
-		gEndGameHud.enabled = false;
+
+		gNavCanvas.InitHub();
+
 	}
 	
 	public void StartGame()
 	{
-		gStartGameHud.gameObject.SetActive(false); //enabled = false;
-		gGameHud.enabled = true;
+
+		gNavCanvas.StartGame();
 		StartCoroutine("InitGame");
+
 	}
 	
 	void InitActionCards()
@@ -650,7 +646,7 @@ public class GameControl : MonoBehaviour
 	IEnumerator DealCards(int inDealer)
 	{
 		dealing = true;
-		SetTickerText("Dealing...");
+		gNavCanvas.SetTicker("Dealing...");
 		int[,] dealOrder = new int[4,4] {{1,2,3,0}, {2,3,0,1}, {3,0,1,2}, {0,1,2,3}};
 
 		
@@ -724,23 +720,23 @@ public class GameControl : MonoBehaviour
 	
 	private void DoTickerStartTurnMessage()
 	{
-		TextMeshProUGUI tmesh = gGameHud.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>();
+
 		if(curPlayer == thePlayerIndex)
 		{
 			if(player[curPlayer].CanMakeMovie())
 			{
-				gGameHud.transform.GetChild(1).gameObject.SetActive(true);
-				tmesh.text = "Your turn, You can Make a Movie, Draw an Action card, or Draw a Talent card.";
+				gNavCanvas.SetMovieButton(true);
+				gNavCanvas.SetTicker("Your turn, You can Make a Movie, Draw an Action card, or Draw a Talent card.");
 			}
 			else
 			{
-				gGameHud.transform.GetChild(1).gameObject.SetActive(false);
-				tmesh.text = "Your turn, Draw an Action or Talent card.";
+				gNavCanvas.SetMovieButton(false);
+				gNavCanvas.SetTicker("Your turn, Draw an Action or Talent card.");
 			}
 		}
 		else
 		{
-			tmesh.text = player[curPlayer].GetName() + "'s turn";	
+			gNavCanvas.SetTicker(player[curPlayer].GetName() + "'s turn");	
 		}
 		
 	}
@@ -748,10 +744,10 @@ public class GameControl : MonoBehaviour
 	public void MakeMovieClicked()
 	{
 		//Need to do player control of making movie
-		//player[thePlayerIndex].MakeMovie();
 		player[thePlayerIndex].playerAction = PlayerAction.MakeMovie;
 		player[thePlayerIndex].playerActed = true;
-		gGameHud.transform.GetChild(MovieButtonIdx).gameObject.SetActive(false);
+		gNavCanvas.SetMovieButton(false);
+		
 	}
 	
 	public string GetNewMovieTitle(string inType)
@@ -784,15 +780,10 @@ public class GameControl : MonoBehaviour
 	public void MovieOKButton()
 	{
 		gMovieBackground.gameObject.SetActive(false);
-		gMovieHud.enabled = false;
+		gNavCanvas.DisableMovieHud();
 		player[curPlayer].playerActed = true;
 	}
-	
-	public void SetTickerText(string inText)
-	{
-		gGameHud.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = inText;
-	}
-	
+
 	public void MovieCardSelected(Card inCard)
 	{
 		player[curPlayer].MovieCardClicked(inCard);

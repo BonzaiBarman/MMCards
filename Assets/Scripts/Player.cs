@@ -225,7 +225,7 @@ public class Player : MonoBehaviour
 	
 	IEnumerator HumanTurn()
 	{
-
+		Debug.Log("before switch");
 		yield return new WaitUntil(() => playerActed == true);
 		switch (playerAction)
 		{
@@ -261,7 +261,7 @@ public class Player : MonoBehaviour
 			Debug.Log("before make movie");
 			MakeMovie();
 			Debug.Log("after make movie");
-			gControl.SetTickerText("Select Cards to add to the movie.");
+			gControl.gNavCanvas.SetTicker("Select Cards to add to the movie.");
 			
 			yield return new WaitUntil(() => playerActed == true);
 			Debug.Log("after ok");
@@ -279,7 +279,7 @@ public class Player : MonoBehaviour
 			Debug.Log("player action error: " + playerAction);
 			break;
 		}
-		
+		Debug.Log("after switch");
 		yield return new WaitForSeconds(1.5f);
 		playerActed = false;
 		gControl.curPlayer += 1;
@@ -287,7 +287,9 @@ public class Player : MonoBehaviour
 		//change player name color to black
 		transform.GetChild(1).gameObject.GetComponent<Renderer>().material = origMaterial;
 		//turn off make movie button
-		gControl.gGameHud.transform.GetChild(1).gameObject.SetActive(false);
+		gControl.gNavCanvas.SetMovieButton(false);
+		
+		
 	}
 
 	IEnumerator ComputerTurn()
@@ -735,46 +737,15 @@ public class Player : MonoBehaviour
 				moveCard.cardData.movieIdx = nextMovieIDX;
 				moveCard.transform.DOMove(movieLocs[idx + 3], 0.5f);
 				moveCard.transform.DORotate(new Vector3(0,0,0), 0.5f);
-				switch(idx)
-				{
-				case 1:
-					gControl.gMovieHud.transform.GetChild(8).gameObject.SetActive(true);
-					gControl.gMovieHud.transform.GetChild(9).gameObject.SetActive(true);
-					break;
-				case 2:
-					gControl.gMovieHud.transform.GetChild(10).gameObject.SetActive(true);
-					gControl.gMovieHud.transform.GetChild(11).gameObject.SetActive(true);
-					break;
-				case 3:
-					gControl.gMovieHud.transform.GetChild(12).gameObject.SetActive(true);
-					gControl.gMovieHud.transform.GetChild(13).gameObject.SetActive(true);
-					break;
-				}
+				gControl.gNavCanvas.TurnOnActorLabel(idx, true);
 			}
 			else
 			{
-				switch(idx)
-				{
-				case 1:
-					gControl.gMovieHud.transform.GetChild(8).gameObject.SetActive(false);
-					gControl.gMovieHud.transform.GetChild(9).gameObject.SetActive(false);
-					break;
-				case 2:
-					gControl.gMovieHud.transform.GetChild(10).gameObject.SetActive(false);
-					gControl.gMovieHud.transform.GetChild(11).gameObject.SetActive(false);
-					break;
-				case 3:
-					gControl.gMovieHud.transform.GetChild(12).gameObject.SetActive(false);
-					gControl.gMovieHud.transform.GetChild(13).gameObject.SetActive(false);
-					break;
-				}
+				gControl.gNavCanvas.TurnOnActorLabel(idx, false);
 			}
 			idx += 1;
 		}
-
-		gControl.gMovieHud.enabled = true;
-		gControl.gGameHud.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = GetName() + " makes a movie '" + movies[nextMovieIDX].title + "'";
-		gControl.gMovieHud.transform.GetChild(15).GetComponent<TextMeshProUGUI>().text = movies[nextMovieIDX].title + " (" + movies[nextMovieIDX].value() + ")";
+		gControl.gNavCanvas.SetMakeMovie(GetName(), movies[nextMovieIDX].title, movies[nextMovieIDX].value());
 		gControl.gMovieBackground.gameObject.SetActive(true);
 	}
 
@@ -927,7 +898,7 @@ public class Player : MonoBehaviour
 				}
 				else
 				{
-					gControl.SetTickerText("Can't remove only actor in a movie.");
+					gControl.gNavCanvas.SetTicker("Can't remove only actor in a movie.");
 				}
 			}
 		}
@@ -1001,11 +972,17 @@ public class Player : MonoBehaviour
 			}
 		}
 		//update movie score in canvas
-		gControl.gMovieHud.transform.GetChild(15).GetComponent<TextMeshProUGUI>().text = movies[nextMovieIDX].title + " (" + movies[nextMovieIDX].value() + ")";
+		gControl.gNavCanvas.UpdateMovieScore(movies[nextMovieIDX].title, movies[nextMovieIDX].value());
+
 		FixMovieHudLabels();
+		
+		//? Still need to do below ?
+		
 		//update player movie info uder name
 		//movies[nextMovieIDX].SetTitle(gControl.GetNewMovieTitle(gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID).cardData.cardName));
 		//score += movies[nextMovieIDX].value();
+		
+		
 	}
 	
 	void FixMovieHudLabels()
@@ -1015,13 +992,11 @@ public class Player : MonoBehaviour
 		{
 			if(movies[nextMovieIDX].actorID[idx] == -1)
 			{
-				gControl.gMovieHud.transform.GetChild(inIdx).gameObject.SetActive(false);
-				gControl.gMovieHud.transform.GetChild(inIdx + 1).gameObject.SetActive(false);
+				gControl.gNavCanvas.TurnOnActorLabel(idx, false);
 			}
 			else
 			{
-				gControl.gMovieHud.transform.GetChild(inIdx).gameObject.SetActive(true);
-				gControl.gMovieHud.transform.GetChild(inIdx + 1).gameObject.SetActive(true);
+				gControl.gNavCanvas.TurnOnActorLabel(idx, true);
 			}
 			inIdx += 2;
 		}

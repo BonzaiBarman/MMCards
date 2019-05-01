@@ -30,6 +30,14 @@ public enum Screenplays
     Action
 }
 
+public enum Huds
+{
+	Game,
+	Movie,
+	Menu,
+	StartGame,
+	EndGame,
+}
 
 
 public class Utilities
