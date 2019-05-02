@@ -22,9 +22,9 @@ MonoBehaviour:
   value: 020000000000000000000000000000000000000000000000
   hand: 0
   handIdx: -1
-  deck: 0
-  deckIdx: 22
-  discard: 0
+  deck: 1
+  deckIdx: 40
+  discard: 1
   discardIdx: -1
   movie: -1
   movieIdx: -1

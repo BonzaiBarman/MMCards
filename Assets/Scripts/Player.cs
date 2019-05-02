@@ -317,7 +317,7 @@ public class Player : MonoBehaviour
 			{
 			case PlayerAction.DrawTalent:
 				//draw a talent card
-
+				gControl.gNavCanvas.SetTicker(GetName() + " draws a talent card");
 				Card drawCard;
 				Card discardCard;
 				int cardToFillIdx;
@@ -401,9 +401,8 @@ public class Player : MonoBehaviour
 
 				break;
 			case PlayerAction.MakeMovie:
-				//movies[nextMovieIDX] = Instantiate(newMovie, plyrMovieLocs[playerID, nextMovieIDX], Quaternion.identity);
 
-                MakeMovie();
+				MakeMovie();
 
 				yield return new WaitUntil(() => playerActed == true);
 				playerActed = false;
@@ -413,7 +412,7 @@ public class Player : MonoBehaviour
 				nextMovieIDX += 1;
 
 				break;
-		}
+			}
 
 		}
 		yield return new WaitForSeconds(0.5f);

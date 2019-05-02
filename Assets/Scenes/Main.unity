@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 170076734}
-  m_IndirectSpecularColor: {r: 0.43667555, g: 0.48427176, b: 0.5645241, a: 1}
+  m_IndirectSpecularColor: {r: 0.43667546, g: 0.48427135, b: 0.5645225, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6842,7 +6842,7 @@ MonoBehaviour:
   playerCount: 0
   curPlayer: -1
   thePlayerIndex: 0
-  gNavCanvas: {fileID: 0}
+  gNavCanvas: {fileID: 1344873877}
   gMovieBackground: {fileID: 1923616844}
   movieTitles:
     comedy: []
@@ -12962,6 +12962,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player (0)
       objectReference: {fileID: 0}
+    - target: {fileID: 7896242392138359210, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
+        type: 3}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7896242392138359210, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
+        type: 3}
+      propertyPath: m_isInputParsingRequired
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5541581011063969312, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -13046,16 +13056,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 7896242392138359210, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
-        type: 3}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7896242392138359210, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
-        type: 3}
-      propertyPath: m_isInputParsingRequired
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5541581011063969313, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
         type: 3}
@@ -13182,6 +13182,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 7896242392138359210, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
+        type: 3}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7896242392138359210, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
+        type: 3}
+      propertyPath: m_isInputParsingRequired
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5541581011063969312, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -13266,16 +13276,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 7896242392138359210, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
-        type: 3}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7896242392138359210, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
-        type: 3}
-      propertyPath: m_isInputParsingRequired
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5541581011063969313, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
         type: 3}
@@ -14059,6 +14059,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7896242392138359210, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
+        type: 3}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7896242392138359210, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
+        type: 3}
+      propertyPath: m_isInputParsingRequired
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5541581011063969312, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -14143,16 +14153,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 7896242392138359210, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
-        type: 3}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7896242392138359210, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
-        type: 3}
-      propertyPath: m_isInputParsingRequired
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5541581011063969313, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
         type: 3}
@@ -16048,6 +16048,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 7896242392138359210, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
+        type: 3}
+      propertyPath: m_havePropertiesChanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7896242392138359210, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
+        type: 3}
+      propertyPath: m_isInputParsingRequired
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7896242392138359210, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
+        type: 3}
+      propertyPath: m_textInfo.textComponent
+      value: 
+      objectReference: {fileID: 162594451}
     - target: {fileID: 5541581011063969312, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -16133,21 +16148,6 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 7896242392138359210, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
-        type: 3}
-      propertyPath: m_havePropertiesChanged
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7896242392138359210, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
-        type: 3}
-      propertyPath: m_isInputParsingRequired
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7896242392138359210, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
-        type: 3}
-      propertyPath: m_textInfo.textComponent
-      value: 
-      objectReference: {fileID: 162594451}
     - target: {fileID: 5541581011063969313, guid: bd87fefaf5e4cd94f9f9e223e81a2d82,
         type: 3}
       propertyPath: playerID

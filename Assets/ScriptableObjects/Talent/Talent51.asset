@@ -16,15 +16,15 @@ MonoBehaviour:
   cardName: Drama
   type: 1
   subType: 10
-  status: 0
+  status: 2
   frontSprite: {fileID: 21300000, guid: a9274a79a21fd6c4ca8e74d615e24718, type: 3}
   backSprite: {fileID: 21300000, guid: c271539c358a113499b45605b31c72c5, type: 3}
   value: 010000000000000000000000000000000000000000000000
-  hand: 0
-  handIdx: -1
-  deck: 0
-  deckIdx: 59
-  discard: 0
-  discardIdx: -1
-  movie: -1
-  movieIdx: -1
+  hand: -1
+  handIdx: 6
+  deck: 1
+  deckIdx: -1
+  discard: 1
+  discardIdx: 7
+  movie: 3
+  movieIdx: 0

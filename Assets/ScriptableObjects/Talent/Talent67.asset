@@ -23,7 +23,7 @@ MonoBehaviour:
   hand: 0
   handIdx: -1
   deck: 1
-  deckIdx: 9
+  deckIdx: 48
   discard: 1
   discardIdx: -1
   movie: -1

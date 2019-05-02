@@ -55,8 +55,6 @@ public class GameControl : MonoBehaviour
     {
 	    gNavCanvas = FindObjectOfType<NavCanvas>();
 	    InitHud();
-	    //StartCoroutine("InitGame");
-	    //DOTween.SetTweensCapacity(500,50);
 	}
 
     // Update is called once per frame
@@ -88,21 +86,17 @@ public class GameControl : MonoBehaviour
 	    //}
 	}
 
-	public void ReshuffleCheck()
+	void InitHud()
 	{
-		if (curTalentCardsIdx >= TalentCardCount)
-		{
-			shuffling = true;
-			
-			StartCoroutine("ReshuffleTalentCards");
-		}
-		if (curActionCardsIdx >= ActionCardCount)
-		{
-			shuffling = true;
-			StartCoroutine("ReshuffleActionCards");
-		}
+		gNavCanvas.InitHub();
 	}
 	
+	public void StartGame()
+	{
+		gNavCanvas.StartGame();
+		StartCoroutine("InitGame");
+	}
+
 	public IEnumerator InitGame()
 	{
 		
@@ -114,7 +108,6 @@ public class GameControl : MonoBehaviour
 		daCards = FindObjectsOfType<Card>();
 		
 		//Initialize Main Varaibles
-		//InitHud();
 		InitActionCards();
 		InitTalentCards();
 		InitPlayers();
@@ -124,7 +117,7 @@ public class GameControl : MonoBehaviour
 		//wait for 2 seconds. cards should have fallen by then
 		yield return new WaitForSeconds(2f);
 		
-		//stop gravity on cards
+		//stop gravity on all cards
 		foreach (Card item in daCards)
 		{
 			item.GetComponent<Rigidbody>().isKinematic = true;
@@ -150,8 +143,7 @@ public class GameControl : MonoBehaviour
 		
 		//Deal Cards
 		yield return StartCoroutine("DealCards", dealer);
-		//Start Game
-		//yield return new WaitForSeconds(10f);
+		//Start Game to Started and run main game loop
 		gameStarted = true;
 		StartCoroutine("MainGameLoop");
 	}
@@ -185,21 +177,6 @@ public class GameControl : MonoBehaviour
 		}
 	}
 
-	void InitHud()
-	{
-
-		gNavCanvas.InitHub();
-
-	}
-	
-	public void StartGame()
-	{
-
-		gNavCanvas.StartGame();
-		StartCoroutine("InitGame");
-
-	}
-	
 	void InitActionCards()
 	{
 		//move cards to starting location
@@ -228,7 +205,6 @@ public class GameControl : MonoBehaviour
 				count += 1;
 			}
 		}
-
 		//shuffle
 		utils.ShuffleCards(actionCards);
 
@@ -272,11 +248,11 @@ public class GameControl : MonoBehaviour
 				talentCards[count].cardData.status = CardData.Status.Deck;
 				talentCards[count].cardData.hand = 0;
 				talentCards[count].cardData.handIdx = -1;
-				talentCards[count].cardData.deck = 0;
+				//talentCards[count].cardData.deck = 0;
 				talentCards[count].cardData.deckIdx = count; //talentCards[count].cardData.cardID;
 				talentCards[count].cardData.movie = -1;
 				talentCards[count].cardData.movieIdx = -1;
-				talentCards[count].cardData.discard = 0;
+				//talentCards[count].cardData.discard = 0;
 				talentCards[count].cardData.discardIdx = -1;
 				count += 1;
 			}
@@ -417,7 +393,6 @@ public class GameControl : MonoBehaviour
 				}
 			}
 			
-			
 			//sort deck physically
 			foreach (Card item in talentCards) 
 			{
@@ -434,6 +409,21 @@ public class GameControl : MonoBehaviour
 			curTalentCardsIdx = cnt;
 			yield return new WaitForSeconds(5f);
 			shuffling = false;
+		}
+	}
+	
+	public void ReshuffleCheck()
+	{
+		if (curTalentCardsIdx >= TalentCardCount)
+		{
+			shuffling = true;
+			
+			StartCoroutine("ReshuffleTalentCards");
+		}
+		if (curActionCardsIdx >= ActionCardCount)
+		{
+			shuffling = true;
+			StartCoroutine("ReshuffleActionCards");
 		}
 	}
 	
