@@ -17,7 +17,28 @@ public class NavCanvas : MonoBehaviour
 	// Start is called before the first frame update
     void Start()
     {
-
+	    var daCanvasList = FindObjectsOfType<Canvas>();
+	    foreach(Canvas cnv in daCanvasList)
+	    {
+	    	switch(cnv.name)
+	    	{
+	    	case "GameHud":
+	    		cGameHud = cnv;
+		    	break;
+	    	case "MovieHud":
+		    	cMovieHud = cnv;
+		    	break;
+	    	case "MenuHud":
+		    	cMenuHud = cnv;
+		    	break;
+	    	case "StartGameHud":
+		    	cStartGameHud = cnv;
+		    	break;
+	    	case "EndGameHud":
+		    	cEndGameHud = cnv;
+		    	break;
+	    	}
+	    }
     }
 
     // Update is called once per frame

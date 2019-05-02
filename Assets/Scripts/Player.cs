@@ -73,6 +73,7 @@ public class Player : MonoBehaviour
 	GameControl gControl;
 	
 	const int CardDrawnHandIDX = 99;
+	const int MaxCardsInHand = 7;
 
 	// Start is called before the first frame update
     void Start()
@@ -1024,6 +1025,106 @@ public class Player : MonoBehaviour
 			}
 		}
 		return cnt;
+	}
+	
+	public void PlayerDrawCard(Card inCard)
+	{
+		if (inCard.cardData.type == CardData.CardType.Talent)
+		{
+
+			if (nextHandIdx < MaxCardsInHand)
+			{
+				hand[nextHandIdx] = inCard.cardData.cardID;
+				inCard.cardData.hand = playerID;
+				inCard.cardData.handIdx = nextHandIdx;
+
+				inCard.cardData.deckIdx = -1;
+				inCard.cardData.status = CardData.Status.Hand;
+				nextHandIdx += 1;
+				gControl.curTalentCardsIdx += 1;
+				playerAction = PlayerAction.DrawTalent;
+			}
+			else
+			{
+				inCard.cardData.hand = playerID;
+				inCard.cardData.handIdx = CardDrawnHandIDX;
+				
+				inCard.cardData.deckIdx = -1;
+				inCard.cardData.status = CardData.Status.Hand;
+				
+				gControl.curTalentCardsIdx += 1;
+				holdCardID = inCard.cardData.cardID;
+				playerAction = PlayerAction.DrawTalentDiscard;
+			}
+
+		}
+		else if (inCard.cardData.type == CardData.CardType.Action)
+		{
+			inCard.cardData.deckIdx = -1;
+			gControl.curActionCardsIdx += 1;
+			inCard.cardData.status = CardData.Status.Hand;
+			switch(inCard.cardData.subType)
+			{
+			case	CardData.SubType.Collect:
+				playerAction = PlayerAction.DrawActionCollect;
+				break;
+			case	CardData.SubType.Raid:
+				playerAction = PlayerAction.DrawActionRaid;
+				break;
+			case	CardData.SubType.Sabotage:
+				playerAction = PlayerAction.DrawActionSabotage;
+				break;
+			case	CardData.SubType.Trade:
+				playerAction = PlayerAction.DrawActionTrade;
+				break;
+			case	CardData.SubType.Chaos:
+				playerAction = PlayerAction.DrawActionChaos;
+				break;
+			case	CardData.SubType.RunOver:
+				playerAction = PlayerAction.DrawActionRunOver;
+				break;
+			}
+			
+		}
+		playerActed = true;
+	}
+	
+	public void PlayerDiscardCard(Card inCard)
+	{
+		if (inCard.cardData.type == CardData.CardType.Talent)
+		{
+			
+			if (playerAction == PlayerAction.DrawTalentDiscard)
+			{
+				inCard.cardData.hand = -1;
+				inCard.cardData.deckIdx = -1;
+				inCard.cardData.status = CardData.Status.Discard;
+				inCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
+				gControl.curTalentDiscardIdx += 1;
+				discardedCardIdx = inCard.cardData.handIdx;
+			}
+			else
+			{
+				int playerHandIdx = GetHandIndexFromCardID(inCard.cardData.cardID);
+			
+				inCard.cardData.hand = -1;
+				inCard.cardData.deckIdx = -1;
+				inCard.cardData.status = CardData.Status.Discard;
+				inCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
+				gControl.curTalentDiscardIdx += 1;
+				CompactHand(playerHandIdx);
+				inCard.cardData.handIdx = -1;				
+			}
+			playerActed = true;	
+
+		}
+		else if (inCard.cardData.type == CardData.CardType.Action)
+		{
+			inCard.cardData.status = CardData.Status.Discard;
+			inCard.cardData.discardIdx = gControl.curActionDiscardIdx;
+			gControl.curActionDiscardIdx += 1;
+			
+		}
 	}
 
 }

@@ -126,9 +126,9 @@ public class Card : MonoBehaviour
 		else
 		{
 			//temp while opp cards are face up
-			transform.DOMoveY(3f, 0.1f);
+			//transform.DOMoveY(8f, 1f);
 			Vector3 v = transform.position;
-			transform.DOMove(new Vector3(v.x, v.y + 1, v.z), 0.2f);
+			transform.DOMove(new Vector3(v.x, v.y + 7, v.z), 0.4f);
 			transform.DORotate(new Vector3(0f, 0f, 0f), 0.5f);
 			//--
 			
