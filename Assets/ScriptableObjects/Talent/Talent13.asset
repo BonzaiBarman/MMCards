@@ -15,7 +15,7 @@ MonoBehaviour:
   cardID: 13
   cardName: Helen Wheels
   type: 1
-  subType: 7
+  subType: 6
   status: 0
   frontSprite: {fileID: 21300000, guid: 832ad3154eee1374d8719f0f8060af4b, type: 3}
   backSprite: {fileID: 21300000, guid: c271539c358a113499b45605b31c72c5, type: 3}

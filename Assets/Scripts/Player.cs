@@ -334,12 +334,53 @@ public class Player : MonoBehaviour
 		{
 			//Computer make a movie
 			int curActor = 0;
-			
+			int spHandIndex = -1;
+			int spIndex = -1;
+			int hiVal = 0;
+			int hiIdx = -1;
+			int handIdx = 0;
+			Card[] aHand =  new Card[7];
 			//determine movie cards
 			//will need alot more logic here in the future
-			movies[nextMovieIDX].screenplayID = hand[lastScreenplay];
-			movies[nextMovieIDX].directorID = hand[hiDirector];		
-			movies[nextMovieIDX].musicID = hand[hiMusic];
+			for(int i = 0; i < 7; i++)
+			{
+				aHand[i] = gControl.GetTalentCardFromID(hand[i]);
+			}
+			spHandIndex = FindHighestScreenplay(aHand);
+			spIndex = GetScreenplayIndexFromName(aHand[spHandIndex].cardData.cardName);
+			movies[nextMovieIDX].screenplayID = hand[spHandIndex];
+			hiVal = 0;
+			hiIdx = -1;
+			handIdx = 0; 
+			foreach(Card crd in aHand)
+			{
+				if(crd.cardData.subType == CardData.SubType.Director)
+				{
+					if(crd.cardData.value[spIndex] > hiVal)
+					{
+						hiVal = crd.cardData.value[spIndex];
+						hiIdx = handIdx;
+					}
+				}
+				handIdx += 1;
+			}
+			movies[nextMovieIDX].directorID = hand[hiIdx];		
+			hiVal = 0;
+			hiIdx = -1;
+			handIdx = 0; 
+			foreach(Card crd in aHand)
+			{
+				if(crd.cardData.subType == CardData.SubType.Music)
+				{
+					if(crd.cardData.value[spIndex] > hiVal)
+					{
+						hiVal = crd.cardData.value[spIndex];
+						hiIdx = handIdx;
+					}
+				}
+				handIdx += 1;
+			}
+			movies[nextMovieIDX].musicID = hand[hiIdx];
 			int idx = 0;
 			foreach(int crd in hand)
 			{
@@ -352,6 +393,10 @@ public class Player : MonoBehaviour
 				idx += 1;
 			}
 			movies[nextMovieIDX].SetTitle(gControl.GetNewMovieTitle(gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID).cardData.cardName));
+			
+			//make adjustments like directot/music having a perfect 10 guy and a 9/10 guy to use 9/10 guy
+			//make adj to not use actors that are 5 or 6 unless neccessary to win game (maybe %50 of time)
+			
 			score += movies[nextMovieIDX].value();
 			scoreText.text = "Score: " + score;
 			MoveMovieCards();
@@ -938,6 +983,119 @@ public class Player : MonoBehaviour
         }
     }
 
+	int FindHighestScreenplay(Card[] inCards)
+	{
+		List<Card> spList = new List<Card>();
+		List<int> spListHandIdx = new List<int>();
+		int handIdx = 0;
+		int hiTot = 0;
+		int tot = 0;
+		int spValIndex = -1;
+		int listIdx = -1;
+		int hiListIdx = -1;
+	
+		//add screenplays in hand to list
+		foreach(Card crd in inCards)
+		{
+			if(crd.cardData.subType ==	CardData.SubType.Screenplay)
+			{
+				spList.Add(crd);
+				spListHandIdx.Add(handIdx);
+			}
+			handIdx	+= 1;
+		}
+		//for each screenplay determine hand total and track lowest
+		listIdx = 0;
+		foreach(Card crd in spList)
+		{
+			tot = 0;
+			spValIndex = GetScreenplayIndexFromName(crd.cardData.cardName);
+		
+			foreach(Card hCrd in inCards)
+			{
+				tot += hCrd.cardData.value[spValIndex];
+			}
+
+			if(tot > hiTot)
+			{
+				hiTot = tot;
+				hiListIdx = listIdx;
+			}
+			listIdx += 1;
+		}
+		return spListHandIdx[hiListIdx];
+	}
+
+	int FindLowestScreenplay(Card[] inCards)
+	{
+		List<Card> spList = new List<Card>();
+		List<int> spListHandIdx = new List<int>();
+		int handIdx = 0;
+		int lowTot = 99;
+		int tot = 0;
+		int spValIndex = -1;
+		int listIdx = -1;
+		int lowListIdx = -1;
+	
+		//add screenplays in hand to list
+		foreach(Card crd in inCards)
+		{
+			if(crd.cardData.subType ==	CardData.SubType.Screenplay)
+			{
+				spList.Add(crd);
+				spListHandIdx.Add(handIdx);
+			}
+			handIdx	+= 1;
+		}
+		//for each screenplay determine hand total and track lowest
+		listIdx = 0;
+		foreach(Card crd in spList)
+		{
+			tot = 0;
+			spValIndex = GetScreenplayIndexFromName(crd.cardData.cardName);
+		
+			foreach(Card hCrd in inCards)
+			{
+				tot += hCrd.cardData.value[spValIndex];
+			}
+
+			if(tot < lowTot)
+			{
+				lowTot = tot;
+				lowListIdx = listIdx;
+			}
+			listIdx += 1;
+		}
+		return spListHandIdx[lowListIdx];
+	}
+	
+	int GetScreenplayIndexFromName(string inScreenplayName)
+	{
+		int spIndex = -1;
+		switch(inScreenplayName)
+		{
+		case "Comedy":
+			spIndex = 0;
+			break;
+		case "Drama":
+			spIndex = 1;
+			break;
+		case "Horror":
+			spIndex = 2;
+			break;
+		case "Musical":
+			spIndex = 3;
+			break;
+		case "Western":
+			spIndex = 4;
+			break;
+		case "Action":
+			spIndex = 5;
+			break;
+		}
+		return spIndex;
+	}
+
     //--------------------------------------------------------------------
     //--------------------------------------------------------------------
     //Computer Player Control and Logic
@@ -983,39 +1141,53 @@ public class Player : MonoBehaviour
                         //drawCard.DrawTalentCard(playerID, nextHandIdx);
                         yield return StartCoroutine(drawCard.DrawTalentCardAnim(playerID));
 
-                        cardToFillIdx = ComputerDetermineDiscard();
-                        nextHandIdx -= 1;
+	                    cardToFillIdx = ComputerDetermineDiscard(drawCard);
+	                    Debug.Log(cardToFillIdx);
+	                    //nextHandIdx -= 1;
                         //throw away card
                         //Needs tobe done
-                        //***********
-                        discardCard = gControl.GetTalentCardFromID(hand[cardToFillIdx]);
-                        if (playerType == PlayerType.Computer) { discardCard.GetComponent<Rigidbody>().isKinematic = false; }
+	                    //***********
+	                    if(cardToFillIdx == 7)
+	                    {
+		                    //discarding drawn card
+		                    discardCard = drawCard;
+
+		                    if (playerType == PlayerType.Computer) { discardCard.GetComponent<Rigidbody>().isKinematic = false; }
+
+		                    discardCard.cardData.hand = -1;
+		                    discardCard.cardData.deckIdx = -1;
+		                    discardCard.cardData.status = CardData.Status.Discard;
+		                    discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
+
+	                    }
+	                    else
+	                    {
+	                    	nextHandIdx -= 1;
+	                    	//discarding hand card
+	                    	//and putting drawn card into hand
+		                    discardCard = gControl.GetTalentCardFromID(hand[cardToFillIdx]);
+
+		                    if (playerType == PlayerType.Computer) { discardCard.GetComponent<Rigidbody>().isKinematic = false; }
+
+		                    discardCard.cardData.hand = -1;
+		                    discardCard.cardData.deckIdx = -1;
+		                    discardCard.cardData.status = CardData.Status.Discard;
+		                    discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
+
+		                    hand[cardToFillIdx] = drawCard.cardData.cardID;
+		                    drawCard.cardData.deckIdx = -1;
+		                    drawCard.cardData.status = CardData.Status.Hand;
+		                    drawCard.cardData.hand = playerID;
+		                    drawCard.cardData.handIdx = cardToFillIdx;
+		                    nextHandIdx += 1;
 
 
-                        discardCard.cardData.hand = -1;
-                        discardCard.cardData.deckIdx = -1;
-                        discardCard.cardData.status = CardData.Status.Discard;
-                        discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
+		                    if (playerType == PlayerType.Computer) { drawCard.GetComponent<Rigidbody>().isKinematic = true; }
+		                    yield return StartCoroutine("ProcessAlignHand");
+	                    }
 
-                        hand[cardToFillIdx] = drawCard.cardData.cardID;
-                        drawCard.cardData.deckIdx = -1;
-                        drawCard.cardData.status = CardData.Status.Hand;
-                        drawCard.cardData.hand = playerID;
-                        drawCard.cardData.handIdx = cardToFillIdx;
-                        nextHandIdx += 1;
-                        gControl.curTalentCardsIdx += 1;
+	                    gControl.curTalentCardsIdx += 1;
 
-                        //pause after card drawn but before align
-                        //yield return new WaitForSeconds(0.05f);
-                        if (playerType == PlayerType.Computer) { drawCard.GetComponent<Rigidbody>().isKinematic = true; }
-
-                        //yield return new WaitForSeconds(1f);
-
-                        yield return StartCoroutine("ProcessAlignHand");
-
-                        //yield return new WaitForSeconds(1.5f);
-
-                        //discardCard.DiscardTalentCard();
                         yield return StartCoroutine(discardCard.DiscardTalentCardAnim());
 
                         gControl.curTalentDiscardIdx += 1;
@@ -1072,56 +1244,257 @@ public class Player : MonoBehaviour
         transform.GetChild(1).gameObject.GetComponent<Renderer>().material = origMaterial;
     }
 
-    int ComputerDetermineDiscard()
+	int ComputerDetermineDiscard(Card inDrawCard)
     {
-        int handIdxToReturn = -1;
-        PopHandInfo();
+	    int handIdxToReturn = -1;
+	    int[] cardCount = new int[] {0,0,0,0,0,0,0};
+	    int hiCountType = 0;
+	    int hiCountVal = 0;
+	    int lowTotVal = 99;
+	    int totVal = 0;
+	    int spCount = 0;
+	    int handIdx = -1;
+	    int spIndex = -1;
+	    //List<Card> spList = new List<Card>();
+	    //create hand to analyze
+	    Card[] aHand =  new Card[8];
+	    for(int i = 0; i < 7; i++)
+	    {
+	    	aHand[i] = gControl.GetTalentCardFromID(hand[i]);
+	    }
+	    aHand[7] = inDrawCard;
+	    //count cards of type
+	    foreach(Card crd in aHand)
+	    {
+	    	cardCount[(int)crd.cardData.subType - 6] = cardCount[(int)crd.cardData.subType - 6] + 1;
+	    }
+	    hiCountType = 0;
+	    hiCountVal = 0;
+	    for(int i = 0; i < 7; i++)
+	    {
+	    	if(cardCount[i] >= hiCountVal)
+	    	{
+	    		hiCountType = i;
+	    		hiCountVal = cardCount[i];
+	    	}
+	    }
+	    
+	    if((hiCountType + 6) == (int)CardData.SubType.Screenplay)
+		{
+	    	//hi count is screenplay
+	    	
+	    	handIdxToReturn = FindLowestScreenplay(aHand);
+	    	
+		}
+	    else
+	    {
+	    	//count screenplays
+	    	spCount = 0;
+	    	foreach(Card crd in aHand)
+	    	{
+	    		if(crd.cardData.subType ==	CardData.SubType.Screenplay)
+	    		{
+	    			//spList.Add(crd);
+	    			spCount += 1;
+	    		}
+	    	}
+	    	if(spCount == 0)
+	    	{
+		    	handIdx = 0;
+		    	lowTotVal = 99;
+	    		foreach(Card crd in aHand)
+	    		{
+	    			if((int)crd.cardData.subType == hiCountType + 6)
+	    			{
+	    				totVal = 0;
+	    				for(int i = 0; i < 6; i++)
+	    				{
+	    					totVal += crd.cardData.value[i];
+	    				}
+	    				if(totVal < lowTotVal)
+	    				{
+	    					lowTotVal = totVal;
+	    					handIdxToReturn = handIdx;
+	    				}
+	    				Debug.Log(crd.cardData.cardName + " " + totVal);
+	    			}
+	    			handIdx += 1;
+	    		}
+	    	}
+	    	else if(spCount == 1)
+	    	{
+	    		//handIdxToReturn = 3;
+	    		//spIndex = GetScreenplayIndexFromName(spList[0].cardData.cardName);
+	    		handIdx = 0;
+	    		spIndex = GetScreenplayIndexFromName(aHand[FindHighestScreenplay(aHand)].cardData.cardName);
+	    		
+		    	foreach(Card crd in aHand)
+	    		{
+	    			if((int)crd.cardData.subType == hiCountType + 6)
+	    			{
+						totVal = crd.cardData.value[spIndex];
 
-        if (raidProtectionCnt > 1)
-        {
-            handIdxToReturn = lastRaidProtection;
-        }
-        else if (sabotageProtectionCnt > 1)
-        {
-            handIdxToReturn = lastSabotageProtection;
-        }
-        else if (directorCnt > 2)
-        {
-            handIdxToReturn = lowDirector;
-        }
-        else if (musicCnt > 2)
-        {
-            handIdxToReturn = lowMusic;
-        }
-        else if (screenplayCnt > 2)
-        {
-            handIdxToReturn = lastScreenplay;
-        }
-        else if (actorCnt > 2)
-        {
-            handIdxToReturn = lowActor;
-        }
-        else
-        {
-            if (screenplayCnt > 1)
-            {
-                handIdxToReturn = lastScreenplay;
-            }
-            else if (musicCnt > 1)
-            {
-                handIdxToReturn = lowMusic;
-            }
-            else if (directorCnt > 1)
-            {
-                handIdxToReturn = lowDirector;
-            }
-            else
-            {
-                handIdxToReturn = lowActor;
-            }
-        }
-        return handIdxToReturn;
+	    				if(totVal < lowTotVal)
+	    				{
+	    					lowTotVal = totVal;
+	    					handIdxToReturn = handIdx;
+	    				}
+	    				Debug.Log(crd.cardData.cardName + " " + totVal);
+	    			}
+	    			handIdx += 1;
+	    		}
+	    		
+	    	}
+	    	else //assumng more than one screenplay
+	    	{
+	    		//handIdxToReturn = 3;
+	    		handIdx = 0;
+	    		spIndex = GetScreenplayIndexFromName(aHand[FindHighestScreenplay(aHand)].cardData.cardName);
+	    		foreach(Card crd in aHand)
+	    		{
+	    			if((int)crd.cardData.subType == hiCountType + 6)
+	    			{
+		    			totVal = crd.cardData.value[spIndex];
+
+	    				if(totVal < lowTotVal)
+	    				{
+	    					lowTotVal = totVal;
+	    					handIdxToReturn = handIdx;
+	    				}
+	    				Debug.Log(crd.cardData.cardName + " " + totVal);
+	    			}
+	    			handIdx += 1;
+	    		}
+	    	}
+	    	
+	    	//find highest screenplay
+	    	//use screenplay index to find lowest card value of card type to throw away
+	    }
+	    
+	    
+	    
+		
+	    //do some extra logic before throwing a good card away you don't really need
+	    
+	    int newHandIdx = -1;
+	    if((aHand[handIdxToReturn].cardData.subType != CardData.SubType.RaidProtection) && (aHand[handIdxToReturn].cardData.subType != CardData.SubType.SabotageProtection))
+		{
+		    int actorsCount = 0;
+		    totVal = 0;
+		    for(int i = 0; i < 6; i++)
+		    {
+			    totVal += aHand[handIdxToReturn].cardData.value[i];
+		    }
+		    if((totVal > 44) && (aHand[handIdxToReturn].cardData.subType != CardData.SubType.Actor))
+		    {
+			    //good card then maybe should keep the card instead of Raid Protect or Low Actor
+			    for(int i = 0; i < 8; i++)
+			    {
+				    if(aHand[i].cardData.subType == CardData.SubType.RaidProtection)
+				    {
+					    newHandIdx = i;
+				    }
+			    }
+			    if(newHandIdx == -1)
+			    {
+				    //count actors
+				    actorsCount = 0;
+				    for(int i = 0; i < 8; i++)
+				    {
+					    if(aHand[i].cardData.subType == CardData.SubType.Actor)
+					    {
+						    actorsCount += 1;
+					    }
+				    }
+				    if(actorsCount > 1)
+				    {
+					    lowTotVal = 99;
+					    for(int i = 0; i < 8; i++)
+					    {
+						    totVal = 0;
+						    if(aHand[i].cardData.subType == CardData.SubType.Actor)
+						    {
+							    for(int j = 0; j < 6; j++)
+							    {
+								    totVal += aHand[handIdxToReturn].cardData.value[j];
+							    }
+							    if(totVal < lowTotVal)
+							    {
+								    lowTotVal = totVal;
+								    if(lowTotVal < 45)
+								    {
+									    newHandIdx = i;
+								    }
+							    }
+						    }
+					    }
+				    }
+			    }
+		    }
+
+		}
+	    
+	    if(newHandIdx == -1)
+	    {
+		    return handIdxToReturn;	    	
+	    }
+	    else
+	    {
+		    return newHandIdx;
+	    }
+		
+
+	    
+	    //int handIdxToReturn = -1;
+        //PopHandInfo();
+
+        //if (raidProtectionCnt > 1)
+        //{
+        //    handIdxToReturn = lastRaidProtection;
+        //}
+        //else if (sabotageProtectionCnt > 1)
+        //{
+        //    handIdxToReturn = lastSabotageProtection;
+        //}
+        //else if (directorCnt > 2)
+        //{
+        //    handIdxToReturn = lowDirector;
+        //}
+        //else if (musicCnt > 2)
+        //{
+        //    handIdxToReturn = lowMusic;
+        //}
+        //else if (screenplayCnt > 2)
+        //{
+        //    handIdxToReturn = lastScreenplay;
+        //}
+        //else if (actorCnt > 2)
+        //{
+        //    handIdxToReturn = lowActor;
+        //}
+        //else
+        //{
+        //    if (screenplayCnt > 1)
+        //    {
+        //        handIdxToReturn = lastScreenplay;
+        //    }
+        //    else if (musicCnt > 1)
+        //    {
+        //        handIdxToReturn = lowMusic;
+        //    }
+        //    else if (directorCnt > 1)
+        //    {
+        //        handIdxToReturn = lowDirector;
+        //    }
+        //    else
+        //    {
+        //        handIdxToReturn = lowActor;
+        //    }
+        //}
+	    //return handIdxToReturn;
     }
+    
+    
 
 }
 
