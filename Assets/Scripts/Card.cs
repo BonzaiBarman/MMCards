@@ -197,7 +197,7 @@ public class Card : MonoBehaviour
 		rBod.AddRelativeForce(0, Random.Range(-10,10), Random.Range(-30,30), ForceMode.Impulse);
 		yield return new WaitForSeconds(0.3f);
 		float yValue;
-		yValue = 0.1f + (cardData.discardIdx / 100f);
+		yValue = 0.01f + (cardData.discardIdx / 100f);
 		transform.DOMove(new Vector3(4.7f, yValue, 0f), 0.5f);
 		yield return new WaitForSeconds(0.8f);
 		rBod.isKinematic = true;

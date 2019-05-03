@@ -98,6 +98,7 @@ public class NavCanvas : MonoBehaviour
 			break;
 		}
 	}
+	
 	public void SetMakeMovie(string inPlayerName, string inMovieTitle, int inMovieValue)
 	{
 		cMovieHud.gameObject.SetActive(true);

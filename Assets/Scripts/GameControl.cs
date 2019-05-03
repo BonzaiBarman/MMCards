@@ -598,7 +598,7 @@ public class GameControl : MonoBehaviour
 			if(crd.cardData.status == CardData.Status.Discard)
 			{
 				Vector3 loc = crd.transform.position;
-				float yValue = 0.1f + (crd.cardData.discardIdx / 100f);
+				float yValue = 0.01f + (crd.cardData.discardIdx / 100f);
 				if(loc.x < 4.5f || loc.x > 4.9f){loc.x = 4.7f;}
 				if(loc.z < -0.2f || loc.z > 0.2f){loc.z = 0f;}
 				crd.transform.position = new Vector3(4.7f, yValue, 0f);
