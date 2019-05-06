@@ -248,7 +248,7 @@ public class GameControl : MonoBehaviour
 			{
 				talentCards[count] = item;
 				talentCards[count].cardData.status = CardData.Status.Deck;
-				talentCards[count].cardData.hand = 0;
+				talentCards[count].cardData.hand = -1;
 				talentCards[count].cardData.handIdx = -1;
 				talentCards[count].cardData.deckIdx = count; //talentCards[count].cardData.cardID;
 				talentCards[count].cardData.movie = -1;

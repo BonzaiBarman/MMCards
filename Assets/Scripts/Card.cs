@@ -73,8 +73,9 @@ public class Card : MonoBehaviour
 		    {
 			    if(gControl.curPlayer == gControl.thePlayerIndex && gControl.dealing == false)
 			    {
-			    	if((cardData.hand == gControl.thePlayerIndex && gControl.GetCurPlayerAction() == PlayerAction.DrawTalentDiscard) || gControl.GetCurPlayerAction() == PlayerAction.RaidingTalent || gControl.GetCurPlayerAction() == PlayerAction.TradingTalent)
+			    	if(((cardData.hand == gControl.thePlayerIndex && gControl.GetCurPlayerAction() == PlayerAction.DrawTalentDiscard)) || (gControl.GetCurPlayerAction() == PlayerAction.RaidingTalent) || (gControl.GetCurPlayerAction() == PlayerAction.TradingTalent))
 			    	{				    	
+				    	Debug.Log("handidx clicked: " + cardData.handIdx);
 				    	gControl.CardDiscard(this);
 				    	if (cardData.type == CardData.CardType.Action)
 				    	{

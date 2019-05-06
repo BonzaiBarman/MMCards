@@ -93,7 +93,8 @@ public class Player : MonoBehaviour
     
 	public void CompactHand(int inIndex)
 	{
-        //inIndex is the card to compact from to the left
+		Debug.Log("Compact Hand inIndex: " + inIndex);
+		//inIndex is the card to compact from to the left
         for (int i = inIndex; i < (hand.Length - 1); i++)
 		{
 			if (hand[i] != -1)
@@ -364,7 +365,8 @@ public class Player : MonoBehaviour
 				}
 				handIdx += 1;
 			}
-			movies[nextMovieIDX].directorID = hand[hiIdx];		
+			movies[nextMovieIDX].directorID = hand[hiIdx];
+			
 			hiVal = 0;
 			hiIdx = -1;
 			handIdx = 0; 
@@ -381,18 +383,34 @@ public class Player : MonoBehaviour
 				handIdx += 1;
 			}
 			movies[nextMovieIDX].musicID = hand[hiIdx];
+			
 			int idx = 0;
-			foreach(int crd in hand)
+			curActor = 0;
+			//foreach(int crd in hand)
+			//{
+			//	if((gControl.GetTalentCardFromID(crd).cardData.subType == CardData.SubType.Actor) || (gControl.GetTalentCardFromID(crd).cardData.subType == CardData.SubType.Actress))
+			//	{
+			//		movies[nextMovieIDX].actorID[curActor] = crd;
+			//		hand[idx] = -1;
+			//		curActor += 1;
+			//	}
+			//	idx += 1;
+			//}
+			foreach(Card crd in aHand)
 			{
-				if((gControl.GetTalentCardFromID(crd).cardData.subType == CardData.SubType.Actor) || (gControl.GetTalentCardFromID(crd).cardData.subType == CardData.SubType.Actress))
+				if((crd.cardData.subType == CardData.SubType.Actor) || (crd.cardData.subType == CardData.SubType.Actress))
 				{
-					movies[nextMovieIDX].actorID[curActor] = crd;
+					movies[nextMovieIDX].actorID[curActor] = crd.cardData.cardID;
 					hand[idx] = -1;
 					curActor += 1;
 				}
 				idx += 1;
 			}
-			movies[nextMovieIDX].SetTitle(gControl.GetNewMovieTitle(gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID).cardData.cardName));
+			
+			
+			//movies[nextMovieIDX].SetTitle(gControl.GetNewMovieTitle(gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID).cardData.cardName));
+			movies[nextMovieIDX].SetTitle(gControl.GetNewMovieTitle(aHand[spHandIndex].cardData.cardName));
+			
 			
 			//make adjustments like directot/music having a perfect 10 guy and a 9/10 guy to use 9/10 guy
 			//make adj to not use actors that are 5 or 6 unless neccessary to win game (maybe %50 of time)
@@ -670,7 +688,7 @@ public class Player : MonoBehaviour
 	{		
 		Card discardCard;
 		
-		//discard screenplay
+		//stack screenplay
 		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].screenplayID);
 		discardCard.cardData.hand = -1;
 		discardCard.cardData.discardIdx = gControl.curTalentDiscardIdx;
@@ -679,7 +697,7 @@ public class Player : MonoBehaviour
 		gControl.curTalentDiscardIdx += 1;
 		
 		
-		//discard director
+		//stack director
 		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].directorID);
 		
 		discardCard.cardData.hand = -1;
@@ -688,7 +706,7 @@ public class Player : MonoBehaviour
 		discardCard.transform.DORotate(movieStackRots[playerID], 0.5f);
 		gControl.curTalentDiscardIdx += 1;
 		
-		//discard music
+		//stack music
 		discardCard = gControl.GetTalentCardFromID(movies[nextMovieIDX].musicID);
 		
 		discardCard.cardData.hand = -1;
@@ -697,7 +715,7 @@ public class Player : MonoBehaviour
 		discardCard.transform.DORotate(movieStackRots[playerID], 0.5f);
 		gControl.curTalentDiscardIdx += 1;
 		
-		//discard actors
+		//stack actors
 		int idx = 0;
 		foreach(int crd in movies[nextMovieIDX].actorID)
 		{
@@ -1004,8 +1022,9 @@ public class Player : MonoBehaviour
 			}
 			handIdx	+= 1;
 		}
-		//for each screenplay determine hand total and track lowest
+		//for each screenplay determine hand total and track highest
 		listIdx = 0;
+		hiTot = 0;
 		foreach(Card crd in spList)
 		{
 			tot = 0;
@@ -1049,6 +1068,7 @@ public class Player : MonoBehaviour
 		}
 		//for each screenplay determine hand total and track lowest
 		listIdx = 0;
+		lowTot = 99;
 		foreach(Card crd in spList)
 		{
 			tot = 0;
@@ -1339,6 +1359,21 @@ public class Player : MonoBehaviour
 	    					lowTotVal = totVal;
 	    					handIdxToReturn = handIdx;
 	    				}
+	    				else if(totVal == lowTotVal)
+	    				{
+	    					//need to compare two totals
+	    					int totl1 = 0;
+	    					int totl2 = 0;
+	    					for(int i = 0; i < 6; i++)
+	    					{
+	    						totl1 += aHand[handIdxToReturn].cardData.value[i];
+	    						totl2 += aHand[handIdx].cardData.value[i];
+	    					}
+	    					if(totl1 > totl2)
+	    					{
+	    						handIdxToReturn = handIdx;
+	    					}
+	    				}
 	    				Debug.Log(crd.cardData.cardName + " " + totVal);
 	    			}
 	    			handIdx += 1;
@@ -1361,6 +1396,21 @@ public class Player : MonoBehaviour
 	    					lowTotVal = totVal;
 	    					handIdxToReturn = handIdx;
 	    				}
+	    				else if(totVal == lowTotVal)
+	    				{
+	    					//need to compare two totals
+		    				int totl1 = 0;
+	    					int totl2 = 0;
+	    					for(int i = 0; i < 6; i++)
+	    					{
+	    						totl1 += aHand[handIdxToReturn].cardData.value[i];
+	    						totl2 += aHand[handIdx].cardData.value[i];
+	    					}
+	    					if(totl1 > totl2)
+	    					{
+	    						handIdxToReturn = handIdx;
+	    					}
+	    				}
 	    				Debug.Log(crd.cardData.cardName + " " + totVal);
 	    			}
 	    			handIdx += 1;
@@ -1372,7 +1422,7 @@ public class Player : MonoBehaviour
 	    }
 	    
 	    
-	    
+	    Debug.Log("Pre Adj " + aHand[handIdxToReturn].cardData.cardName);
 		
 	    //do some extra logic before throwing a good card away you don't really need
 	    
@@ -1381,13 +1431,14 @@ public class Player : MonoBehaviour
 		{
 		    int actorsCount = 0;
 		    totVal = 0;
+		    int totHold = 0;
 		    for(int i = 0; i < 6; i++)
 		    {
 			    totVal += aHand[handIdxToReturn].cardData.value[i];
 		    }
-		    if((totVal > 44) && (aHand[handIdxToReturn].cardData.subType != CardData.SubType.Actor))
+		    if(totVal > 44)
 		    {
-			    //good card then maybe should keep the card instead of Raid Protect or Low Actor
+			    //good card then maybe should keep the card instead of Raid Protect or 2nd screenplay or Low Actor
 			    for(int i = 0; i < 8; i++)
 			    {
 				    if(aHand[i].cardData.subType == CardData.SubType.RaidProtection)
@@ -1411,17 +1462,17 @@ public class Player : MonoBehaviour
 					    lowTotVal = 99;
 					    for(int i = 0; i < 8; i++)
 					    {
-						    totVal = 0;
+						    totHold = 0;
 						    if(aHand[i].cardData.subType == CardData.SubType.Actor)
 						    {
 							    for(int j = 0; j < 6; j++)
 							    {
-								    totVal += aHand[handIdxToReturn].cardData.value[j];
+								    totHold += aHand[handIdxToReturn].cardData.value[j];
 							    }
-							    if(totVal < lowTotVal)
+							    if(totHold < lowTotVal)
 							    {
-								    lowTotVal = totVal;
-								    if(lowTotVal < 45)
+								    lowTotVal = totHold;
+								    if((lowTotVal < 45) || (lowTotVal < totVal))
 								    {
 									    newHandIdx = i;
 								    }
@@ -1436,10 +1487,12 @@ public class Player : MonoBehaviour
 	    
 	    if(newHandIdx == -1)
 	    {
+		    Debug.Log("Post Adj " + aHand[handIdxToReturn].cardData.cardName);
 		    return handIdxToReturn;	    	
 	    }
 	    else
 	    {
+		    Debug.Log("Post Adj " + aHand[newHandIdx].cardData.cardName);
 		    return newHandIdx;
 	    }
 		
