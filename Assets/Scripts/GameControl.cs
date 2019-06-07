@@ -286,7 +286,8 @@ public class GameControl : MonoBehaviour
 		foreach(Player ply in player)
 		{
 			ply.hand = new int[] {-1, -1, -1, -1, -1, -1, -1};
-			ply.nextHandIdx = 0;			
+			ply.nextHandIdx = 0;
+			ply.transform.GetChild((int)PlayerDisplay.Fire).gameObject.SetActive(false);
 		}
 		//Sort players by playerID
 		player = player.OrderBy(go => go.playerID).ToArray();
@@ -675,4 +676,8 @@ public class GameControl : MonoBehaviour
 		player[curPlayer].playerActed = true;
 	}
 
+	public int GetPlayerHoldCardID()
+	{
+		return player[curPlayer].holdCardID;
+	}
 }

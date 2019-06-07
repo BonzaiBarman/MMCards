@@ -73,7 +73,8 @@ public class Card : MonoBehaviour
 		    {
 			    if(gControl.curPlayer == gControl.thePlayerIndex && gControl.dealing == false)
 			    {
-			    	if(((cardData.hand == gControl.thePlayerIndex && gControl.GetCurPlayerAction() == PlayerAction.DrawTalentDiscard)) || (gControl.GetCurPlayerAction() == PlayerAction.RaidingTalent) || (gControl.GetCurPlayerAction() == PlayerAction.TradingTalent))
+			    	Debug.Log(gControl.GetCurPlayerAction());
+				    if(((cardData.hand == gControl.thePlayerIndex && gControl.GetCurPlayerAction() == PlayerAction.DrawTalentDiscard && gControl.GetPlayerHoldCardID() != -1)) || (gControl.GetCurPlayerAction() == PlayerAction.RaidingTalent) || (gControl.GetCurPlayerAction() == PlayerAction.TradingTalent))
 			    	{				    	
 				    	gControl.CardDiscard(this);
 				    	if (cardData.type == CardData.CardType.Action)
@@ -128,7 +129,7 @@ public class Card : MonoBehaviour
 			//temp while opp cards are face up
 			//transform.DOMoveY(8f, 1f);
 			Vector3 v = transform.position;
-			transform.DOMove(new Vector3(v.x, v.y + 7, v.z), 0.4f);
+			transform.position += new Vector3(0, 2f, 0); //.DOMove(new Vector3(v.x, v.y + 7, v.z), 0.5f);
 			transform.DORotate(new Vector3(0f, 0f, 0f), 0.5f);
 			//--
 			

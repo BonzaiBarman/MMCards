@@ -48,7 +48,8 @@ public enum PlayerDisplay
 {
     Name,
     Background,
-    Score
+	Score,
+	Fire
 }
 
 public class Utilities
